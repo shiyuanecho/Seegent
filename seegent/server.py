@@ -2844,24 +2844,56 @@ class Handler(SimpleHTTPRequestHandler):
     TODO_LINE_START_WORDS = ('todo', '待办', 'fixme')  # 整行以这些词开头（忽略 - * # 前缀）
     # 排除的目录
     SKIP_DIRS = {'.git', 'node_modules', '__pycache__', '.venv', 'venv', 'dist', 'build', '.next', '.idea', '.vscode'}
+    # 业务目录优先级：先扫这些目录，确保最重要的内容先进入视野
+    PRIORITY_DIRS = ('小红书教育', '小红书AI', '小绿书银发',
+                     '个人感悟', '展示区', '违禁词', 'skills', '临时')
     # README 候选
     README_CANDIDATES = ['README.md', 'README.txt', 'readme.md', 'readme.txt']
 
-    def _collect_md_files(self, root, max_files=200):
-        """收集根目录下的 Markdown 文件（递归，但跳过常见无关目录）"""
-        result = []
-        try:
-            for dirpath, dirnames, filenames in os.walk(root):
+    def _collect_md_files(self, root, max_files=2000):
+        """收集根目录下的 Markdown 文件（递归，但跳过常见无关目录）。
+        业务目录优先遍历，确保最重要的内容先进视图（避免被大批演示稿挤掉配额）。
+        """
+        seen = {}  # path -> True，保持插入顺序且去重
+
+        def _collect_from(base):
+            """递归扫 base 下的所有 md，写入 seen"""
+            for dirpath, dirnames, filenames in os.walk(base):
                 # 原地修改 dirnames 跳过无关目录
                 dirnames[:] = [d for d in dirnames if d not in self.SKIP_DIRS and not d.startswith('.')]
                 for fn in filenames:
                     if fn.lower().endswith(('.md', '.markdown')):
-                        result.append(os.path.join(dirpath, fn))
-                        if len(result) >= max_files:
-                            return result
+                        full = os.path.join(dirpath, fn)
+                        if full not in seen:
+                            seen[full] = True
+
+        try:
+            # 第一轮：按业务优先级扫
+            for sub in self.PRIORITY_DIRS:
+                sub_path = os.path.join(root, sub)
+                if os.path.isdir(sub_path):
+                    _collect_from(sub_path)
+                    if len(seen) >= max_files:
+                        return list(seen.keys())[:max_files]
+
+            # 第二轮：兜底扫剩余目录（已扫过的不重复）
+            for dirpath, dirnames, filenames in os.walk(root):
+                # 跳过整个优先级目录（已在第一轮扫过）
+                rel = os.path.relpath(dirpath, root)
+                if rel.split(os.sep)[0] in self.PRIORITY_DIRS:
+                    dirnames[:] = []
+                    continue
+                dirnames[:] = [d for d in dirnames if d not in self.SKIP_DIRS and not d.startswith('.')]
+                for fn in filenames:
+                    if fn.lower().endswith(('.md', '.markdown')):
+                        full = os.path.join(dirpath, fn)
+                        if full not in seen:
+                            seen[full] = True
+                            if len(seen) >= max_files:
+                                return list(seen.keys())[:max_files]
         except Exception:
             pass
-        return result
+        return list(seen.keys())[:max_files]
 
     def _scan_todos_from_project(self, root):
         """扫描项目内所有 Markdown 文件，提取待办行。
