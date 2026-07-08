@@ -4,6 +4,7 @@
 import json
 import os
 import re
+import hashlib
 import shutil
 import subprocess
 import tempfile
@@ -73,6 +74,9 @@ FEISHU_CREDENTIALS_FILE = os.path.join(DATA_DIR, '.seegent-feishu-credentials.js
 
 # ===== 数据源注册表 =====
 DATASOURCES_FILE = os.path.join(DATA_DIR, '.seegent-datasources.json')
+
+# ===== 技能库浏览器索引 =====
+SKILLLIB_INDEX_FILE = os.path.join(DATA_DIR, '.seegent-skill-index.json')
 
 # ===== 看板配置（按项目隔离）=====
 DASHBOARD_DIR = os.path.join(DATA_DIR, 'dashboards')
@@ -699,6 +703,381 @@ def _save_json(path, data):
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
+
+# ===== 技能库浏览器（Skill Library）=====
+
+def _parse_simple_yaml(lines):
+    """极简 YAML 子集解析（容错，不抛异常）。支持标量、列表、| / > 多行块。"""
+    result = {}
+    i = 0
+    n = len(lines)
+    while i < n:
+        line = lines[i]
+        stripped = line.strip()
+        if not stripped or stripped.startswith('#'):
+            i += 1
+            continue
+        m = re.match(r'^([A-Za-z0-9_\-]+):\s*(.*)$', line)
+        if not m:
+            i += 1
+            continue
+        key = m.group(1)
+        val = m.group(2).rstrip()
+        # 空值：可能是列表（- 项）或块标量（缩进行）
+        if val == '' or val.startswith('|') or val.startswith('>'):
+            j = i + 1
+            while j < n and lines[j].strip() == '':
+                j += 1
+            if j < n and re.match(r'^\s*-\s+\S', lines[j]):
+                lst = []
+                while j < n and re.match(r'^\s*-\s+', lines[j]):
+                    item = re.sub(r'^\s*-\s+', '', lines[j]).strip().strip('"').strip("'")
+                    lst.append(item)
+                    j += 1
+                result[key] = lst
+                i = j
+                continue
+            # 块标量：收集后续缩进行
+            block = []
+            k = i + 1
+            while k < n:
+                bl = lines[k]
+                if bl.strip() == '':
+                    block.append('')
+                    k += 1
+                    continue
+                if re.match(r'^\s+\S', bl):
+                    block.append(bl)
+                    k += 1
+                else:
+                    break
+            while block and block[-1] == '':
+                block.pop()
+            if block:
+                indent = len(block[0]) - len(block[0].lstrip(' '))
+                result[key] = '\n'.join((b[indent:] if len(b) >= indent else b.lstrip(' ')) for b in block)
+            else:
+                result[key] = ''
+            i = k
+            continue
+        result[key] = val.strip().strip('"').strip("'")
+        i += 1
+    return result
+
+
+def _parse_skill_frontmatter(raw_text):
+    """从 SKILL.md 解析 frontmatter。返回 (meta, body, parse_error)。永不抛异常。"""
+    meta = {}
+    parse_error = False
+    if not raw_text.startswith('---'):
+        return meta, raw_text, False
+    lines = raw_text.split('\n')
+    end = -1
+    for i in range(1, len(lines)):
+        if lines[i].strip() == '---':
+            end = i
+            break
+    if end == -1:
+        parse_error = True
+        fm_lines = lines[1:]
+        body = ''
+    else:
+        fm_lines = lines[1:end]
+        body = '\n'.join(lines[end + 1:])
+    try:
+        meta = _parse_simple_yaml(fm_lines)
+    except Exception:
+        meta = {}
+        parse_error = True
+    return meta, body.strip(), parse_error
+
+
+def _build_skill_record(dirpath, source_id):
+    """构造单个 Skill 记录（frontmatter 解析 + 文件统计 + 全文）。"""
+    skill_md = os.path.join(dirpath, 'SKILL.md')
+    try:
+        with open(skill_md, 'r', encoding='utf-8', errors='replace') as f:
+            raw = f.read()
+    except Exception:
+        raw = ''
+    meta, body, parse_error = _parse_skill_frontmatter(raw)
+    file_count = 0
+    sub_dirs = []
+    files = []
+    try:
+        for entry in sorted(os.listdir(dirpath)):
+            fp = os.path.join(dirpath, entry)
+            if os.path.isdir(fp):
+                sub_dirs.append(entry)
+                files.append({'name': entry + '/', 'path': fp, 'isDir': True})
+            else:
+                try:
+                    sz = os.path.getsize(fp)
+                except Exception:
+                    sz = 0
+                file_count += 1
+                files.append({'name': entry, 'path': fp, 'size': sz})
+    except Exception:
+        pass
+    name = meta.get('name') or os.path.basename(dirpath)
+    display_name = meta.get('displayName') or name
+    description = meta.get('description') or ''
+    platforms = meta.get('platforms') or []
+    if isinstance(platforms, str):
+        platforms = [platforms]
+    return {
+        'id': 'skill_' + hashlib.sha1(dirpath.encode('utf-8')).hexdigest()[:12],
+        'sourceId': source_id,
+        'dirName': os.path.basename(dirpath),
+        'dirPath': dirpath,
+        'name': name,
+        'displayName': display_name,
+        'description': description,
+        'version': meta.get('version', ''),
+        'category': meta.get('category', ''),
+        'platforms': platforms,
+        'slug': meta.get('slug', ''),
+        'fileCount': file_count,
+        'subDirs': sub_dirs,
+        'files': files,
+        'content': body,
+        'parseError': bool(parse_error),
+    }
+
+
+def _first_markdown_heading(body):
+    for line in body.split('\n'):
+        line = line.strip()
+        if line.startswith('# '):
+            return line[2:].strip()
+    return ''
+
+
+def _derive_description(body):
+    """从正文取第一段非空文字作为简介（跳过标题行）。"""
+    for p in body.split('\n'):
+        p = p.strip()
+        if not p or p.startswith('#'):
+            continue
+        text = p.lstrip('#*- ').strip()
+        if text:
+            return text[:200]
+    return ''
+
+
+def _build_file_skill_record(dirpath, name, source_id):
+    """把独立的 .md 文件视为一个 Skill。"""
+    full = os.path.join(dirpath, name)
+    try:
+        with open(full, 'r', encoding='utf-8', errors='replace') as f:
+            raw = f.read()
+    except Exception:
+        raw = ''
+    meta, body, parse_error = _parse_skill_frontmatter(raw)
+    display = meta.get('displayName') or meta.get('name') or _first_markdown_heading(body) or name[:-3]
+    description = meta.get('description') or _derive_description(body)
+    platforms = meta.get('platforms') or []
+    if isinstance(platforms, str):
+        platforms = [platforms]
+    try:
+        sz = os.path.getsize(full)
+    except Exception:
+        sz = 0
+    return {
+        'id': 'skillf_' + hashlib.sha1(full.encode('utf-8')).hexdigest()[:12],
+        'sourceId': source_id,
+        'dirName': name,
+        'dirPath': dirpath,
+        'name': display,
+        'displayName': display,
+        'description': description,
+        'version': meta.get('version', ''),
+        'category': meta.get('category', ''),
+        'platforms': platforms,
+        'slug': meta.get('slug', ''),
+        'fileCount': 1,
+        'subDirs': [],
+        'files': [{'name': name, 'path': full, 'size': sz}],
+        'content': body,
+        'parseError': bool(parse_error),
+        'isFileSkill': True,
+        'entryName': name,
+    }
+
+
+def _scan_skill_source(root_path):
+    """递归扫描 root_path，返回所有 Skill：
+    - 含 SKILL.md 的目录 → 目录型 Skill（其子树内部文件可经文件树浏览，不再单独成 Skill）
+    - 不在任何 Skill 目录内的独立 .md 文件（排除 SKILL.md / README.md）→ 文件型 Skill
+    """
+    root_path = os.path.expanduser(root_path)
+    skills = []
+    if not os.path.isdir(root_path):
+        return skills
+    src_id = 'src_' + hashlib.sha1(root_path.encode('utf-8')).hexdigest()[:10]
+    skip = {'.git', 'node_modules', '__pycache__', '.venv', 'venv', '.seegent-reports'}
+
+    def walk(dirpath, inside_skill):
+        try:
+            entries = sorted(os.listdir(dirpath))
+        except Exception:
+            return
+        has_skill_md = 'SKILL.md' in entries
+        if has_skill_md and not inside_skill:
+            skills.append(_build_skill_record(dirpath, src_id))
+            return  # 该目录作为 Skill 边界，子树不再单独成 Skill
+        for name in entries:
+            if name in skip:
+                continue
+            fp = os.path.join(dirpath, name)
+            if os.path.isdir(fp):
+                walk(fp, inside_skill or has_skill_md)
+            elif os.path.isfile(fp) and name.lower().endswith('.md'):
+                if name in ('SKILL.md', 'README.md'):
+                    continue
+                if not (inside_skill or has_skill_md):
+                    skills.append(_build_file_skill_record(dirpath, name, src_id))
+
+    try:
+        for name in sorted(os.listdir(root_path)):
+            if name in skip:
+                continue
+            fp = os.path.join(root_path, name)
+            if os.path.isdir(fp):
+                walk(fp, False)
+            elif os.path.isfile(fp) and name.lower().endswith('.md'):
+                if name in ('SKILL.md', 'README.md'):
+                    continue
+                skills.append(_build_file_skill_record(root_path, name, src_id))
+    except Exception:
+        pass
+    return skills
+
+
+def _rebuild_skill_index_from(index):
+    """根据内存 index（含 sources）重新扫描、写盘并返回完整 index。"""
+    index.setdefault('version', 1)
+    index.setdefault('sources', [])
+    index.setdefault('skills', [])
+    all_skills = []
+    for src in index['sources']:
+        p = src.get('path', '')
+        scanned = _scan_skill_source(p)
+        src_id = src.get('id') or ('src_' + hashlib.sha1(p.encode('utf-8')).hexdigest()[:10])
+        src['id'] = src_id
+        for s in scanned:
+            s['sourceId'] = src_id
+        src['skillCount'] = len(scanned)
+        all_skills.extend(scanned)
+    index['skills'] = all_skills
+    _save_json(SKILLLIB_INDEX_FILE, index)
+    return index
+
+
+def _rebuild_skill_index():
+    """从磁盘加载 index 并重新扫描全部来源。"""
+    index = _load_json(SKILLLIB_INDEX_FILE, {'version': 1, 'sources': [], 'skills': []})
+    return _rebuild_skill_index_from(index)
+
+
+# ===== 技能库：文件浏览 / AI 解释 辅助 =====
+
+SKILLLIB_FS_SKIP = {'.git', 'node_modules', '__pycache__', '.venv', 'venv', '.seegent-reports'}
+
+
+def _skilllib_find_skill(skill_id):
+    """按 id 从磁盘索引查找 Skill 记录。"""
+    if not skill_id:
+        return None
+    index = _load_json(SKILLLIB_INDEX_FILE, {'version': 1, 'sources': [], 'skills': []})
+    for s in index.get('skills', []):
+        if s.get('id') == skill_id:
+            return s
+    return None
+
+
+def _skilllib_build_tree(dirpath, rel):
+    """返回 dirpath/rel 目录下的条目（目录在前，文件在后，均排序）。"""
+    full = os.path.normpath(os.path.join(dirpath, rel)) if rel else dirpath
+    if not (full == dirpath or full.startswith(dirpath + os.sep)):
+        return []
+    entries = []
+    try:
+        names = sorted(os.listdir(full))
+    except Exception:
+        return entries
+    dirs = [n for n in names if os.path.isdir(os.path.join(full, n)) and n not in SKILLLIB_FS_SKIP]
+    files = [n for n in names if os.path.isfile(os.path.join(full, n))]
+    for n in dirs:
+        entries.append({'name': n, 'isDir': True, 'sub': (rel + '/' + n).lstrip('/')})
+    for n in files:
+        try:
+            sz = os.path.getsize(os.path.join(full, n))
+        except Exception:
+            sz = 0
+        entries.append({'name': n, 'isDir': False, 'sub': (rel + '/' + n).lstrip('/'), 'size': sz})
+    return entries
+
+
+def _skilllib_read_file(dirpath, sub):
+    """读取 dirpath/sub 文件内容。返回 (data, error)。带路径越界保护。"""
+    if not sub:
+        return None, '缺少 sub 参数'
+    full = os.path.normpath(os.path.join(dirpath, sub))
+    if not (full == dirpath or full.startswith(dirpath + os.sep)):
+        return None, '路径越界'
+    if not os.path.isfile(full):
+        return None, '不是文件：' + sub
+    try:
+        with open(full, 'r', encoding='utf-8', errors='replace') as f:
+            content = f.read()
+    except Exception as e:
+        return None, str(e)
+    MAX = 300 * 1024
+    truncated = False
+    if len(content) > MAX:
+        content = content[:MAX]
+        truncated = True
+    name = os.path.basename(full)
+    low = name.lower()
+    if low.endswith(('.md', '.markdown')):
+        lang = 'markdown'
+    elif low.endswith(('.json', '.py', '.js', '.jsx', '.ts', '.tsx', '.sh', '.bash',
+                       '.yaml', '.yml', '.toml', '.cfg', '.ini', '.css', '.html', '.htm', '.txt', '.csv', '.xml', '.svg')):
+        lang = 'code'
+    else:
+        lang = 'text'
+    return {'content': content, 'lang': lang, 'truncated': truncated, 'name': name}, None
+
+
+def _skilllib_explain_prompt(s):
+    """构造发给 LLM 的「解释这个 Skill」提示正文。"""
+    parts = []
+    parts.append('Skill 名称：' + (s.get('displayName') or s.get('name') or ''))
+    if s.get('category'):
+        parts.append('分类：' + s['category'])
+    if s.get('description'):
+        parts.append('描述：' + s['description'])
+    if s.get('platforms'):
+        parts.append('适用平台：' + ', '.join(s['platforms']))
+    content = (s.get('content') or '')[:2000]
+    if content:
+        parts.append('SKILL.md 正文（节选）：\n' + content)
+    return '\n'.join(parts)
+
+
+def _skilllib_default_engine(engines):
+    """选择一个可用的 REST 引擎 id（优先 deepseek，其次第一个 rest）。"""
+    if not engines:
+        return None
+    if 'deepseek' in engines and engines['deepseek'].get('type') == 'rest':
+        return 'deepseek'
+    for eid, cfg in engines.items():
+        if cfg.get('type') == 'rest':
+            return eid
+    return None
+
+
 # ===== 操作日志 =====
 
 MAX_LOG_ENTRIES = 500
@@ -1110,6 +1489,8 @@ _OPENTOKEN_TOOL_NAMES = {
     'hermes': 'Hermes',
     'workbuddy': 'WorkBuddy',
     'zcode': 'ZCode',
+    'minimax': 'MiniMax Code',
+    'kimi-code': 'Kimi Code (上下文快照)',
 }
 
 
@@ -1120,6 +1501,81 @@ def _find_opentoken():
     if os.path.isfile(p) and os.access(p, os.X_OK):
         return p
     return _which('opentoken')
+
+
+def _scan_minimax_usage():
+    """读取 MiniMax Code 本地 sqlite(~/.minimax/sqlite.db)的 token_usage 表，
+    返回与 opentoken 同形状的 rows（真实逐轮 input/output/cache tokens + 成本）。
+    失败/缺失时返回空列表，绝不抛异常。"""
+    rows = []
+    db = os.path.expanduser('~/.minimax/sqlite.db')
+    if not os.path.isfile(db):
+        return rows
+    try:
+        import sqlite3
+        con = sqlite3.connect(db)
+        con.row_factory = sqlite3.Row
+        cur = con.cursor()
+        cur.execute("SELECT model, ts, input_tokens, output_tokens, "
+                    "cache_read_tokens, cache_write_tokens, cost_usd "
+                    "FROM token_usage")
+        for r in cur.fetchall():
+            ts = r['ts']
+            date = ''
+            try:
+                # ts 为毫秒时间戳
+                date = datetime.datetime.fromtimestamp(int(ts) / 1000.0).strftime('%Y-%m-%d')
+            except Exception:
+                date = ''
+            rows.append({
+                'tool': 'minimax',
+                'date': date,
+                'input': int(r['input_tokens'] or 0),
+                'output': int(r['output_tokens'] or 0),
+                'cache_read': int(r['cache_read_tokens'] or 0),
+                'cache_write': int(r['cache_write_tokens'] or 0),
+                'model': (r['model'] or 'unknown'),
+                'cost': float(r['cost_usd'] or 0),
+            })
+        con.close()
+    except Exception:
+        pass
+    return rows
+
+
+def _scan_kimi_usage():
+    """读取 Kimi Code 本地上下文占用快照
+    (~/Library/Application Support/kimi-desktop/kimi-agent/conversation-context-usage.json)。
+    注意：Kimi 本地不保存累计 token 消耗，只有“当前上下文占用”快照，
+    因此标记为 _ctx，聚合时不计入全局总量/趋势图。失败/缺失返回空列表。"""
+    rows = []
+    p = os.path.expanduser('~/Library/Application Support/kimi-desktop/kimi-agent/conversation-context-usage.json')
+    if not os.path.isfile(p):
+        return rows
+    try:
+        d = _load_json(p, {})
+        if isinstance(d, dict):
+            for _cid, info in d.items():
+                if not isinstance(info, dict):
+                    continue
+                ctx = int(info.get('contextTokens', 0) or 0)
+                if ctx <= 0:
+                    continue
+                updated = info.get('updatedAt', '') or ''
+                date = updated[:10] if len(updated) >= 10 else ''
+                rows.append({
+                    'tool': 'kimi-code',
+                    'date': date,
+                    'input': ctx,
+                    'output': 0,
+                    'cache_read': 0,
+                    'cache_write': 0,
+                    'model': (info.get('model') or 'unknown'),
+                    '_ctx': True,
+                })
+    except Exception:
+        pass
+    return rows
 
 
 def _scan_local_tokens():
@@ -1150,7 +1606,16 @@ def _scan_local_tokens():
         except (subprocess.TimeoutExpired, json.JSONDecodeError, OSError) as e:
             opentoken_err = '解析失败: ' + str(e)[:200]
 
-    # 聚合：按 tool 汇总，同时保留 byDate / byModel 明细
+        # ---- 并入本地 Kimi / MiniMax 用量（opentoken 尚未覆盖的工具）----
+        try:
+            _merged = list(raw if isinstance(raw, list) else [])
+            _merged += _scan_minimax_usage()
+            _merged += _scan_kimi_usage()
+            raw = _merged
+        except Exception:
+            pass
+
+            # 聚合：按 tool 汇总，同时保留 byDate / byModel 明细
     # 真实总消耗 = input + output + cache_read + cache_write（含缓存读取，反映实际 token 吞吐）
     def _real_tokens(rec):
         return (rec.get('input', 0) + rec.get('output', 0)
@@ -1165,7 +1630,8 @@ def _scan_local_tokens():
     for rec in (raw or []):
         tid = rec.get('tool', 'unknown')
         all_dates.add(rec.get('date', ''))
-        grand_total += _real_tokens(rec)
+        if not rec.get('_ctx'):
+            grand_total += _real_tokens(rec)
         if tid not in tools_map:
             tools_map[tid] = {
                 'id': tid,
@@ -1173,6 +1639,7 @@ def _scan_local_tokens():
                 'total': 0, 'input': 0, 'output': 0,
                 'cacheRead': 0, 'cacheWrite': 0, 'records': 0,
                 'byDate': {}, 'byModel': {},
+                '_ctx': bool(rec.get('_ctx', False)),
             }
         agg = tools_map[tid]
         real = _real_tokens(rec)
@@ -1189,12 +1656,13 @@ def _scan_local_tokens():
         # byModel
         m = rec.get('model', 'unknown')
         agg['byModel'][m] = agg['byModel'].get(m, 0) + real
-        # global model aggregation
-        global_by_model[m] = global_by_model.get(m, 0) + real
-        global_model_records[m] = global_model_records.get(m, 0) + 1
-        mbyd = global_model_by_date.setdefault(m, {})
-        if d:
-            mbyd[d] = mbyd.get(d, 0) + real
+        # global model aggregation（上下文快照 _ctx 不计入全局模型汇总）
+        if not rec.get('_ctx'):
+            global_by_model[m] = global_by_model.get(m, 0) + real
+            global_model_records[m] = global_model_records.get(m, 0) + 1
+            mbyd = global_model_by_date.setdefault(m, {})
+            if d:
+                mbyd[d] = mbyd.get(d, 0) + real
 
     # ---- Merge Seegent own usage into token stats ----
     pfm_data = _load_json(USAGE_FILE, {'usage': []})
@@ -1248,6 +1716,8 @@ def _scan_local_tokens():
     global_by_date = {}
     # byToolByDate: {date: [{tool, tokens, color_idx}]} —— 用于堆叠/明细
     for t in tools_list:
+        if t.get('_ctx'):  # 上下文快照不计入趋势图
+            continue
         for d, v in t.get('byDate', {}).items():
             global_by_date[d] = global_by_date.get(d, 0) + v
 
@@ -1777,6 +2247,33 @@ class Handler(SimpleHTTPRequestHandler):
             return self._serve_json(_load_json(SKILLS_FILE, DEFAULT_SKILLS))
         if self.path == '/api/roles':
             return self._serve_json(_load_json(ROLES_FILE, DEFAULT_ROLES))
+        if self.path == '/api/skilllib/index':
+            return self._serve_json(_load_json(SKILLLIB_INDEX_FILE, {'version': 1, 'sources': [], 'skills': []}))
+        if self.path.startswith('/api/skilllib/tree') or self.path.startswith('/api/skilllib/file'):
+            from urllib.parse import urlparse, parse_qs
+            qs = parse_qs(urlparse(self.path).query)
+            sid = qs.get('skillId', [None])[0]
+            s = _skilllib_find_skill(sid) if sid else None
+            if not s:
+                return self._serve_json({'error': 'skill 不存在'}, 404)
+            if self.path.startswith('/api/skilllib/tree'):
+                if s.get('isFileSkill'):
+                    fp = os.path.join(s['dirPath'], s['entryName'])
+                    try:
+                        sz = os.path.getsize(fp)
+                    except Exception:
+                        sz = 0
+                    return self._serve_json({'skillId': sid, 'sub': s['entryName'],
+                                             'entries': [{'name': s['entryName'], 'isDir': False, 'sub': s['entryName'], 'size': sz}]})
+                sub = qs.get('sub', [''])[0]
+                return self._serve_json({'skillId': sid, 'sub': sub, 'entries': _skilllib_build_tree(s['dirPath'], sub)})
+            sub = qs.get('sub', [''])[0]
+            if s.get('isFileSkill') and (not sub or sub == s['entryName']):
+                sub = s['entryName']
+            data, err = _skilllib_read_file(s['dirPath'], sub)
+            if err:
+                return self._serve_json({'error': err}, 400)
+            return self._serve_json(data)
         # 看板配置（按项目隔离）
         if self.path.startswith('/api/dashboard/config'):
             return self._handle_dashboard_config_get()
@@ -1963,6 +2460,50 @@ class Handler(SimpleHTTPRequestHandler):
             return self._save_json_endpoint(SKILLS_FILE)
         if self.path == '/api/roles':
             return self._save_json_endpoint(ROLES_FILE)
+        if self.path == '/api/skilllib/sources':
+            body = self._read_body()
+            if not isinstance(body, dict):
+                body = {}
+            action = body.get('action', 'add')
+            path = (body.get('path') or '').strip()
+            if not path:
+                return self._serve_json({'error': 'path 必填'}, 400)
+            path = os.path.expanduser(path)
+            if not os.path.isdir(path):
+                return self._serve_json({'error': '目录不存在: ' + path}, 400)
+            index = _load_json(SKILLLIB_INDEX_FILE, {'version': 1, 'sources': [], 'skills': []})
+            index.setdefault('sources', [])
+            index.setdefault('skills', [])
+            if action == 'remove':
+                index['sources'] = [s for s in index['sources'] if s.get('path') != path]
+            else:
+                src_id = 'src_' + hashlib.sha1(path.encode('utf-8')).hexdigest()[:10]
+                name = body.get('name') or os.path.basename(path.rstrip('/')) or path
+                found = False
+                for s in index['sources']:
+                    if s.get('path') == path:
+                        s['name'] = name
+                        s['addedAt'] = s.get('addedAt', int(time.time() * 1000))
+                        found = True
+                        break
+                if not found:
+                    index['sources'].append({
+                        'id': src_id, 'path': path, 'name': name,
+                        'addedAt': int(time.time() * 1000), 'skillCount': 0
+                    })
+            try:
+                index = _rebuild_skill_index_from(index)
+            except Exception as e:
+                return self._serve_json({'error': str(e)}, 500)
+            return self._serve_json(index)
+        if self.path == '/api/skilllib/rescan':
+            try:
+                index = _rebuild_skill_index()
+                return self._serve_json(index)
+            except Exception as e:
+                return self._serve_json({'error': str(e)}, 500)
+        if self.path == '/api/skilllib/explain':
+            return self._handle_skilllib_explain()
         if self.path == '/api/agents':
             return self._save_json_endpoint(AGENTS_FILE)
         if self.path == '/api/project-agents':
@@ -2554,6 +3095,58 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
         self.wfile.write(body)
+
+    def _handle_skilllib_explain(self):
+        """POST /api/skilllib/explain — 用已配置模型把 Skill 翻译成大白话。"""
+        body = self._read_body() or {}
+        sid = body.get('id')
+        s = _skilllib_find_skill(sid) if sid else None
+        if not s:
+            return self._serve_json({'error': 'skill 不存在'}, 404)
+        engines = _load_json(ENGINES_FILE, {'engines': {}}).get('engines', {})
+        engine_id = body.get('engine') or _skilllib_default_engine(engines)
+        cfg = engines.get(engine_id) if engine_id else None
+        if not cfg or cfg.get('type') != 'rest':
+            cfg = next((e for e in engines.values() if e.get('type') == 'rest'), None)
+            engine_id = None
+        if not cfg:
+            return self._serve_json({'ok': False, 'reason': 'no_engine'})
+        api_key = cfg.get('api_key', '')
+        if isinstance(api_key, str) and api_key.startswith('${') and api_key.endswith('}'):
+            api_key = os.environ.get(api_key[2:-1], '')
+        base_url = cfg.get('base_url', '')
+        model = cfg.get('model', '')
+        if not api_key or not base_url or not model:
+            return self._serve_json({'ok': False, 'reason': 'no_key'})
+        system_prompt = ('你是一个帮助用户理解开发工具的助手，阅读你内容的人是不懂技术的产品/运营/教师。'
+                         '请用通俗易懂、口语化的中文解释下面这个 Skill（技能/插件）：它是什么、解决什么问题、'
+                         '典型使用场景、大概怎么用。控制在 260 字以内，用自然段落，不要使用 Markdown 标题。')
+        payload = json.dumps({
+            'model': model,
+            'messages': [
+                {'role': 'system', 'content': system_prompt},
+                {'role': 'user', 'content': _skilllib_explain_prompt(s)}
+            ],
+            'stream': False,
+            'temperature': 0.3,
+            'max_tokens': 600
+        }).encode('utf-8')
+        url = base_url.rstrip('/') + '/chat/completions'
+        headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + api_key}
+        try:
+            req = urllib.request.Request(url, data=payload, headers=headers, method='POST')
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                out = json.loads(resp.read().decode('utf-8'))
+            content = out['choices'][0]['message']['content']
+            u = out.get('usage') or {}
+            agent_id = cfg.get('name', engine_id or 'rest').lower()
+            _record_usage(model, agent_id, cfg.get('name', engine_id or 'rest'),
+                          u.get('prompt_tokens', 0), u.get('completion_tokens', 0))
+            return self._serve_json({'ok': True, 'text': content, 'engine': engine_id or cfg.get('name')})
+        except urllib.error.HTTPError as e:
+            return self._serve_json({'ok': False, 'reason': 'api_error', 'error': self._format_api_error(e)}, 502)
+        except Exception as e:
+            return self._serve_json({'ok': False, 'reason': 'api_error', 'error': str(e)}, 500)
 
     # ===== 项目追踪 API =====
 

@@ -2013,6 +2013,114 @@ body {
 .usage-stack-col:hover .usage-stack-tip { opacity:1; }
 .usage-stack-lbl { position:absolute; bottom:-17px; font-size:8px; color:var(--text-tertiary); white-space:nowrap; }
 
+/* ===== 技能库浏览器（Skill Library） ===== */
+#skilllib-module { padding: 0; }
+.skilllib-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:28px 40px 16px; }
+.skilllib-header h2 { font-size:var(--text-2xl); font-weight:700; margin:0 0 6px; }
+.skilllib-header p { font-size:var(--text-sm); color:var(--text-secondary); margin:0; max-width:640px; }
+.skilllib-actions { display:flex; gap:10px; flex-shrink:0; }
+.sl-btn { padding:9px 14px; border:1px solid var(--border); background:var(--bg-card); color:var(--text); border-radius:9px; cursor:pointer; font-size:13px; display:inline-flex; align-items:center; gap:6px; transition:all .15s; }
+.sl-btn:hover { background:var(--bg-hover); border-color:var(--accent); }
+.sl-btn-primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+.sl-btn-primary:hover { filter:brightness(1.08); }
+.skilllib-layout { display:grid; grid-template-columns:260px 1fr 420px; flex:1; min-height:0; border-top:1px solid var(--border); }
+.sl-side { border-right:1px solid var(--border); padding:16px; overflow:hidden; min-height:0; display:flex; flex-direction:column; gap:14px; }
+.sl-search { width:100%; padding:9px 12px; border:1px solid var(--border); border-radius:9px; background:var(--bg-card); color:var(--text); font-size:13px; box-sizing:border-box; }
+.sl-search:focus { outline:none; border-color:var(--accent); }
+.sl-sources-title { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); font-weight:600; }
+.sl-sources { flex-shrink:0; max-height:42%; display:flex; flex-direction:column; min-height:0; }
+.sl-sources-head { display:flex; align-items:center; gap:6px; cursor:pointer; user-select:none; padding:2px 0; }
+.sl-sources-head:hover .sl-sources-title { color:var(--text-secondary); }
+.sl-source-count { font-size:10px; background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:0 7px; color:var(--text-tertiary); }
+.sl-sources-chevron { margin-left:auto; font-size:10px; color:var(--text-tertiary); transition:transform .2s ease; }
+.sl-sources.collapsed .sl-sources-chevron { transform:rotate(-90deg); }
+.sl-sources.collapsed #sl-source-list { display:none; }
+#sl-source-list { overflow-y:auto; min-height:0; flex:1; margin:2px -4px 0 0; padding-right:4px; }
+.sl-source-item { display:flex; align-items:center; gap:8px; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg-card); margin-top:6px; }
+.sl-source-name { font-size:12px; color:var(--text-secondary); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sl-source-del { background:none; border:none; color:var(--text-tertiary); cursor:pointer; font-size:14px; padding:2px 4px; border-radius:6px; }
+.sl-source-del:hover { color:#ef4444; background:var(--bg-hover); }
+.sl-source-empty { font-size:12px; color:var(--text-tertiary); margin-top:6px; line-height:1.5; }
+.sl-group-tabs { display:flex; justify-content:center; gap:6px; margin-bottom:2px; flex-shrink:0; }
+.sl-group-wrap { display:flex; flex-direction:column; flex:1; min-height:0; }
+.sl-group-sec-label { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); font-weight:600; margin:16px 0 8px; }
+.slg-tab { flex:1; padding:6px 0; font-size:12px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-secondary); border-radius:7px; cursor:pointer; transition:all .15s; }
+.slg-tab.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+.sl-groups { display:flex; flex-direction:column; gap:3px; margin-top:6px; padding-top:14px; border-top:1px solid var(--border); flex:1; min-height:0; overflow-y:auto; }
+.sl-group-link { display:flex; align-items:center; justify-content:space-between; padding:7px 10px; border-radius:7px; font-size:13px; color:var(--text-secondary); cursor:pointer; }
+.sl-group-link:hover { background:var(--bg-hover); }
+.sl-group-link.active { background:var(--bg-hover); color:var(--text); font-weight:600; }
+.sl-group-count { font-size:11px; color:var(--text-tertiary); background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:1px 7px; }
+.sl-cards { padding:16px; overflow-y:auto; min-height:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:14px; align-content:start; }
+.sl-card { padding:16px; border:1px solid var(--border); border-radius:12px; background:var(--bg-card); display:flex; flex-direction:column; gap:8px; cursor:pointer; transition:all .18s; }
+.sl-card:hover { box-shadow:var(--shadow); border-color:var(--accent); transform:translateY(-2px); }
+.sl-card.selected { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+.sl-card-name { font-size:15px; font-weight:600; color:var(--text); line-height:1.3; }
+.sl-card-desc { font-size:12.5px; color:var(--text-secondary); line-height:1.55; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.sl-card-tags { display:flex; flex-wrap:wrap; gap:5px; }
+.sl-tag { font-size:10.5px; padding:2px 8px; border-radius:20px; background:var(--bg-hover); color:var(--text-secondary); border:1px solid var(--border); }
+.sl-tag.cat { color:var(--accent); border-color:var(--accent); }
+.sl-card-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:11px; color:var(--text-tertiary); margin-top:auto; }
+.sl-pager { grid-column:1 / -1; position:sticky; bottom:0; display:flex; align-items:center; justify-content:center; gap:14px; padding:12px 0 6px; margin-top:8px; background:var(--bg); border-top:1px solid var(--border); z-index:2; }
+.sl-pg-btn { padding:7px 16px; border:1px solid var(--border); background:var(--bg-card); color:var(--text); border-radius:8px; cursor:pointer; font-size:13px; transition:all .15s; }
+.sl-pg-btn:hover:not(:disabled) { border-color:var(--accent); color:var(--accent); }
+.sl-pg-btn:disabled { opacity:.4; cursor:not-allowed; }
+.sl-pg-info { font-size:13px; color:var(--text-secondary); }
+.sl-multifile { color:#f59e0b; }
+.sl-err-badge { color:#ef4444; border:1px solid #ef4444; border-radius:20px; padding:1px 7px; font-size:10px; }
+.sl-origin-bar { display:flex; align-items:center; gap:2px; padding:2px; margin:8px 0 4px; background:var(--bg-hover); border:1px solid var(--border); border-radius:22px; flex-shrink:0; }
+.sl-origin-btn { flex:1; text-align:center; border:none; background:transparent; color:var(--text-secondary); border-radius:18px; padding:5px 18px; cursor:pointer; font-size:12px; font-weight:500; letter-spacing:.02em; transition:all .22s cubic-bezier(0.16,1,0.3,1); white-space:nowrap; }
+.sl-origin-btn:hover { color:var(--text); }
+.sl-origin-btn.active { background:var(--accent); color:#fff; box-shadow:0 2px 10px -2px var(--accent); }
+.sl-origin-badge { font-size:10px; padding:1px 7px; border-radius:20px; border:1px solid var(--border); }
+.sl-origin-badge.user { color:#22c55e; border-color:#22c55e; }
+.sl-origin-badge.native { color:var(--text-tertiary); }
+.sl-empty, .sl-detail-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; height:100%; color:var(--text-tertiary); text-align:center; padding:40px; font-size:14px; }
+.sl-empty-btn { margin-top:6px; }
+.sl-detail { border-left:1px solid var(--border); padding:20px 24px; overflow-y:auto; min-height:0; }
+.sl-detail-head { margin-bottom:16px; }
+.sl-detail-title { font-size:18px; font-weight:700; color:var(--text); margin:0 0 8px; }
+.sl-meta-grid { display:grid; grid-template-columns:auto 1fr; gap:4px 12px; font-size:12.5px; margin-bottom:14px; }
+.sl-meta-grid dt { color:var(--text-tertiary); }
+.sl-meta-grid dd { color:var(--text-secondary); margin:0; word-break:break-word; }
+.sl-filetree { margin:14px 0; border-top:1px solid var(--border); padding-top:12px; }
+.sl-filetree-title { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); margin-bottom:8px; }
+.sl-file-item { display:flex; align-items:center; justify-content:space-between; font-size:12px; color:var(--text-secondary); padding:3px 0; }
+.sl-file-item .sz { color:var(--text-tertiary); font-size:11px; }
+.sl-content { font-size:13.5px; line-height:1.7; }
+.sl-content h1, .sl-content h2, .sl-content h3 { color:var(--text); margin:18px 0 8px; }
+.sl-content pre { background:var(--bg-card); border:1px solid var(--border); border-radius:8px; padding:12px; overflow:auto; }
+.sl-content code { background:var(--bg-hover); padding:1px 5px; border-radius:4px; font-size:12px; }
+
+/* 文件树（可展开 / 查看子文件） */
+.sl-tree-row { display:flex; align-items:center; font-size:12.5px; color:var(--text-secondary); padding:2px 0; }
+.sl-tree-toggle { width:16px; flex-shrink:0; text-align:center; color:var(--text-tertiary); cursor:pointer; user-select:none; }
+.sl-tree-name { cursor:pointer; padding:1px 4px; border-radius:5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sl-tree-name:hover { background:var(--bg-hover); color:var(--text); }
+.sl-tree-dir { color:var(--text); font-weight:500; }
+.sl-tree-file .sz { color:var(--text-tertiary); font-size:11px; margin-left:6px; }
+.sl-file-view { margin:10px 0 4px; border:1px solid var(--border); border-radius:10px; background:var(--bg-surface); overflow:hidden; }
+.sl-file-view-head { display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:var(--bg-card); border-bottom:1px solid var(--border); font-size:12px; color:var(--text-secondary); font-family:var(--font-mono); }
+.sl-file-view-close { cursor:pointer; color:var(--text-tertiary); padding:0 4px; }
+.sl-file-view-close:hover { color:#ef4444; }
+.sl-file-view-body { padding:12px; max-height:360px; overflow:auto; font-size:13px; line-height:1.6; }
+.sl-file-view-body pre.sl-code { background:var(--bg-card); border:1px solid var(--border); border-radius:8px; padding:12px; overflow:auto; white-space:pre; margin:0; font-family:var(--font-mono); font-size:12px; }
+.sl-file-trunc { font-size:11px; color:var(--text-tertiary); margin-top:8px; }
+/* AI 解释 */
+.sl-btn-ai { background:linear-gradient(135deg, var(--accent), var(--accent-hover)); border:none; color:#fff; font-weight:600; }
+.sl-btn-ai:hover { filter:brightness(1.08); }
+.sl-btn-ai:disabled { opacity:.6; cursor:default; }
+.sl-explain-box { margin:0 0 14px; border:1px solid var(--accent); border-radius:10px; background:var(--accent-light, rgba(99,102,241,.08)); overflow:hidden; }
+.sl-explain-head { font-size:12px; font-weight:600; color:var(--text); padding:8px 12px; background:var(--bg-card); border-bottom:1px solid var(--border); }
+.sl-explain-body { padding:12px; font-size:13.5px; line-height:1.7; color:var(--text); white-space:pre-wrap; }
+/* 相关技能 */
+.sl-related { margin:14px 0; border-top:1px solid var(--border); padding-top:12px; }
+.sl-related-title { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); margin-bottom:8px; }
+.sl-related-list { display:flex; flex-wrap:wrap; gap:6px; }
+.sl-related-chip { font-size:12px; padding:4px 10px; border-radius:20px; background:var(--bg-card); border:1px solid var(--border); color:var(--text-secondary); cursor:pointer; transition:all .15s; }
+.sl-related-chip:hover { border-color:var(--accent); color:var(--text); }
+.sl-content-title { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); margin:14px 0 8px; }
+
 /* ===== 业务数据看板 ===== */
 .dash-toolbar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
 .dash-project-select { min-width:200px; padding:8px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg-card); color:var(--text); font-size:14px; }
@@ -2784,6 +2892,7 @@ body {
     <div class="header-segments">
       <button class="header-seg active" data-module="file">项目</button>
       <button class="header-seg" data-module="board">看板</button>
+      <button class="header-seg" data-module="skilllib">技能库</button>
       <button class="header-seg" data-module="config">配置</button>
       <button class="header-seg" data-module="usage">用量</button>
       <button class="header-seg" data-module="log">日志</button>
@@ -2920,6 +3029,45 @@ body {
 	          </div>
           <div id="dash-datasources"></div>
           <div id="dash-cards"></div>
+        </div>
+      </div>
+
+      <!-- 技能库浏览器模块 -->
+      <div id="skilllib-module" class="module-content">
+        <div class="skilllib-header">
+          <div>
+            <h2>技能库</h2>
+            <p>浏览本地 Skill 资产。添加文件夹 → 后端递归扫描 SKILL.md → 结构化查看用途与全文。只读，不上传任何第三方。</p>
+          </div>
+          <div class="skilllib-actions">
+            <button class="sl-btn sl-btn-primary" onclick="addSkillFolder()">添加文件夹</button>
+            <button class="sl-btn" onclick="rescanSkillSources()" title="重新扫描所有来源">重新扫描</button>
+          </div>
+        </div>
+        <div class="skilllib-layout">
+          <aside class="sl-side">
+            <input id="sl-search" class="sl-search" placeholder="搜索 name / description…" oninput="onSkillSearchInput()">
+            <div class="sl-group-wrap">
+              <div class="sl-group-tabs">
+                <button class="slg-tab active" data-mode="category" onclick="setSkillGroupMode('category')">分类</button>
+                <button class="slg-tab" data-mode="source" onclick="setSkillGroupMode('source')">来源</button>
+                <button class="slg-tab" data-mode="theme" onclick="setSkillGroupMode('theme')">主题</button>
+              </div>
+              <div id="sl-groups" class="sl-groups"></div>
+            </div>
+            <div class="sl-sources" id="sl-sources">
+              <div class="sl-sources-head" onclick="toggleSkillSources()" title="折叠 / 展开来源列表">
+                <span class="sl-sources-title">已添加来源</span>
+                <span class="sl-source-count" id="sl-source-count">0</span>
+                <span class="sl-sources-chevron" id="sl-sources-chevron">▾</span>
+              </div>
+              <div id="sl-source-list"></div>
+            </div>
+          </aside>
+          <main class="sl-cards" id="sl-cards"></main>
+          <section class="sl-detail" id="sl-detail">
+            <div class="sl-detail-empty">点击左侧卡片查看 Skill 详情</div>
+          </section>
         </div>
       </div>
 
@@ -6962,9 +7110,633 @@ function switchModule(name) {
   if (name === 'usage') { loadAiMonitor(); }
   if (name === 'board') { initDashboard(); }
   if (name === 'settings') { initSettingsEmbToggle(); }
+  if (name === 'skilllib') { initSkillLibrary(); }
 }
 
 // ========== 模块切换结束 ==========
+// ========== 技能库浏览器（Skill Library） ============
+let skillIndex = { sources: [], skills: [] };
+let skillSelectedId = null;
+let skillGroupMode = 'category';
+let skillActiveGroup = 'all';
+let skillSearchQuery = '';
+// 文件树 / 关系视图 / AI 解释 状态
+let skillTreeCache = {};        // skillId|sub -> entries[]
+let skillTreeDiv = {};          // sub -> 子容器 DOM id
+let skillTreeCounter = 0;
+let skillExplainCache = {};     // skillId -> 已生成的解释 HTML
+let skillSigCache = {};         // skillId -> Set(签名)
+let skillThemeClusters = {};    // clusterId -> {label, ids}
+let skillThemeMap = {};         // skillId -> clusterId
+let skillPageSize = 48;         // 每页卡片数（分页避免一次性渲染上千张卡）
+let skillCurrentPage = 1;
+let skillLastFilterSig = '';    // 过滤签名：变化才回到第 1 页
+let skillOriginFilter = 'all';  // 归属筛选：all / user / native
+
+function initSkillLibrary() {
+  fetch('/api/skilllib/index')
+    .then(r => r.json())
+    .then(d => { skillIndex = (d && d.skills) ? d : { sources: [], skills: [] }; renderSkillLibrary(); })
+    .catch(() => { skillIndex = { sources: [], skills: [] }; renderSkillLibrary(); });
+}
+
+async function addSkillFolder() {
+  let handleName = null;
+  try {
+    if (typeof window.showDirectoryPicker === 'function') {
+      const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
+      handleName = handle.name;
+    }
+  } catch (e) {
+    if (e && e.name === 'AbortError') return;
+  }
+  const guess = handleName ? await guessFolderPath(handleName) : '';
+  const path = await slPromptPath(guess);
+  if (!path) return;
+  await addSkillSource(path, handleName || '');
+}
+
+function slPromptPath(defaultVal) {
+  return new Promise((resolve) => {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:9999;';
+    overlay.innerHTML =
+      '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:22px;width:min(520px,90vw);box-shadow:var(--shadow)">' +
+      '<div style="font-size:15px;font-weight:600;margin-bottom:10px;color:var(--text)">添加 Skills 文件夹</div>' +
+      '<div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;line-height:1.6">路径已经自动填好（一般在你的「拾元」文件夹下），<b>不用改，直接点「确定」</b>就行。后端会递归扫描里面的 SKILL.md 和 .md 文档并显示出来。</div>' +
+      '<input id="sl-path-input" value="' + escapeHtml(defaultVal || '') + '" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;box-sizing:border-box;margin-bottom:14px" placeholder="/绝对/路径/到/skills">' +
+      '<div style="display:flex;justify-content:flex-end;gap:10px">' +
+      '<button id="sl-path-cancel" style="padding:8px 16px;border:1px solid var(--border);background:transparent;color:var(--text-secondary);border-radius:8px;cursor:pointer">取消</button>' +
+      '<button id="sl-path-ok" style="padding:8px 16px;border:none;background:var(--accent);color:#fff;border-radius:8px;cursor:pointer">确定</button>' +
+      '</div></div>';
+    document.body.appendChild(overlay);
+    const input = overlay.querySelector('#sl-path-input');
+    input.focus(); input.select();
+    const close = (val) => { if (overlay.parentNode) document.body.removeChild(overlay); resolve(val); };
+    overlay.querySelector('#sl-path-cancel').onclick = () => close(null);
+    overlay.querySelector('#sl-path-ok').onclick = () => close(input.value.trim() || null);
+    overlay.onclick = (e) => { if (e.target === overlay) close(null); };
+    input.onkeydown = (e) => { if (e.key === 'Enter') close(input.value.trim() || null); if (e.key === 'Escape') close(null); };
+  });
+}
+
+async function addSkillSource(path, name) {
+  showToast('正在扫描 ' + path + ' …');
+  try {
+    const resp = await fetch('/api/skilllib/sources', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path, name })
+    });
+    const data = await resp.json();
+    if (!resp.ok) { alert('添加失败：' + (data.error || resp.status)); return; }
+    skillIndex = data;
+    renderSkillLibrary();
+    showToast('已添加，共 ' + (data.skills ? data.skills.length : 0) + ' 个 Skill');
+  } catch (e) { alert('添加失败：' + e.message); }
+}
+
+async function removeSkillSource(path) {
+  if (!confirm('确定移除该来源？\n' + path)) return;
+  try {
+    const resp = await fetch('/api/skilllib/sources', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'remove', path })
+    });
+    const data = await resp.json();
+    if (!resp.ok) { alert('移除失败：' + (data.error || '')); return; }
+    skillIndex = data;
+    if (skillSelectedId && !(data.skills || []).some(s => s.id === skillSelectedId)) skillSelectedId = null;
+    renderSkillLibrary();
+  } catch (e) { alert('移除失败：' + e.message); }
+}
+
+async function rescanSkillSources() {
+  if (!skillIndex.sources || !skillIndex.sources.length) { showToast('暂无来源'); return; }
+  showToast('重新扫描中…');
+  try {
+    const resp = await fetch('/api/skilllib/rescan', { method: 'POST' });
+    const data = await resp.json();
+    if (!resp.ok) { alert('扫描失败：' + (data.error || '')); return; }
+    skillIndex = data; renderSkillLibrary();
+    showToast('扫描完成，共 ' + data.skills.length + ' 个 Skill');
+  } catch (e) { alert('扫描失败：' + e.message); }
+}
+
+function onSkillSearchInput() {
+  const el = document.getElementById('sl-search');
+  skillSearchQuery = el ? el.value.trim().toLowerCase() : '';
+  renderSkillLibrary();
+}
+
+function setSkillGroupMode(m) {
+  skillGroupMode = m;
+  skillActiveGroup = 'all';
+  document.querySelectorAll('.slg-tab').forEach(b => b.classList.toggle('active', b.dataset.mode === m));
+  renderSkillLibrary();
+}
+
+function _skillGroupKey(s) {
+  if (skillGroupMode === 'source') return s.sourceId;
+  if (skillGroupMode === 'theme') return skillThemeMap[s.id] || 'all';
+  return s.category || '未分类';
+}
+
+function _skillMatchesSearch(s) {
+  if (!skillSearchQuery) return true;
+  const hay = ((s.name || '') + ' ' + (s.displayName || '') + ' ' + (s.description || '')).toLowerCase();
+  return hay.indexOf(skillSearchQuery) !== -1;
+}
+
+function _skillInActiveGroup(s) {
+  if (skillActiveGroup === 'all') return true;
+  return _skillGroupKey(s) === skillActiveGroup;
+}
+
+// ---- 原生 / 自建 归属分类与筛选 ----
+let skillSourceOrigin = {};        // sourceId -> 'user' | 'native'
+
+function _getUserHome() {
+  const sp = (skillIndex.sources || [])[0];
+  if (sp && sp.path && sp.path.indexOf('/Users/') === 0) return '/Users/' + sp.path.split('/')[2];
+  const sk = (skillIndex.skills || [])[0];
+  if (sk && sk.dirPath && sk.dirPath.indexOf('/Users/') === 0) return '/Users/' + sk.dirPath.split('/')[2];
+  return '';
+}
+
+function _classifyOriginByPath(p, home) {
+  const low = (p || '').toLowerCase();
+  const MARK = ['marketplaces', 'skills-marketplace', 'connectors-marketplace',
+                'vendor_imports', 'external_plugins', 'plugins-marketplace', '/.system/', 'connectors/skills'];
+  if (MARK.some(m => low.indexOf(m) !== -1)) return 'native';
+  if (!home) return 'user';
+  if (p.indexOf(home + '/.workbuddy/skills') === 0) return 'user';
+  if (p.indexOf(home + '/.agents/skills') === 0) return 'user';
+  if (p.indexOf(home + '/.') === 0) return 'native';   // 其余隐藏工具配置目录
+  return 'user';                                        // 拾元 / Documents / 项目 等
+}
+
+function _buildSourceOriginMap() {
+  skillSourceOrigin = {};
+  const home = _getUserHome();
+  (skillIndex.sources || []).forEach(src => {
+    skillSourceOrigin[src.id] = _classifyOriginByPath(src.path, home);
+  });
+}
+
+function _skillOriginOf(s) { return skillSourceOrigin[s.sourceId] || 'user'; }
+
+function _skillMatchesOrigin(s) {
+  return skillOriginFilter === 'all' || _skillOriginOf(s) === skillOriginFilter;
+}
+
+function _skillVisible(s) {
+  return _skillMatchesSearch(s) && _skillInActiveGroup(s) && _skillMatchesOrigin(s);
+}
+
+function _originCounts() {
+  const c = { all: 0, user: 0, native: 0 };
+  (skillIndex.skills || []).forEach(s => {
+    if (_skillMatchesSearch(s) && _skillInActiveGroup(s)) {
+      c.all++; c[_skillOriginOf(s)]++;
+    }
+  });
+  return c;
+}
+
+function _originBtn(f, label, n) {
+  const active = skillOriginFilter === f ? ' active' : '';
+  return '<button class="sl-origin-btn' + active + '" onclick="setSkillOrigin(' + JSON.stringify(f).replace(/"/g, '&quot;') + ')">' +
+    escapeHtml(label) + '</button>';
+}
+
+function setSkillOrigin(f) { skillOriginFilter = f; renderSkillLibrary(); }
+
+function toggleSkillSources() {
+  const el = document.getElementById('sl-sources');
+  if (el) el.classList.toggle('collapsed');
+}
+
+function renderSkillLibrary() {
+  const sources = skillIndex.sources || [];
+  _buildSourceOriginMap();
+  // 分页：过滤条件（分组/搜索/数据量）变化才回到第 1 页；翻页本身不改变签名，故停留当前页
+  const _sig = skillGroupMode + '|' + skillActiveGroup + '|' + skillSearchQuery + '|' + skillOriginFilter + '|' + (skillIndex.skills || []).length + '|' + sources.length;
+  if (_sig !== skillLastFilterSig) { skillCurrentPage = 1; skillLastFilterSig = _sig; }
+  const skills = skillIndex.skills || [];
+  // 计算签名缓存（供聚类与相关技能使用）
+  skillSigCache = {};
+  skills.forEach(s => { skillSigCache[s.id] = _skillSignatures(s); });
+  if (skillGroupMode === 'theme') {
+    const t = computeSkillThemes(skills);
+    skillThemeClusters = t.clusters;
+    skillThemeMap = t.map;
+  } else {
+    skillThemeClusters = {}; skillThemeMap = {};
+  }
+  const sl = document.getElementById('sl-source-list');
+  if (sl) {
+    if (!sources.length) {
+      sl.innerHTML = '<div class="sl-source-empty">还没有添加来源。<br>点右上角「添加文件夹」开始。</div>';
+    } else {
+      sl.innerHTML = sources.map(s =>
+        '<div class="sl-source-item"><span class="sl-source-name" title="' + escapeHtml(s.path) + '">' + escapeHtml(s.name || s.path) +
+        ' <span style="color:var(--text-tertiary)">(' + (s.skillCount || 0) + ')</span></span>' +
+        '<button class="sl-source-del" title="移除来源" onclick="removeSkillSource(' + JSON.stringify(s.path).replace(/"/g, '&quot;') + ')">✕</button></div>'
+      ).join('');
+    }
+  }
+  const cntEl = document.getElementById('sl-source-count');
+  if (cntEl) cntEl.textContent = (sources.length || 0);
+  const gl = document.getElementById('sl-groups');
+  if (gl) {
+    const counts = {};
+    skills.forEach(s => { if (_skillVisible(s)) { const k = _skillGroupKey(s); counts[k] = (counts[k] || 0) + 1; } });
+    const keys = Object.keys(counts).sort((a, b) => a.localeCompare(b));
+    let html = '<div class="sl-group-link' + (skillActiveGroup === 'all' ? ' active' : '') + '" onclick="skillActiveGroup=\'all\';renderSkillLibrary()">' +
+      '<span>全部</span><span class="sl-group-count">' + skills.filter(_skillVisible).length + '</span></div>';
+    html += keys.map(k => {
+      let label = k;
+      if (skillGroupMode === 'source') {
+        const src = sources.find(x => x.id === k);
+        label = src ? (src.name || src.path) : k;
+      } else if (skillGroupMode === 'theme') {
+        label = (skillThemeClusters[k] || {}).label || k;
+      }
+      return '<div class="sl-group-link' + (skillActiveGroup === k ? ' active' : '') + '" onclick="skillActiveGroup=' + JSON.stringify(k).replace(/"/g, '&quot;') + ';renderSkillLibrary()">' +
+        '<span>' + escapeHtml(label) + '</span><span class="sl-group-count">' + counts[k] + '</span></div>';
+    }).join('');
+    gl.innerHTML = html;
+  }
+  // 原生 / 自建 归属筛选条（注入到分组列表上方）
+  (function () {
+    const _gl = document.getElementById('sl-groups');
+    let _bar = document.getElementById('sl-origin-bar');
+    if (_gl && _gl.parentElement && !_bar) {
+      _bar = document.createElement('div');
+      _bar.id = 'sl-origin-bar';
+      _bar.className = 'sl-origin-bar';
+      _gl.parentElement.insertBefore(_bar, _gl);
+    }
+    if (_bar) {
+      const c = _originCounts();
+      _bar.innerHTML = _originBtn('all', '全部', c.all) + _originBtn('user', '我的', c.user) + _originBtn('native', '原生', c.native);
+    }
+  })();
+  const cards = document.getElementById('sl-cards');
+  if (cards) {
+    if (!sources.length) {
+      cards.innerHTML = '<div class="sl-empty" style="grid-column:1/-1">' +
+        '<div>还没有添加 Skills 文件夹</div>' +
+        '<button class="sl-btn sl-btn-primary sl-empty-btn" onclick="addSkillFolder()">添加你的 Skills 文件夹</button></div>';
+    } else {
+      const filtered = skills.filter(_skillVisible);
+      if (!filtered.length) {
+        const reason = skills.length ? '没有匹配的 Skill（试试调整搜索或分组）' : '该文件夹未发现 Skill（需要含 SKILL.md 的子目录）';
+        cards.innerHTML = '<div class="sl-empty" style="grid-column:1/-1"><div>' + reason + '</div></div>';
+      } else {
+        const _total = filtered.length;
+        const _pageCount = Math.max(1, Math.ceil(_total / skillPageSize));
+        if (skillCurrentPage > _pageCount) skillCurrentPage = _pageCount;
+        const _start = (skillCurrentPage - 1) * skillPageSize;
+        const _pageItems = filtered.slice(_start, _start + skillPageSize);
+        cards.innerHTML = _pageItems.map(s => _skillCardHtml(s)).join('') + _skillPagerHtml(_total, _pageCount);
+        cards.scrollTop = 0;
+      }
+    }
+  }
+  if (skillSelectedId) renderSkillDetail(skillSelectedId);
+}
+
+function _skillCardHtml(s) {
+  const desc = (s.description || '').replace(/\s+/g, ' ');
+  const descShort = desc.length > 120 ? desc.slice(0, 120) + '…' : desc;
+  const tags = [];
+  if (s.category) tags.push('<span class="sl-tag cat">' + escapeHtml(s.category) + '</span>');
+  (s.platforms || []).slice(0, 3).forEach(p => tags.push('<span class="sl-tag">' + escapeHtml(p) + '</span>'));
+  const src = (skillIndex.sources || []).find(x => x.id === s.sourceId);
+  const meta = [];
+  if (s.subDirs && s.subDirs.length) meta.push('<span class="sl-multifile">多文件</span>');
+  meta.push('<span>来源：' + escapeHtml(src ? (src.name || src.path) : '?') + '</span>');
+  if (s.parseError) meta.push('<span class="sl-err-badge">元数据解析失败</span>');
+  const _origin = _skillOriginOf(s);
+  meta.push('<span class="sl-origin-badge ' + _origin + '">' + (_origin === 'user' ? '我的' : '工具') + '</span>');
+  return '<div class="sl-card' + (skillSelectedId === s.id ? ' selected' : '') + '" onclick="selectSkill(' + JSON.stringify(s.id).replace(/"/g, '&quot;') + ')">' +
+    '<div class="sl-card-name">' + escapeHtml(s.displayName || s.name) + '</div>' +
+    (descShort ? '<div class="sl-card-desc">' + escapeHtml(descShort) + '</div>' : '') +
+    (tags.length ? '<div class="sl-card-tags">' + tags.join('') + '</div>' : '') +
+    '<div class="sl-card-meta">' + meta.join('') + '</div></div>';
+}
+
+function _skillPagerHtml(total, pageCount) {
+  if (total <= skillPageSize) return '';
+  const cur = skillCurrentPage;
+  let html = '<div class="sl-pager">';
+  html += '<button class="sl-pg-btn" ' + (cur <= 1 ? 'disabled' : '') + ' onclick="skillGoPage(' + (cur - 1) + ')">上一页</button>';
+  html += '<span class="sl-pg-info">第 ' + cur + ' / ' + pageCount + ' 页 · 共 ' + total + ' 个</span>';
+  html += '<button class="sl-pg-btn" ' + (cur >= pageCount ? 'disabled' : '') + ' onclick="skillGoPage(' + (cur + 1) + ')">下一页</button>';
+  html += '</div>';
+  return html;
+}
+
+function skillGoPage(p) {
+  const filtered = (skillIndex.skills || []).filter(_skillVisible);
+  const pageCount = Math.max(1, Math.ceil(filtered.length / skillPageSize));
+  skillCurrentPage = Math.min(Math.max(1, p), pageCount);
+  renderSkillLibrary();
+}
+
+function selectSkill(id) {
+  skillSelectedId = id;
+  renderSkillLibrary();
+}
+
+function renderSkillDetail(id) {
+  const box = document.getElementById('sl-detail');
+  if (!box) return;
+  const s = (skillIndex.skills || []).find(x => x.id === id);
+  if (!s) { box.innerHTML = '<div class="sl-detail-empty">点击左侧卡片查看 Skill 详情</div>'; return; }
+  // 重置文件树展开状态（切换技能时重新加载）
+  skillTreeDiv = {}; skillTreeCounter = 0;
+  const metaRows = [];
+  metaRows.push('<dt>name</dt><dd>' + escapeHtml(s.name) + '</dd>');
+  if (s.version) metaRows.push('<dt>version</dt><dd>' + escapeHtml(s.version) + '</dd>');
+  if (s.category) metaRows.push('<dt>category</dt><dd>' + escapeHtml(s.category) + '</dd>');
+  if (s.slug) metaRows.push('<dt>slug</dt><dd>' + escapeHtml(s.slug) + '</dd>');
+  if (s.platforms && s.platforms.length) metaRows.push('<dt>platforms</dt><dd>' + escapeHtml(s.platforms.join(', ')) + '</dd>');
+  metaRows.push('<dt>目录</dt><dd>' + escapeHtml(s.dirPath) + '</dd>');
+  // AI 解释：有缓存则直接展示
+  let explainInner = '<div class="sl-explain-head">AI 解读</div><div class="sl-explain-body">点击右上角「AI 解释」生成通俗解读。</div>';
+  const cached = skillExplainCache[id];
+  if (cached) explainInner = cached;
+  const explainBox = '<div class="sl-explain-box" id="sl-explain-box"' + (cached ? '>' : ' style="display:none">') + explainInner + '</div>';
+  // 相关技能
+  const related = _relatedSkills(s);
+  const relatedHtml = related.length
+    ? '<div class="sl-related"><div class="sl-related-title">相关技能（共享主题）</div><div class="sl-related-list">' +
+      related.map(r => '<span class="sl-related-chip" onclick="selectSkill(' + JSON.stringify(r.id).replace(/"/g, '&quot;') + ')">' + escapeHtml(r.displayName || r.name) + '</span>').join('') +
+      '</div></div>'
+    : '';
+  const isFile = !!s.isFileSkill;
+  const treeTitle = isFile
+    ? '文档'
+    : '文件结构（点击目录展开、点击文件查看，共 ' + (s.fileCount || 0) + ' 个文件）';
+  // 文件型 Skill 也渲染轻量文件树（仅一个文件节点），内容在统一的文件视图中展示
+  const treeHtml =
+    '<div class="sl-filetree"><div class="sl-filetree-title">' + treeTitle + '</div><div id="sl-filetree-body">加载中…</div></div>' +
+    '<div class="sl-file-view" id="sl-file-view" style="display:none"></div>';
+  // 目录型默认内联展示 SKILL.md 正文；文件型交给文件视图自动打开，避免重复渲染
+  const inlineContent = isFile ? '' :
+    '<div class="sl-content-title">SKILL.md 正文</div>' +
+    '<div class="sl-content">' + renderMarkdown(s.content || '') + '</div>';
+  box.innerHTML =
+    '<div class="sl-detail-head"><h3 class="sl-detail-title">' + escapeHtml(s.displayName || s.name) + '</h3>' +
+      '<button class="sl-btn sl-btn-ai" id="sl-explain-btn" onclick="explainSkill(' + JSON.stringify(id).replace(/"/g, '&quot;') + ')">AI 解释</button></div>' +
+    explainBox +
+    '<dl class="sl-meta-grid">' + metaRows.join('') + '</dl>' +
+    (s.parseError ? '<div class="sl-err-badge" style="margin-bottom:10px;display:inline-block">元数据解析失败，已回退显示目录名</div>' : '') +
+    treeHtml +
+    relatedHtml +
+    inlineContent;
+  if (typeof hlAllCodeBlocks === 'function') hlAllCodeBlocks(box);
+  initSkillTree(id, isFile);
+}
+
+/* ===== 文件树：懒加载展开 + 文件查看 ===== */
+async function initSkillTree(skillId, autoOpenFile) {
+  const body = document.getElementById('sl-filetree-body');
+  if (!body) return;
+  const entries = await fetchSkillTree(skillId, '');
+  body.innerHTML = entries.length
+    ? skillTreeHtml(entries, skillId, 0)
+    : '<div style="font-size:12px;color:var(--text-tertiary)">（空目录）</div>';
+  // 文件型 Skill：树仅一个文件节点，自动打开以统一交互
+  if (autoOpenFile && entries.length === 1 && !entries[0].isDir) {
+    openSkillFile(skillId, entries[0].sub);
+  }
+}
+
+async function fetchSkillTree(skillId, sub) {
+  const key = skillId + '|' + sub;
+  if (skillTreeCache[key]) return skillTreeCache[key];
+  try {
+    const resp = await fetch('/api/skilllib/tree?skillId=' + encodeURIComponent(skillId) + '&sub=' + encodeURIComponent(sub));
+    const data = await resp.json();
+    const entries = data.entries || [];
+    skillTreeCache[key] = entries;
+    return entries;
+  } catch (e) {
+    return [];
+  }
+}
+
+function skillTreeHtml(entries, skillId, depth) {
+  return entries.map(e => {
+    const pad = (depth * 14 + 8) + 'px';
+    const q = JSON.stringify(e.sub).replace(/"/g, '&quot;');
+    const qid = JSON.stringify(skillId).replace(/"/g, '&quot;');
+    if (e.isDir) {
+      return '<div class="sl-tree-row" style="padding-left:' + pad + '">' +
+        '<span class="sl-tree-toggle" onclick="toggleSkillDir(event,\'' + qid + '\',\'' + q + '\')">▸</span>' +
+        '<span class="sl-tree-name sl-tree-dir" onclick="toggleSkillDir(event,\'' + qid + '\',\'' + q + '\')">' + escapeHtml(e.name) + '</span>' +
+        '</div>';
+    }
+    const sz = e.size != null ? ' <span class="sz">' + _fmtSize(e.size) + '</span>' : '';
+    return '<div class="sl-tree-row" style="padding-left:' + pad + '">' +
+      '<span class="sl-tree-toggle"></span>' +
+      '<span class="sl-tree-name sl-tree-file" onclick="openSkillFile(\'' + qid + '\',\'' + q + '\')">' + escapeHtml(e.name) + sz + '</span>' +
+      '</div>';
+  }).join('');
+}
+
+async function toggleSkillDir(evt, skillId, sub) {
+  evt.stopPropagation();
+  const toggle = evt.currentTarget;
+  const row = toggle.closest('.sl-tree-row');
+  if (!skillTreeDiv[sub]) skillTreeDiv[sub] = 'sltc' + (++skillTreeCounter);
+  const cid = skillTreeDiv[sub];
+  let box = document.getElementById(cid);
+  if (!box) {
+    box = document.createElement('div');
+    box.id = cid;
+    box.className = 'sl-tree-children';
+    row.after(box);
+    toggle.textContent = '▾';
+    const entries = await fetchSkillTree(skillId, sub);
+    box.innerHTML = skillTreeHtml(entries, skillId, sub.split('/').length);
+  } else {
+    const hidden = box.style.display === 'none' || !box.style.display;
+    box.style.display = hidden ? 'block' : 'none';
+    toggle.textContent = hidden ? '▾' : '▸';
+  }
+}
+
+async function openSkillFile(skillId, sub) {
+  const viewer = document.getElementById('sl-file-view');
+  if (!viewer) return;
+  viewer.style.display = 'block';
+  viewer.innerHTML = '<div class="sl-file-view-head"><span>' + escapeHtml(sub) + '</span><span class="sl-file-view-close" onclick="closeSkillFile()">✕</span></div><div class="sl-file-view-body">加载中…</div>';
+  try {
+    const resp = await fetch('/api/skilllib/file?skillId=' + encodeURIComponent(skillId) + '&sub=' + encodeURIComponent(sub));
+    const data = await resp.json();
+    const body = viewer.querySelector('.sl-file-view-body');
+    if (!resp.ok) { body.textContent = '读取失败：' + (data.error || ''); return; }
+    if (data.lang === 'markdown') {
+      body.innerHTML = renderMarkdown(data.content || '');
+    } else {
+      const pre = document.createElement('pre');
+      pre.className = 'sl-code';
+      pre.textContent = data.content || '';
+      body.innerHTML = '';
+      body.appendChild(pre);
+    }
+    if (data.truncated) {
+      const note = document.createElement('div');
+      note.className = 'sl-file-trunc';
+      note.textContent = '（文件过大，仅显示前 300KB）';
+      body.appendChild(note);
+    }
+    if (typeof hlAllCodeBlocks === 'function') hlAllCodeBlocks(body);
+  } catch (e) {
+    viewer.querySelector('.sl-file-view-body').textContent = '读取失败：' + e.message;
+  }
+}
+
+function closeSkillFile() {
+  const viewer = document.getElementById('sl-file-view');
+  if (viewer) { viewer.style.display = 'none'; viewer.innerHTML = ''; }
+}
+
+/* ===== 关系视图：签名 / 聚类 / 相关技能 ===== */
+function _skillSignatures(s) {
+  const sig = new Set();
+  if (s.category) sig.add('cat:' + s.category);
+  (s.platforms || []).forEach(p => sig.add('plat:' + p));
+  const text = ((s.name || '') + ' ' + (s.displayName || '') + ' ' + (s.description || '')).toLowerCase();
+  const ascii = text.match(/[a-z0-9]{4,}/g) || [];
+  ascii.forEach(w => sig.add('kw:' + w));
+  const cjk = text.match(/[一-龥]{2,4}/g) || [];
+  cjk.slice(0, 6).forEach(w => sig.add('cjk:' + w));
+  return sig;
+}
+
+function computeSkillThemes(skills) {
+  const parent = {};
+  const find = x => { while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; };
+  const union = (a, b) => { parent[find(a)] = find(b); };
+  skills.forEach((s, i) => { parent['s' + i] = 's' + i; });
+  const sigToSkill = {};
+  skills.forEach((s, i) => {
+    _skillSignatures(s).forEach(sig => {
+      if (sig in sigToSkill) union('s' + sigToSkill[sig], 's' + i);
+      else sigToSkill[sig] = i;
+    });
+  });
+  const groups = {};
+  skills.forEach((s, i) => {
+    const r = find('s' + i);
+    (groups[r] = groups[r] || []).push(i);
+  });
+  const clusters = {};
+  const map = {};
+  let ci = 0;
+  for (const r in groups) {
+    const idxs = groups[r];
+    const label = idxs.length === 1
+      ? '独立 · ' + (skills[idxs[0]].displayName || skills[idxs[0]].name)
+      : _themeLabel(skills, idxs);
+    const cid = 'theme' + (ci++);
+    clusters[cid] = { label, ids: idxs.map(i => skills[i].id) };
+    idxs.forEach(i => { map[skills[i].id] = cid; });
+  }
+  return { clusters, map };
+}
+
+function _themeLabel(skills, idxs) {
+  const freq = {};
+  idxs.forEach(i => _skillSignatures(skills[i]).forEach(sig => { freq[sig] = (freq[sig] || 0) + 1; }));
+  let best = null, bestRank = 99, bestFreq = 0;
+  const rank = s => s.startsWith('plat:') ? 0 : s.startsWith('cat:') ? 1 : 2;
+  for (const sig in freq) {
+    if (freq[sig] < 2) continue;
+    const r = rank(sig);
+    if (r < bestRank || (r === bestRank && freq[sig] > bestFreq)) { best = sig; bestRank = r; bestFreq = freq[sig]; }
+  }
+  if (!best) return '混合 · ' + (skills[idxs[0]].displayName || skills[idxs[0]].name);
+  return best.replace('plat:', '平台 ').replace('cat:', '分类 ').replace('kw:', '').replace('cjk:', '');
+}
+
+function _relatedSkills(s) {
+  const sig = skillSigCache[s.id];
+  if (!sig || !sig.size) return [];
+  const all = skillIndex.skills || [];
+  const scored = [];
+  all.forEach(o => {
+    if (o.id === s.id) return;
+    const osig = skillSigCache[o.id];
+    if (!osig) return;
+    let overlap = 0; sig.forEach(x => { if (osig.has(x)) overlap++; });
+    if (overlap > 0) scored.push({ o, overlap });
+  });
+  scored.sort((a, b) => b.overlap - a.overlap);
+  return scored.slice(0, 6).map(x => x.o);
+}
+
+/* ===== AI 解释按钮 ===== */
+async function explainSkill(id) {
+  const box = document.getElementById('sl-explain-box');
+  const btn = document.getElementById('sl-explain-btn');
+  if (!box) return;
+  if (btn) { btn.disabled = true; btn.textContent = 'AI 解释中…'; }
+  box.style.display = 'block';
+  box.innerHTML = '<div class="sl-explain-head">AI 解读</div><div class="sl-explain-body">正在请 AI 解读这个 Skill…</div>';
+  try {
+    const resp = await fetch('/api/skilllib/explain', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    });
+    const data = await resp.json();
+    if (data.ok) {
+      const html = '<div class="sl-explain-head">AI 解读（' + escapeHtml(data.engine || 'AI') + '）</div><div class="sl-explain-body">' + escapeHtml(data.text) + '</div>';
+      box.innerHTML = html;
+      skillExplainCache[id] = html;
+    } else if (data.reason === 'no_key' || data.reason === 'no_engine') {
+      const local = _localExplain(id);
+      const html = '<div class="sl-explain-head">本地摘要（未配置 AI，以下为自动解析）</div><div class="sl-explain-body">' + local + '</div>';
+      box.innerHTML = html;
+      skillExplainCache[id] = html;
+    } else {
+      box.innerHTML = '<div class="sl-explain-head" style="color:#ef4444">AI 解释失败</div><div class="sl-explain-body">' + escapeHtml(data.error || '未知错误') + '</div>';
+    }
+  } catch (e) {
+    box.innerHTML = '<div class="sl-explain-body">请求失败：' + escapeHtml(e.message) + '</div>';
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'AI 解释'; }
+  }
+}
+
+function _localExplain(id) {
+  const s = (skillIndex.skills || []).find(x => x.id === id);
+  if (!s) return '未找到该 Skill。';
+  const lines = [];
+  lines.push('名称：' + (s.displayName || s.name));
+  if (s.description) lines.push('用途：' + s.description.replace(/\s+/g, ' '));
+  if (s.category) lines.push('分类：' + s.category);
+  if (s.platforms && s.platforms.length) lines.push('平台：' + s.platforms.join('、'));
+  const src = (skillIndex.sources || []).find(x => x.id === s.sourceId);
+  lines.push('文件数：' + (s.fileCount || 0) + ' 个；来源：' + (src ? (src.name || src.path) : '?'));
+  const firstSent = (s.content || '').replace(/\s+/g, ' ').split(/[。\n]/)[0];
+  if (firstSent && firstSent.length > 10) lines.push('说明（首句）：' + firstSent.slice(0, 160));
+  return lines.map(l => '· ' + l).join('<br>');
+}
+
+function _fmtSize(bytes) {
+  bytes = bytes || 0;
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+}
+// ========== 技能库浏览器结束 ==========
+
 // 顶栏分段控件点击事件
 document.querySelectorAll('.header-seg').forEach(seg => {
   seg.addEventListener('click', () => switchModule(seg.dataset.module));
@@ -10664,21 +11436,22 @@ async function autoSetWorkspace(folderName) {
 }
 
 async function guessFolderPath(folderName) {
+  // 优先猜测用户常见位置（Skills 多放在 ~/拾元 下）
+  const fallback = '~/拾元/' + folderName;
   try {
     const resp = await fetch('/api/workspaces');
     const data = await resp.json();
     const workspaces = data.workspaces || {};
     for (const p of Object.keys(workspaces)) {
-      // 已有路径本身就是目标文件夹或以其结尾 → 直接用
       if (p.endsWith('/' + folderName) || p === folderName) return p;
     }
     for (const p of Object.keys(workspaces)) {
-      // 从已知工作区推测：取父目录 + folderName
+      // 已知工作区若在 ~/拾元 下，目标极可能也在那
       const parent = p.substring(0, p.lastIndexOf('/'));
-      if (parent) return parent + '/' + folderName;
+      if (parent && parent.endsWith('/拾元')) return parent + '/' + folderName;
     }
   } catch (_) {}
-  return '~/Seegent/' + folderName;
+  return fallback;
 }
 
 function removeFromChatContext(idx) {
