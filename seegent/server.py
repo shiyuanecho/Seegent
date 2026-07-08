@@ -61,8 +61,6 @@ SKILLS_FILE = os.path.join(DATA_DIR, '.seegent-skills.json')
 ROLES_FILE = os.path.join(DATA_DIR, '.seegent-roles.json')
 EMBEDDING_FILE = os.path.join(DATA_DIR, '.seegent-embedding.json')
 INDEX_DB = os.path.join(DATA_DIR, '.seegent-index.db')
-AGENTS_FILE = os.path.join(DATA_DIR, '.seegent-agents.json')
-PROJECT_AGENTS_FILE = os.path.join(DATA_DIR, '.seegent-project-agents.json')
 LOG_FILE = os.path.join(DATA_DIR, '.seegent-logs.json')
 TIMING_FILE = os.path.join(DATA_DIR, '.seegent-timing.txt')
 USAGE_FILE = os.path.join(DATA_DIR, '.seegent-usage.json')
@@ -507,186 +505,6 @@ DEFAULT_ROLES = {
     "activeRole": ""
 }
 
-# ===== Agent 注册表 + Project-Agent 映射 =====
-
-DEFAULT_AGENTS = {
-    "agents": [
-        {
-            "id": "default-general",
-            "name": "全能助手",
-            "description": "不限定角色，根据对话灵活调用所有能力",
-            "systemPrompt": "你是一个全能 AI 助手。根据用户的需求灵活切换角色——需要写代码时你是软件工程师，需要写文案时你是专业写作者，需要分析数据时你是数据分析师。遇到复杂任务时，你可以调用其他专业智能体来协助。请用中文回复。",
-            "modelId": "deepseek-chat",
-            "provider": "deepseek",
-            "temperature": 0.7,
-            "tools": ["list_dir", "read_file", "write_file", "edit_file", "search_files", "semantic_search", "web_search", "web_fetch", "file_stats", "recent_files", "run_shell"],
-            "allowedOutputDir": "产出/通用",
-            "allowedFileTypes": [".md", ".html", ".txt", ".json", ".csv", ".svg", ".png", ".jpg"],
-            "maxIterations": 10,
-            "status": "active"
-        },
-        {
-            "id": "code-assistant",
-            "name": "代码助手",
-            "description": "全栈开发、算法实现、代码审查、架构设计",
-            "systemPrompt": "你是资深全栈软件工程师。精通 Python/JavaScript/HTML/CSS/SQL，熟悉 React/Vue/Node.js/Cloudflare Workers。写代码时注重可读性和错误处理，复杂逻辑加必要注释。用中文回复，代码块标注语言类型。",
-            "modelId": "deepseek-chat",
-            "provider": "deepseek",
-            "temperature": 0.3,
-            "tools": ["list_dir", "read_file", "write_file", "edit_file", "search_files", "web_search", "web_fetch", "semantic_search", "run_shell"],
-            "allowedOutputDir": "产出/代码",
-            "allowedFileTypes": [".md", ".html", ".js", ".py", ".ts", ".json", ".css"],
-            "maxIterations": 15,
-            "status": "active"
-        },
-        {
-            "id": "writing-assistant",
-            "name": "文案助手",
-            "description": "技术博客、产品文档、商业文案、翻译润色",
-            "systemPrompt": "你是专业的中文写作者，擅长技术博客、产品文档、商业文案和翻译润色。文风清晰准确，结构分明。技术文章注重代码示例和实际应用场景，商业文案注重说服力和转化逻辑。用中文回复。",
-            "modelId": "deepseek-chat",
-            "provider": "deepseek",
-            "temperature": 0.7,
-            "tools": ["read_file", "write_file", "edit_file", "search_files", "web_search"],
-            "allowedOutputDir": "产出/文案",
-            "allowedFileTypes": [".md", ".html", ".txt"],
-            "maxIterations": 10,
-            "status": "active"
-        },
-        {
-            "id": "drawing-assistant",
-            "name": "图表助手",
-            "description": "SVG 图表、架构图、流程图、数据可视化",
-            "systemPrompt": "你是专业的数据可视化专家，擅长用 SVG 生成精美的图表、架构图、流程图。生成的 SVG 必须完整可渲染，包含 viewBox，颜色搭配专业。支持柱状图、折线图、饼图、流程图、架构图等。用中文回复，SVG 代码放在代码块中。",
-            "modelId": "deepseek-chat",
-            "provider": "deepseek",
-            "temperature": 0.5,
-            "tools": ["write_file", "edit_file", "read_file"],
-            "allowedOutputDir": "产出/图表",
-            "allowedFileTypes": [".svg", ".html", ".md"],
-            "maxIterations": 8,
-            "status": "active"
-        },
-        {
-            "id": "data-analyst",
-            "name": "数据分析师",
-            "description": "数据洞察、统计分析、趋势预测、SQL 查询",
-            "systemPrompt": "你是资深数据分析师，擅长从数据中发现规律和洞察。精通统计分析、趋势预测、SQL 查询。处理 CSV/JSON 数据，生成清晰的报告和可视化建议。先理解业务问题再分析，用数据说话。用中文回复。",
-            "modelId": "deepseek-chat",
-            "provider": "deepseek",
-            "temperature": 0.2,
-            "tools": ["list_dir", "read_file", "write_file", "edit_file", "search_files", "semantic_search", "web_search"],
-            "allowedOutputDir": "产出/数据",
-            "allowedFileTypes": [".md", ".csv", ".json", ".html"],
-            "maxIterations": 12,
-            "status": "active"
-        },
-        {
-            "id": "copywriter",
-            "name": "文案写手",
-            "description": "小红书/公众号/视频脚本、营销文案、品牌故事",
-            "systemPrompt": "你是专业的中文创作者。擅长小红书图文、公众号长文、短视频脚本、营销文案。\n写作原则：\n- 标题有钩子，前三行决定用户是否读下去\n- 金字塔结构，段落简短\n- 数据+案例支撑观点\n- 结尾给出行动建议或情绪共鸣\n- 根据平台调整语气（小红书活泼、公众号深度、视频口语化）",
-            "modelId": "deepseek-chat",
-            "provider": "deepseek",
-            "temperature": 0.8,
-            "tools": ["write_file", "edit_file", "read_file", "search_files"],
-            "allowedOutputDir": "产出/文案",
-            "allowedFileTypes": [".md", ".html", ".txt"],
-            "maxIterations": 8,
-            "status": "active"
-        },
-        {
-            "id": "translator",
-            "name": "翻译润色",
-            "description": "中英日韩互译，技术文档、商业文书、文学内容",
-            "systemPrompt": "你是专业翻译。技术文档保留代码和术语原文；商业文书准确流畅；文学内容传达风格。先给译文，必要时加注释说明术语选择。发现原文歧义主动提醒。",
-            "modelId": "deepseek-chat",
-            "provider": "deepseek",
-            "temperature": 0.3,
-            "tools": ["write_file", "edit_file", "read_file"],
-            "allowedOutputDir": "产出/翻译",
-            "allowedFileTypes": [".md", ".txt"],
-            "maxIterations": 5,
-            "status": "active"
-        },
-        {
-            "id": "tutor",
-            "name": "教程讲师",
-            "description": "把复杂概念拆成教学大纲、逐字稿、PPT 结构",
-            "systemPrompt": "你是专业的教育内容设计师。擅长：\n- 复杂概念的拆解和通俗化\n- 教学大纲设计（目标→知识点→练习→检验）\n- 视频逐字稿（口语化、有节奏感）\n- PPT 结构（一页一个核心观点）\n- 互动问题设计（激发思考）\n\n设计原则：\n- 先给「学完你能做什么」\n- 用类比降低认知门槛\n- 每次只讲一个核心概念\n- 穿插练习巩固记忆\n- 中文授课，专业术语保留英文",
-            "modelId": "deepseek-chat",
-            "provider": "deepseek",
-            "temperature": 0.7,
-            "tools": ["write_file", "edit_file", "read_file", "search_files"],
-            "allowedOutputDir": "产出/教程",
-            "allowedFileTypes": [".md", ".html"],
-            "maxIterations": 10,
-            "status": "active"
-        },
-        {
-            "id": "knowledge-editor",
-            "name": "知识库编辑",
-            "description": "把零散信息整理成结构化文档，加标签、做摘要、建链接",
-            "systemPrompt": "你是知识管理专家。擅长：\n- 把零散笔记整理成结构化文档\n- 自动提取关键词和标签\n- 建立文档间的交叉引用\n- 写摘要和 TL;DR\n- 识别知识缺口\n\n整理原则：\n- 一个文档只讲一个主题\n- 金字塔结构（结论先行）\n- 善用表格和列表\n- 标注信息来源和可信度\n- 结尾给出「延伸阅读」建议",
-            "modelId": "deepseek-chat",
-            "provider": "deepseek",
-            "temperature": 0.5,
-            "tools": ["write_file", "edit_file", "read_file", "search_files", "semantic_search"],
-            "allowedOutputDir": "产出/知识库",
-            "allowedFileTypes": [".md", ".txt", ".json"],
-            "maxIterations": 10,
-            "status": "active"
-        },
-        {
-            "id": "reader",
-            "name": "阅读助理",
-            "description": "读长文/PDF 后做要点提炼、批判性提问、知识关联",
-            "systemPrompt": "你是深度阅读助理。拿到一篇文章后：\n1. 一句话概括核心观点\n2. 提取 3-5 个关键论点\n3. 标注文中的数据和引用\n4. 提出 2-3 个批判性问题\n5. 关联已有知识（如果用户提供了上下文）\n\n输出格式：\n## 一句话总结\n## 核心论点\n## 关键数据\n## 值得追问的问题\n## 延伸思考\n\n中文输出，保持客观。",
-            "modelId": "deepseek-chat",
-            "provider": "deepseek",
-            "temperature": 0.5,
-            "tools": ["read_file", "write_file", "edit_file", "search_files"],
-            "allowedOutputDir": "产出/阅读",
-            "allowedFileTypes": [".md", ".txt"],
-            "maxIterations": 8,
-            "status": "active"
-        },
-        {
-            "id": "topic-planner",
-            "name": "选题策划",
-            "description": "根据知识库内容出选题方案，匹配热点，规划内容日历",
-            "systemPrompt": "你是自媒体选题策划师。根据用户提供的领域和素材：\n1. 出 5-10 个选题（含标题和角度）\n2. 标注每个选题的流量潜力（🔴爆款 🟡常规 🔵长尾）\n3. 匹配当前热点话题\n4. 规划发布节奏（内容日历）\n5. 给出每个选题的差异化角度\n\n选题原则：\n- 痛点 + 解决方案 = 高打开率\n- 反常识观点 = 高互动率\n- 实用教程 = 高收藏率\n- 情绪共鸣 = 高转播率",
-            "modelId": "deepseek-chat",
-            "provider": "deepseek",
-            "temperature": 0.8,
-            "tools": ["write_file", "edit_file", "read_file", "web_search"],
-            "allowedOutputDir": "产出/选题",
-            "allowedFileTypes": [".md"],
-            "maxIterations": 8,
-            "status": "active"
-        },
-        {
-            "id": "viral-optimizer",
-            "name": "爆款优化",
-            "description": "改标题、改钩子、改结尾，提升完读率和互动率",
-            "systemPrompt": "你是内容优化师，专攻小红书和公众号爆款。优化维度：\n\n**标题**\n- 数字+痛点+承诺（例：3 个方法，让你的文案转化率翻倍）\n- 反常识+好奇心（例：为什么你越努力，流量越差）\n- 人群标签+场景（例：30 岁转行 AI，我的真实经历）\n\n**开头（钩子）**\n- 前三行决定读者是否继续\n- 痛点共鸣 / 反常识观点 / 悬念提问\n\n**正文**\n- 段落不超过 3 行\n- 每段一个核心信息\n- 用 emoji 和短句增加节奏感\n\n**结尾**\n- 总结核心观点\n- 引导互动（提问/投票/评论区话题）\n\n优化时指出具体问题并给出改写版本。",
-            "modelId": "deepseek-chat",
-            "provider": "deepseek",
-            "temperature": 0.7,
-            "tools": ["read_file", "write_file", "edit_file"],
-            "allowedOutputDir": "产出/优化",
-            "allowedFileTypes": [".md", ".txt"],
-            "maxIterations": 6,
-            "status": "active"
-        }
-    ],
-    "activeAgentId": "default-general"
-}
-
-DEFAULT_PROJECT_AGENTS = {
-    "mappings": [],
-    "activeProjectId": ""
-}
 
 
 def _load_json(path, default):
@@ -2303,13 +2121,9 @@ class Handler(SimpleHTTPRequestHandler):
             return self._serve_json({
                 'tools': ['list_dir', 'read_file', 'write_file', 'edit_file', 'search_files',
                           'semantic_search', 'file_stats', 'recent_files',
-                          'web_search', 'web_fetch', 'invoke_agent', 'run_shell'],
+                          'web_search', 'web_fetch'],
                 'max_iterations': 10
             })
-        if self.path == '/api/agents':
-            return self._serve_json(_load_json(AGENTS_FILE, DEFAULT_AGENTS))
-        if self.path == '/api/project-agents':
-            return self._serve_json(_load_json(PROJECT_AGENTS_FILE, DEFAULT_PROJECT_AGENTS))
         if self.path.startswith('/api/logs'):
             from urllib.parse import urlparse, parse_qs
             qs = parse_qs(urlparse(self.path).query)
@@ -2504,10 +2318,6 @@ class Handler(SimpleHTTPRequestHandler):
                 return self._serve_json({'error': str(e)}, 500)
         if self.path == '/api/skilllib/explain':
             return self._handle_skilllib_explain()
-        if self.path == '/api/agents':
-            return self._save_json_endpoint(AGENTS_FILE)
-        if self.path == '/api/project-agents':
-            return self._save_json_endpoint(PROJECT_AGENTS_FILE)
         if self.path.startswith('/api/convert-office'):
             return self._convert_office()
         if self.path == '/api/embedding-config':
@@ -4618,20 +4428,7 @@ class Handler(SimpleHTTPRequestHandler):
         with open(TIMING_FILE, 'a') as _tf: _tf.write(f'{time.strftime("%H:%M:%S")} --- Agent请求开始 ---\n')
         workspace = req.get('workspace', '')
         max_iter = req.get('max_iterations', 10)
-        agent_id = req.get('agentId', '')
         temperature = None
-
-        # 如果指定了 Agent，加载 Agent 配置
-        agent_cfg = None
-        if agent_id:
-            agents_data = _load_json(AGENTS_FILE, DEFAULT_AGENTS)
-            for a in agents_data.get('agents', []):
-                if a.get('id') == agent_id and a.get('status') == 'active':
-                    agent_cfg = a
-                    break
-            if agent_cfg:
-                temperature = agent_cfg.get('temperature')
-                max_iter = agent_cfg.get('maxIterations', max_iter)
 
         if not api_key or not base_url:
             self._serve_json({'error': '请先配置模型和 API Key，或在终端设置 DEEPSEEK_API_KEY 环境变量'}, 400)
@@ -4789,50 +4586,6 @@ class Handler(SimpleHTTPRequestHandler):
                     }
                 }
             },
-            {
-                "type": "function",
-                "function": {
-                    "name": "invoke_agent",
-                    "description": "调用另一个注册的智能体来完成任务。当前 Agent 会暂停等待子 Agent 返回结果后再继续。可用智能体：code-assistant（代码助手）、writing-assistant（文案助手）、drawing-assistant（图表助手）、data-analyst（数据分析师）、default-general（全能助手）。",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "agentId": {
-                                "type": "string",
-                                "description": "目标智能体的 ID，如 'code-assistant'、'writing-assistant'、'drawing-assistant'、'data-analyst'、'default-general'"
-                            },
-                            "task": {
-                                "type": "string",
-                                "description": "要交给该智能体完成的具体任务描述，越详细越好。如'写一个冒泡排序算法，保存为 bubble-sort.py'"
-                            },
-                            "context": {
-                                "type": "string",
-                                "description": "传给子 Agent 的上下文信息（可选），如之前对话的部分结果、文件路径等"
-                            },
-                            "outputFile": {
-                                "type": "string",
-                                "description": "期望的输出文件名（可选），如 'sorting-algorithm.md'"
-                            }
-                        },
-                        "required": ["agentId", "task"]
-                    }
-                }
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "run_shell",
-                    "description": "在工作区执行 shell 命令并返回输出。支持运行脚本、编译代码、安装依赖、调用 CLI 工具（如 claude、hermes、cursor agent 等）。危险命令会被自动拦截。",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "command": {"type": "string", "description": "要执行的 shell 命令，如 'python3 script.py'、'git status'、'npm test'、'claude -p \"重构代码\"'"},
-                            "timeout": {"type": "integer", "description": "超时秒数，默认 60，最长 300"}
-                        },
-                        "required": ["command"]
-                    }
-                }
-            }
         ]
 
         # --- Discover MCP tools from enabled servers (must run before building tools list & _exec_tool) ---
@@ -5137,335 +4890,6 @@ class Handler(SimpleHTTPRequestHandler):
                         lines.append(f'  {t}  📄 {rel}')
                     return '\n'.join(lines)
 
-                elif name == 'invoke_agent':
-                    agent_id = args.get('agentId', '')
-                    task = args.get('task', '')
-                    context = args.get('context', '')
-                    output_file = args.get('outputFile', '')
-
-                    if not agent_id or not task:
-                        return 'invoke_agent 需要 agentId 和 task 参数'
-
-                    agent_data = _load_json(AGENTS_FILE, DEFAULT_AGENTS)
-                    agent = next((a for a in agent_data.get('agents', []) if a['id'] == agent_id), None)
-                    if not agent:
-                        return f'Agent 不存在：{agent_id}。可用的 Agent ID：{", ".join(a["id"] for a in agent_data.get("agents", []))}'
-                    if agent.get('status') != 'active':
-                        return f'Agent「{agent["name"]}」当前状态为 {agent.get("status")}，无法调用'
-
-                    # Check nesting depth
-                    nesting = int(args.get('_nesting_depth', 0))
-                    if nesting > 3:
-                        return f'调用链过深（当前 {nesting} 层），拒绝递归调用以避免无限循环'
-
-                    # Build sub-agent messages
-                    sub_messages = []
-                    sys_prompt = agent.get('systemPrompt', '你是一个智能助手。')
-                    if wpath:
-                        sys_prompt += f'\n\n当前工作区根目录：{wpath}。所有文件路径相对于此目录。'
-                    sub_messages.append({'role': 'system', 'content': sys_prompt})
-
-                    user_content = task
-                    if context:
-                        user_content = f'上下文信息：\n{context}\n\n---\n任务：\n{task}'
-                    if output_file:
-                        user_content += f'\n\n请将最终结果写入文件：{output_file}'
-                    sub_messages.append({'role': 'user', 'content': user_content})
-
-                    # Filter tools by agent whitelist
-                    agent_tool_names = set(agent.get('tools', []))
-                    agent_tool_names.discard('invoke_agent')
-                    sub_tools = [t for t in tools if t['function']['name'] in agent_tool_names]
-
-                    sub_model = agent.get('modelId', model)
-                    sub_max_iter = min(agent.get('maxIterations', 10), 20)
-                    sub_temp = agent.get('temperature', 0.7)
-
-                    # Track written files
-                    written_files = []
-                    sub_start = time.time()
-                    sub_tools_used = []
-
-                    self._serve_sse('invoke_agent_start', {
-                        'agentId': agent_id,
-                        'agentName': agent['name'],
-                        'task': task[:300]
-                    })
-
-                    sub_iteration = 0
-                    final_response = ''
-
-                    try:
-                        while sub_iteration < sub_max_iter:
-                            sub_iteration += 1
-                            self._serve_sse('invoke_agent_iteration', {
-                                'agentId': agent_id,
-                                'iteration': sub_iteration,
-                                'maxIter': sub_max_iter
-                            })
-
-                            url = base_url.rstrip('/') + '/chat/completions'
-                            payload = json.dumps({
-                                'model': sub_model,
-                                'messages': sub_messages,
-                                'tools': sub_tools,
-                                'tool_choice': 'auto',
-                                'temperature': sub_temp,
-                                'stream': True
-                            }).encode('utf-8')
-
-                            r = urllib.request.Request(url, data=payload, headers={
-                                'Content-Type': 'application/json',
-                                'Authorization': f'Bearer {api_key}'
-                            }, method='POST')
-
-                            try:
-                                sub_content = ''
-                                sub_tool_calls_acc = {}
-                                sub_finish = ''
-                                sub_usage = {}
-
-                                with urllib.request.urlopen(r, timeout=120) as resp:
-                                    for line in resp:
-                                        line = line.decode('utf-8', errors='replace').strip()
-                                        if not line or not line.startswith('data: '):
-                                            continue
-                                        data_str = line[6:]
-                                        if data_str == '[DONE]':
-                                            break
-                                        try:
-                                            chunk = json.loads(data_str)
-                                        except json.JSONDecodeError:
-                                            continue
-                                        choices = chunk.get('choices', [])
-                                        if not choices:
-                                            continue
-                                        delta = choices[0].get('delta', {})
-                                        sub_finish = choices[0].get('finish_reason', '')
-                                        if 'usage' in chunk:
-                                            sub_usage = chunk['usage']
-                                        if 'content' in delta and delta['content']:
-                                            sub_content += delta['content']
-                                            self._serve_sse('invoke_agent_token', {
-                                                'agentId': agent_id,
-                                                'content': delta['content']
-                                            })
-                                        if 'tool_calls' in delta:
-                                            for tc in delta['tool_calls']:
-                                                idx = tc.get('index', 0)
-                                                if idx not in sub_tool_calls_acc:
-                                                    sub_tool_calls_acc[idx] = {'id': '', 'name': '', 'arguments': ''}
-                                                if 'id' in tc and tc['id']:
-                                                    sub_tool_calls_acc[idx]['id'] = tc['id']
-                                                if 'function' in tc:
-                                                    if 'name' in tc['function'] and tc['function']['name']:
-                                                        sub_tool_calls_acc[idx]['name'] = tc['function']['name']
-                                                    if 'arguments' in tc['function']:
-                                                        sub_tool_calls_acc[idx]['arguments'] += tc['function']['arguments']
-
-                                # Rebuild tool calls list
-                                sub_tool_calls_list = []
-                                for idx in sorted(sub_tool_calls_acc.keys()):
-                                    tc = sub_tool_calls_acc[idx]
-                                    if tc['name']:
-                                        sub_tool_calls_list.append({
-                                            'id': tc['id'], 'type': 'function',
-                                            'function': {'name': tc['name'], 'arguments': tc['arguments']}
-                                        })
-
-                                if sub_usage:
-                                    _record_usage(sub_model, agent_id, agent['name'],
-                                                  sub_usage.get('prompt_tokens', 0),
-                                                  sub_usage.get('completion_tokens', 0))
-
-                            except urllib.error.HTTPError as e:
-                                err_body = e.read().decode('utf-8', errors='ignore')[:500]
-                                self._serve_sse('invoke_agent_error', {
-                                    'agentId': agent_id,
-                                    'error': f'API 错误 {e.code}: {err_body}'
-                                })
-                                _append_log({
-                                    'type': 'agent_end',
-                                    'agentId': agent_id,
-                                    'agentName': agent['name'],
-                                    'modelId': sub_model,
-                                    'task': task[:200],
-                                    'duration': round(time.time() - sub_start, 1),
-                                    'status': 'error',
-                                    'error': f'HTTP {e.code}',
-                                })
-                                return f'子 Agent「{agent["name"]}」API 调用失败 (HTTP {e.code})'
-
-                            if sub_finish == 'tool_calls' or sub_tool_calls_list:
-                                tool_calls = sub_tool_calls_list
-                                tool_results_local = []
-                                for tc in tool_calls:
-                                    fn_name = tc['function']['name']
-                                    fn_args = tc['function'].get('arguments', '{}')
-                                    self._serve_sse('invoke_agent_tool_call', {
-                                        'agentId': agent_id,
-                                        'tool': fn_name,
-                                        'arguments': fn_args
-                                    })
-                                    rt = _exec_tool(tc)
-                                    tool_results_local.append(rt)
-                                    if fn_name not in sub_tools_used:
-                                        sub_tools_used.append(fn_name)
-
-                                    if fn_name == 'write_file':
-                                        try:
-                                            wf_args = json.loads(fn_args)
-                                            wf_path = _resolve(wf_args['path'])
-                                            if wf_path not in written_files:
-                                                written_files.append(wf_path)
-                                        except Exception:
-                                            pass
-
-                                    self._serve_sse('invoke_agent_tool_result', {
-                                        'agentId': agent_id,
-                                        'tool': fn_name,
-                                        'result': rt[:3000]
-                                    })
-
-                                sub_messages.append({
-                                    'role': 'assistant',
-                                    'content': sub_content,
-                                    'tool_calls': tool_calls
-                                })
-                                for tc, rt in zip(tool_calls, tool_results_local):
-                                    sub_messages.append({
-                                        'role': 'tool',
-                                        'tool_call_id': tc['id'],
-                                        'content': rt
-                                    })
-                                continue
-
-                            # Final text response
-                            final_response = sub_content
-
-                            # Auto-save code blocks if outputFile specified
-                            if output_file and final_response and wpath:
-                                allowed_dir = agent.get('allowedOutputDir', '产出/通用')
-                                ts = time.strftime('%Y%m%d_%H%M')
-                                out_name = output_file if output_file else f'{ts}_output.md'
-                                out_path = os.path.join(allowed_dir, out_name)
-                                try:
-                                    full_out = _resolve(out_path)
-                                    os.makedirs(os.path.dirname(full_out), exist_ok=True)
-                                    with open(full_out, 'w', encoding='utf-8') as f:
-                                        f.write(final_response)
-                                    if full_out not in written_files:
-                                        written_files.append(full_out)
-                                except Exception:
-                                    pass
-
-                            break
-
-                        # Send artifact events for all written files
-                        for wf in written_files:
-                            rel = os.path.relpath(wf, wpath) if wpath else wf
-                            self._serve_sse('artifact', {
-                                'path': rel,
-                                'type': os.path.splitext(wf)[1].lstrip('.'),
-                                'agentId': agent_id
-                            })
-
-                    except Exception as e:
-                        self._serve_sse('invoke_agent_error', {
-                            'agentId': agent_id,
-                            'error': str(e)
-                        })
-                        _append_log({
-                            'type': 'agent_end',
-                            'agentId': agent_id,
-                            'agentName': agent['name'],
-                            'modelId': sub_model,
-                            'task': task[:200],
-                            'duration': round(time.time() - sub_start, 1),
-                            'status': 'error',
-                            'error': str(e)[:200],
-                        })
-                        return f'子 Agent「{agent["name"]}」执行出错：{e}'
-
-                    # Return structured result
-                    rel_artifacts = [os.path.relpath(wf, wpath) if wpath else wf for wf in written_files]
-                    self._serve_sse('invoke_agent_response', {
-                        'agentId': agent_id,
-                        'agentName': agent['name'],
-                        'response': final_response[:2000],
-                        'artifacts': rel_artifacts
-                    })
-
-                    _append_log({
-                        'type': 'agent_end',
-                        'agentId': agent_id,
-                        'agentName': agent['name'],
-                        'modelId': sub_model,
-                        'workspace': wpath or '',
-                        'task': task[:200],
-                        'iterations': sub_iteration,
-                        'toolsUsed': sub_tools_used,
-                        'artifacts': rel_artifacts,
-                        'duration': round(time.time() - sub_start, 1),
-                        'status': 'success',
-                    })
-
-                    result_lines = [f'[子 Agent「{agent["name"]}」执行完成]\n']
-                    result_lines.append(final_response[:4000] if final_response else '(无文本输出)')
-                    if written_files:
-                        result_lines.append('\n---\n产物文件：')
-                        for wf in written_files:
-                            rel = os.path.relpath(wf, wpath) if wpath else wf
-                            result_lines.append(f'- {rel}')
-                    return '\n'.join(result_lines)
-
-                elif name == 'run_shell':
-                    command = args['command']
-                    timeout = min(int(args.get('timeout', 60)), 300)
-
-                    # Safety sandbox
-                    DANGEROUS_PATTERNS = [
-                        'rm -rf /', 'rm -rf ~', 'rm -rf .',
-                        'mkfs.', 'dd if=', ':(){ :|:& };:',
-                        'chmod 777 /', '> /dev/sda',
-                        'wget -O - | sh', 'curl | sh', 'curl | bash',
-                    ]
-                    cmd_lower = command.strip().lower()
-                    for pat in DANGEROUS_PATTERNS:
-                        if pat in cmd_lower:
-                            return f'❌ 安全拦截：命令包含危险模式 "{pat}"'
-                    if command.strip().startswith('sudo '):
-                        return '❌ 安全拦截：sudo 命令不被允许'
-
-                    cwd = wpath if wpath else os.path.expanduser('~')
-
-                    try:
-                        result = subprocess.run(
-                            command,
-                            shell=True,
-                            cwd=cwd,
-                            capture_output=True,
-                            timeout=timeout,
-                            env={**os.environ}
-                        )
-                    except subprocess.TimeoutExpired:
-                        return f'⏱ 命令超时（{timeout} 秒）：{command[:200]}'
-                    except FileNotFoundError:
-                        return f'❌ 命令未找到：{command.split()[0]}'
-
-                    stdout = result.stdout.decode('utf-8', errors='replace')[:4000]
-                    stderr = result.stderr.decode('utf-8', errors='replace')[:2000]
-
-                    parts = []
-                    if stdout:
-                        parts.append(f'STDOUT:\n{stdout}')
-                    if stderr:
-                        parts.append(f'STDERR:\n{stderr}')
-                    parts.append(f'\n退出码：{result.returncode}')
-                    out = '\n'.join(parts)
-                    if len(out) > 5000:
-                        out = out[:5000] + '\n... (输出已截断)'
-                    return out if out.strip() else '(无输出)'
 
                 else:
                     # Check if it's an MCP tool
@@ -5497,9 +4921,9 @@ class Handler(SimpleHTTPRequestHandler):
         iteration = 0
         system_msg = next((m for m in messages if m['role'] == 'system'), None)
         if not system_msg:
-            base_prompt = '你叫"小See"，是用户的 AI 工作台助手。打招呼时自我介绍叫小See。重要规则：(1)每次回复必须以文字收尾——用了工具也要用一两句话总结结果。(2)文件/目录不存在时如实告知。(3)用户问电脑上任意文件夹时，用 run_shell 执行 ls/find/cat 等命令探索，不要局限于工作区。(4)简单问题直接回复，不调工具。(5)绝对不使用任何 emoji 表情符号。中文回复。'
+            base_prompt = '你叫"小See"，是用户的 AI 工作台助手（项目管理指挥部）。打招呼时自我介绍叫小See。重要规则：(1)每次回复必须以文字收尾——用了工具也要用一两句话总结结果。(2)文件/目录不存在时如实告知。(3)用户问电脑上任意文件夹时，用 list_dir/read_file 等文件工具探索，不要局限于工作区。(4)简单问题直接回复，不调工具。(5)绝对不使用任何 emoji 表情符号。中文回复。'
             if wpath:
-                base_prompt += f' 工作区：{wpath}。文件操作优先用 edit_file 而非 write_file。可用工具：文件读写搜索、shell、web 搜索抓取、调用子 Agent。中文回复。'
+                base_prompt += f' 工作区：{wpath}。文件操作优先用 edit_file 而非 write_file。可用工具：文件读写搜索、web 搜索抓取、语义检索等。中文回复。'
             else:
                 base_prompt += ' 文件编辑优先用 edit_file。可用工具：文件读写、shell、web 搜索、子 Agent 调用。中文回复。'
             system_msg = {'role': 'system', 'content': base_prompt}
@@ -5730,8 +5154,7 @@ def run_server(host='127.0.0.1', port=8765, data_dir=None, open_browser=False):
     """启动 Seegent 服务器（程序化调用入口）。"""
     global DATA_DIR, STATE_FILE, MODELS_FILE, ENGINES_FILE, CLI_FILE, MCP_FILE
     global CHAT_FILE, PROMPTS_FILE, WORKSPACES_FILE, SKILLS_FILE, ROLES_FILE
-    global EMBEDDING_FILE, INDEX_DB, DATA_PLATFORMS_FILE, AGENTS_FILE
-    global PROJECT_AGENTS_FILE, LOG_FILE, USAGE_FILE
+    global EMBEDDING_FILE, INDEX_DB, DATA_PLATFORMS_FILE, LOG_FILE, USAGE_FILE
 
     if data_dir:
         os.environ['SEEGENT_DATA_DIR'] = data_dir
@@ -5749,8 +5172,6 @@ def run_server(host='127.0.0.1', port=8765, data_dir=None, open_browser=False):
         EMBEDDING_FILE = os.path.join(DATA_DIR, '.seegent-embedding.json')
         INDEX_DB = os.path.join(DATA_DIR, '.seegent-index.db')
         DATA_PLATFORMS_FILE = os.path.join(DATA_DIR, '.seegent-data-platforms.json')
-        AGENTS_FILE = os.path.join(DATA_DIR, '.seegent-agents.json')
-        PROJECT_AGENTS_FILE = os.path.join(DATA_DIR, '.seegent-project-agents.json')
         LOG_FILE = os.path.join(DATA_DIR, '.seegent-logs.json')
         USAGE_FILE = os.path.join(DATA_DIR, '.seegent-usage.json')
 
@@ -5767,8 +5188,6 @@ def run_server(host='127.0.0.1', port=8765, data_dir=None, open_browser=False):
     _load_json(WORKSPACES_FILE, DEFAULT_WORKSPACES)
     _load_json(SKILLS_FILE, DEFAULT_SKILLS)
     _load_json(ROLES_FILE, DEFAULT_ROLES)
-    _load_json(AGENTS_FILE, DEFAULT_AGENTS)
-    _load_json(PROJECT_AGENTS_FILE, DEFAULT_PROJECT_AGENTS)
     _load_json(LOG_FILE, {'logs': []})
     _load_json(USAGE_FILE, {'usage': []})
 
