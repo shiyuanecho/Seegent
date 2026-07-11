@@ -2890,8 +2890,8 @@ body {
       <span class="header-title">Seegent</span>
     </div>
     <div class="header-segments">
-      <button class="header-seg active" data-module="file">项目</button>
-      <button class="header-seg" data-module="board">看板</button>
+      <button class="header-seg" data-module="file">项目</button>
+      <button class="header-seg active" data-module="board">看板</button>
       <button class="header-seg" data-module="skilllib">技能库</button>
       <button class="header-seg" data-module="config">配置</button>
       <button class="header-seg" data-module="usage">用量</button>
@@ -2905,7 +2905,7 @@ body {
     <div id="center-panel">
 
       <!-- 文件模块 -->
-      <div id="file-module" class="module-content active">
+      <div id="file-module" class="module-content">
         <!-- 侧边栏 -->
         <aside id="sidebar">
           <div class="sidebar-resize-handle" id="sidebar-resizer"></div>
@@ -3011,7 +3011,7 @@ body {
       </div>
 
       <!-- 看板模块（数据优先：数据源 → 项目绑定） -->
-      <div id="board-module" class="module-content">
+      <div id="board-module" class="module-content active">
         <div class="mgmt-panel">
           <div class="page-header">
 	            <h2>看板</h2>
@@ -3022,6 +3022,10 @@ body {
 		    <button onclick="refreshBoardProjects()" title="刷新项目信息" style="margin-left:auto;background:none;border:none;cursor:pointer;padding:4px;color:var(--text-tertiary);border-radius:6px" onmouseenter="this.style.background='var(--bg-hover)'" onmouseleave="this.style.background='none'"><span class="app-icon app-icon--sm"><svg width="16" height="16"><use href="#icon-refresh"/></svg></span></button>
 		  </div>
 		  <div id="dash-projects"></div>
+		<div class="dash-section-title" style="margin-top:18px"><svg width="16" height="16"><use href="#icon-check"/></svg> 待办汇总 <span id="dash-todo-filter" style="margin-left:auto;display:flex;gap:6px"></span></div>
+		<div id="dash-todo-summary"></div>
+		<div class="dash-section-title" style="margin-top:18px"><svg width="16" height="16"><use href="#icon-data"/></svg> 最近动态</div>
+		<div id="dash-recent-activity"></div>
 	          <div class="dash-section-title"><svg width="16" height="16"><use href="#icon-data"/></svg> 业务数据</div>
 	          <div class="dash-toolbar">
 	            <button class="dash-add-btn" onclick="openAddDatasourceModal()"><span class="app-icon app-icon--sm"><svg width="16" height="16"><use href="#icon-plus"/></svg></span> 添加数据源</button>
@@ -7065,7 +7069,7 @@ init().catch(console.error);
 <!-- ===== 模块管理与聊天功能 ===== -->
 <script>
 // ========== 模块切换 ==========
-let activeModule = localStorage.getItem('seegent-module') || 'file';
+let activeModule = localStorage.getItem('seegent-module') || 'board';
 let activeConfigTab = localStorage.getItem('seegent-config-tab') || 'model';
 
 function switchConfigTab(tabName) {
@@ -7756,7 +7760,6 @@ setTimeout(() => {
   fetch('/api/cli').then(r => r.json()).then(d => { cliCache = d.items || {}; }).catch(() => {});
   fetch('/api/mcp').then(r => r.json()).then(d => { mcpConfig = d; mcpLoaded = true; }).catch(() => {});
   fetch('/api/mcp-status').then(r => r.json()).then(d => { mcpStatusCache = d.status || {}; }).catch(() => {});
-  fetch('/api/agents').then(r => r.json()).then(d => { agentConfig = d; populateAgentSelect(); }).catch(() => {});
   fetch('/api/skills').then(r => r.json()).then(d => { skillConfig = d; }).catch(() => {});
   fetch('/api/ai-monitor').then(r => r.json()).then(d => { aiMonitorData = d; }).catch(() => {});
   fetch('/api/embedding-config').then(r => r.json()).then(d => {
@@ -9886,6 +9889,7 @@ async function loadBoardProjects() {
     boardProjectsData = null;
   }
   renderBoardProjects();
+  renderBoardExtras();
 }
 
 async function refreshBoardProjects() {
@@ -9968,6 +9972,53 @@ function renderBoardProjects() {
     html += '</div></div>';
   }
   el.innerHTML = html;
+}
+
+function renderBoardExtras() {
+  // 待办汇总：跨项目聚合 + 状态筛选
+  const todoEl = document.getElementById('dash-todo-summary');
+  const filterEl = document.getElementById('dash-todo-filter');
+  if (todoEl) {
+    const projects = (boardProjectsData && boardProjectsData.projects) || [];
+    const all = [];
+    projects.forEach(p => (p.todos || []).forEach(t => all.push({ text: t.text, file: t.file, project: p.folderName })));
+    if (!all.length) {
+      todoEl.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);padding:8px 0">各项目暂无待办项</div>';
+    } else {
+      const done = it => /\[x\]|✅|done|完成/i.test(it.text);
+      const mode = window.__todoMode || 'all';
+      const btn = (k, label) => '<button data-mode="' + k + '" style="font-size:12px;padding:3px 10px;border-radius:6px;border:1px solid var(--border);background:' + (mode===k?'var(--accent)':'var(--bg-surface)') + ';color:' + (mode===k?'#fff':'var(--text-secondary)') + ';cursor:pointer">' + label + '</button>';
+      if (filterEl) filterEl.innerHTML = btn('all','全部') + btn('active','进行中') + btn('done','已完成');
+      const filtered = all.filter(it => mode==='all' ? true : mode==='done' ? done(it) : !done(it));
+      let h = '<ul class="dash-project-todos">';
+      filtered.forEach((it,i) => {
+        const tag = done(it) ? ' style="opacity:.55;text-decoration:line-through"' : '';
+        h += '<li class="dash-project-todo-item"' + tag + '><span class="dash-project-idx">' + (i+1) + '.</span><span class="dash-project-text">' + escapeHtml(it.text) + '</span><span class="dash-project-todo-src">' + escapeHtml(it.project) + (it.file?(' · '+escapeHtml(it.file)):'') + '</span></li>';
+      });
+      h += '</ul>';
+      todoEl.innerHTML = h;
+      if (filterEl) filterEl.querySelectorAll('button').forEach(b => b.onclick = () => { window.__todoMode = b.dataset.mode; renderBoardExtras(); });
+    }
+  }
+  // 最近动态：文件变更，取最新 5 条
+  const actEl = document.getElementById('dash-recent-activity');
+  if (actEl) {
+    fetch('/api/file-changes').then(r => r.json()).then(d => {
+      const changes = (d && d.changes) || {};
+      const items = Object.entries(changes).map(([p, mt]) => ({ p, mt })).sort((a,b) => b.mt - a.mt).slice(0,5);
+      if (!items.length) { actEl.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);padding:8px 0">暂无文件变更记录</div>'; return; }
+      const now = Date.now();
+      const fmt = ts => { const s = Math.floor((now - ts*1000)/1000); if (s<60) return '刚刚'; if (s<3600) return Math.floor(s/60)+' 分钟前'; if (s<86400) return Math.floor(s/3600)+' 小时前'; return Math.floor(s/86400)+' 天前'; };
+      let h = '<ul style="list-style:none;margin:0;padding:0">';
+      items.forEach(it => {
+        const proj = ((boardProjectsData && boardProjectsData.projects)||[]).find(p => it.p.startsWith(p.path));
+        const ptag = proj ? escapeHtml(proj.folderName) : '';
+        h += '<li style="display:flex;gap:8px;align-items:center;padding:6px 0;font-size:13px;border-bottom:1px solid var(--border)"><span class="app-icon app-icon--sm" style="color:var(--text-tertiary)"><svg width="14" height="14"><use href="#icon-file"/></svg></span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escapeHtml(it.p) + '</span>' + (ptag?'<span style="font-size:11px;color:var(--accent)">'+ptag+'</span>':'') + '<span style="font-size:11px;color:var(--text-tertiary)">'+fmt(it.mt)+'</span></li>';
+      });
+      h += '</ul>';
+      actEl.innerHTML = h;
+    }).catch(() => { actEl.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);padding:8px 0">动态加载失败</div>'; });
+  }
 }
 
 async function bindFolderToBoard(folder) {
@@ -10776,11 +10827,6 @@ function triggerAnalysis(cardId) {
   if (!card) return;
   analysisCardId = cardId;
 
-  // 构建 Agent 选项
-  const agents = (window.agentConfig && window.agentConfig.agents || []).filter(a => a.status === 'active');
-  if (!agents.length) { alert('暂无可用助手，请先在「配置 → 助手」中创建'); return; }
-  let agentOpts = agents.map(a => '<option value="' + escapeHtml(a.id) + '">' + escapeHtml(a.name) + '</option>').join('');
-
   const defaultPrompt = card.analysisPrompt || '分析该指标的趋势变化，识别关键驱动因素，给出行动建议。';
   const metricTitle = card.title || card.metricKey || '未命名';
 
@@ -10791,7 +10837,7 @@ function triggerAnalysis(cardId) {
         '<div style="margin-bottom:12px;padding:10px 14px;background:var(--bg-surface);border-radius:8px;font-size:13px">' +
           '<span style="color:var(--text-tertiary)">分析指标：</span><strong>' + escapeHtml(metricTitle) + '</strong>' +
         '</div>' +
-        '<div class="pm-field"><label class="pm-label">选择分析 Agent</label><select id="analyze-agent">' + agentOpts + '</select></div>' +
+
         '<div class="pm-field"><label class="pm-label">分析提示词（可编辑）</label><textarea id="analyze-prompt" rows="4">' + escapeHtml(defaultPrompt) + '</textarea></div>' +
       '</div>' +
       '<div class="pm-footer">' +
@@ -10810,7 +10856,7 @@ function closeAnalysisModal() {
 }
 
 async function confirmAnalysis() {
-  const agentId = document.getElementById('analyze-agent').value;
+  const agentId = '';  // 单一默认管理 Agent，不再选择
   const prompt = document.getElementById('analyze-prompt').value.trim();
   const cardId = analysisCardId;
   if (!cardId) return;
@@ -10843,12 +10889,6 @@ async function confirmAnalysis() {
     wsInp.value = dashboardConfig.projectPath;
   }
 
-  // 4. 设置 Agent 选择器
-  if (agentId) {
-    const agentSel = document.getElementById('chat-agent-select');
-    if (agentSel) agentSel.value = agentId;
-    onChatAgentChange(); // 触发模型自动绑定
-  }
 
   // 5. 将分析上下文填入聊天输入框并发送
   const inputEl = document.getElementById('chat-input');
