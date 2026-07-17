@@ -7,6 +7,7 @@ import re
 import hashlib
 import shutil
 import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -75,6 +76,9 @@ DATASOURCES_FILE = os.path.join(DATA_DIR, '.seegent-datasources.json')
 
 # ===== 技能库浏览器索引 =====
 SKILLLIB_INDEX_FILE = os.path.join(DATA_DIR, '.seegent-skill-index.json')
+
+# ===== 团队 / 技能 模块可手动覆盖的文件夹路径（仅本人使用）=====
+PATHS_FILE = os.path.join(DATA_DIR, '.seegent-paths.json')
 
 # ===== 看板配置（按项目隔离）=====
 DASHBOARD_DIR = os.path.join(DATA_DIR, 'dashboards')
@@ -434,25 +438,25 @@ DEFAULT_WORKSPACES = {"workspaces": {}}
 DEFAULT_SKILLS = {
     "skills": [
         {
-            "id": "writing",
-            "name": "写文章",
-            "description": "技术博客、产品文档、商业文案等长篇内容创作工作流",
+            "id": "xhs-note",
+            "name": "小红书教育笔记创作",
+            "description": "教育类小红书图文与选题工作流：受众痛点、标题钩子、正文结构、配图脚本、合规检查",
             "enabled": True,
-            "content": "## 写文章 Skill\n\n### 触发条件\n当用户需要写技术博客、产品文档、商业文案、长文章时使用。\n\n### 工作流程\n1. **理解需求**：确认文章类型、目标读者、字数范围、风格要求\n2. **列出大纲**：用金字塔结构组织（结论先行 → 分论点 → 支撑细节）\n3. **逐段写作**：\n   - 开头：钩子句吸引注意（数据/反问/故事）\n   - 正文：每段一个核心观点，段落不超过 4 行\n   - 结尾：总结 + 行动建议\n4. **检查清单**：\n   - [ ] 标题有吸引力\n   - [ ] 段落简短易读\n   - [ ] 有数据或案例支撑\n   - [ ] 没有错别字\n\n### 输出格式\n先用一句话概括核心观点，再给出完整文章。技术博客标注代码块语言类型。"
+            "content": "## 小红书教育笔记创作 Skill\n\n### 触发条件\n用户要写小红书教育类图文、选题、标题，或梳理教育内容方向时使用。\n\n### 工作流程\n1. **定受众与痛点**\n   - 明确给谁看：幼儿园老师 / 家长 / 教育从业者\n   - 抓一个真实痛点（不是编的），例如孩子数感差怎么启蒙、家长不会陪玩数学\n2. **选题与热点**\n   - 结合近期教育热点、节气、开学季等时间节点\n   - 必要时调用「小红书教育素材官」专家整理竞品与素材，结果归入知识库 Pro 文件夹\n3. **标题钩子（三种结构选一）**\n   - 人群+痛点+数字：3个方法，让娃主动数数\n   - 反常识：越早教认字，反而越怕数学\n   - 场景共鸣：幼儿园老师私下都在用的数感游戏\n4. **正文结构**\n   - 开头三行：钩子 + 你能得到什么\n   - 正文：每条一个方法，配具体操作步骤，段落短\n   - 结尾：总结 + 引导互动（提问或评论区话题）\n5. **配图建议**：给出每屏图文案与画面描述（不替你生成图，只给脚本）\n6. **合规检查**\n   - [ ] 不编造数据、不夸大效果\n   - [ ] 引用观点标注来源（作者 / 出处 / 年份）\n   - [ ] 不硬广、不营销\n\n### 输出格式\n先给 3 个候选标题，再给完整正文（分屏图文案 + 配图脚本），最后给 5 个话题标签。"
         },
         {
-            "id": "code-review",
-            "name": "代码审查",
-            "description": "系统化代码审查工作流：安全、性能、质量、架构四个维度",
+            "id": "kb-article",
+            "name": "知识库教材文章写作",
+            "description": "按「一本书」工程标准写教材级文章：六节模板、真实来源标注、科学诚实声明",
             "enabled": True,
-            "content": "## 代码审查 Skill\n\n### 触发条件\n用户要求审查代码、检查 PR、评估代码质量时使用。\n\n### 审查流程\n按以下顺序逐项检查，不要跳过：\n\n1. **安全排查**\n   - [ ] SQL 注入风险（参数化查询）\n   - [ ] XSS/CSRF 防护\n   - [ ] 密钥/Token 是否硬编码\n   - [ ] 输入验证是否完整\n\n2. **性能分析**\n   - [ ] N+1 查询问题\n   - [ ] 不必要的循环/递归\n   - [ ] 内存泄漏风险\n   - [ ] 大文件/大数据处理方式\n\n3. **代码质量**\n   - [ ] 命名是否清晰（变量/函数/类名）\n   - [ ] 是否重复代码可以抽取\n   - [ ] 错误处理是否完整\n   - [ ] 类型安全/边界检查\n\n4. **架构评估**\n   - [ ] 单一职责原则\n   - [ ] 模块间耦合度\n   - [ ] 可测试性\n   - [ ] 可维护性\n\n### 输出格式\n按严重程度分级：\n- 🔴 严重（必须修改）\n- 🟡 警告（建议修改）\n- 🔵 建议（可选优化）\n\n每个问题标注：文件位置、解释原因、给出改进代码。"
+            "content": "## 知识库教材文章写作 Skill\n\n### 触发条件\n用户要在知识库 Pro 文件夹写篇章、教材级文章，或整理成「一本书」的某个章节时使用。\n\n### 读者与定位\n先确认读者是哪类：幼儿园教师 / 家长 / 教育行业从业者（管理者、教研、出版、培训）。三类人深浅不同，写法不同。\n\n### 六节固定模板（每篇必须包含）\n1. **概念界定**：这个主题到底是什么，用大白话讲清，不堆术语\n2. **理论依据**：为什么有效，引用可核实的研究或理论，标注作者与年份\n3. **能力发展**：对孩子（3-6 岁）具体发展哪方面能力\n4. **活动示例**：2-3 个可直接落地的游戏或活动，写清材料、步骤、年龄适配\n5. **常见误区**：家长和老师最容易踩的坑，逐个点破\n6. **延伸资源**：推荐进一步阅读或工具，标注来源\n\n### 硬性规则（不可违反）\n- 真实来源标注：引用必须给作者、年份、可核实出处；查不到的一律不写\n- 科学诚实声明：不确定的、有争议的结论要明确说「目前研究尚无定论」\n- 可疑引用必须联网核实，严禁编造、严禁营销腔\n- 语言通俗，不写翻译腔，少用学术黑话\n\n### 输出格式\n按六节模板输出；文末附「来源清单」与「诚实声明」两段。"
         },
         {
-            "id": "debugging",
-            "name": "排错调试",
-            "description": "系统化 Bug 调试工作流：复现→隔离→分析→修复→验证",
+            "id": "weekly-review",
+            "name": "多项目周报与复盘",
+            "description": "并行跟踪 Learn Chinese / PartnerFM / 场景识字 三个项目，产出周报与复盘",
             "enabled": True,
-            "content": "## 排错调试 Skill\n\n### 触发条件\n用户报告 Bug、错误、异常、程序行为不符合预期时使用。\n\n### 调试流程\n严格遵守以下步骤，不跳过任何一步：\n\n1. **复现**\n   - 问清触发条件和环境（浏览器/系统/版本）\n   - 能否稳定复现？概率性还是必然？\n   - 最近改了什么？（git diff / git log）\n\n2. **隔离**\n   - 二分法缩小范围：关掉一半代码/配置，看问题是否存在\n   - 检查是否能单独抽出来跑\n   - git bisect 定位引入 commit\n\n3. **分析**\n   - 看日志/报错信息/堆栈跟踪\n   - 检查变量状态和输入数据\n   - 对比正常情况 vs 异常情况的差异\n\n4. **修复**\n   - 最小改动原则\n   - 考虑边界情况\n   - 加必要注释说明为什么这样改\n\n5. **验证**\n   - 确认修复后问题不再出现\n   - 确认没有引入新问题\n   - 建议加测试防止复发\n\n### 输出格式\n先给根因分析（1-2 句话），再给修复代码，最后给验证步骤。"
+            "content": "## 多项目周报与复盘 Skill\n\n### 触发条件\n用户要整理本周进展、写周报、做项目复盘，或并行跟踪多个项目时使用。\n\n### 项目清单（固定三个，按需启用）\n- Learn Chinese：面向海外用户的汉字学习 App（Cloudflare 全栈，Paddle 支付）\n- PartnerFM：多人在线聊天智能体工作站\n- 场景识字工具：PWA 架构幼儿教育 App\n\n### 工作流程\n1. **逐项目梳理**，每个项目填：\n   - 本周完成\n   - 进行中\n   - 阻塞 / 风险（含需要决策的点）\n2. **跨项目依赖**：有没有一个项目的产出卡住另一个\n3. **关键决策记录**：本周做了什么方向性决定、为什么\n4. **下周计划**：每项目 1-3 条，标注优先级（高 / 中 / 低）\n5. **成本与资源**：涉及花钱或花时间的事单独列（用户偏好免费或低成本方案）\n\n### 输出格式\n先给一页总览（三项目状态表），再分项目展开，最后给下周计划清单。"
         }
     ]
 }
@@ -505,6 +509,66 @@ DEFAULT_ROLES = {
     "activeRole": ""
 }
 
+
+
+# ===== 角色系统：内置角色已弃用，聊天角色改从「个人团队文件夹」(拾元/syteam) 动态读取 =====
+# DEFAULT_ROLES 仅作历史兼容占位，不再作为角色来源（见 _handle_roles_get / _team_roles）。
+BUILTIN_ROLE_IDS = {
+    'none', 'custom', 'copywriter', 'tutor', 'translate',
+    'knowledge-editor', 'reader', 'data-analysis', 'topic-planner', 'viral-optimizer'
+}
+
+
+def _preset_roles():
+    """聊天角色的两个兜底：通用助手（不限定角色）/ 自定义（用户自填提示词）。"""
+    return [
+        {"id": "none", "name": "通用助手", "icon": "🔄", "category": "通用",
+         "description": "不限定角色，AI 根据对话内容灵活响应", "prompt": ""},
+        {"id": "custom", "name": "自定义", "icon": "⚙️", "category": "通用",
+         "description": "用户自定义系统提示词", "prompt": ""},
+    ]
+
+
+def _team_roles():
+    """把拾元/syteam 下的角色 .md 映射成聊天角色格式（content 作为系统提示词注入）。"""
+    out = []
+    try:
+        src = _scan_team_source(_team_path())
+    except Exception:
+        return out
+    for g in src.get('groups', []):
+        gname = g.get('name') or '团队'
+        for m in g.get('members', []):
+            out.append({
+                "id": m.get('id'),
+                "name": m.get('name'),
+                "icon": m.get('emoji') or '👤',
+                "category": gname,
+                "description": m.get('description') or m.get('title') or '',
+                "prompt": m.get('content') or '',
+                "isTeam": True,
+            })
+    return out
+
+
+def _handle_roles_get():
+    """合并：兜底角色 + 团队文件夹角色 + 用户自定角色（过滤掉已移除的内置角色）。"""
+    try:
+        data = _load_json(ROLES_FILE, {"roles": _preset_roles(), "activeRole": ""})
+    except Exception:
+        data = {"roles": _preset_roles(), "activeRole": ""}
+    if not isinstance(data, dict):
+        data = {"roles": _preset_roles(), "activeRole": ""}
+    saved = data.get('roles', []) or []
+    user_custom = [
+        r for r in saved
+        if isinstance(r, dict) and r.get('id') not in BUILTIN_ROLE_IDS and not r.get('isTeam')
+    ]
+    roles = _preset_roles() + _team_roles() + user_custom
+    active = data.get('activeRole', '') or ''
+    if active and not any(r.get('id') == active for r in roles):
+        active = ''
+    return {"roles": roles, "activeRole": active}
 
 
 def _load_json(path, default):
@@ -772,6 +836,462 @@ def _scan_skill_source(root_path):
     return skills
 
 
+# ===== 个人能力：团队（Team）扫描 =====
+# 团队角色存放在「个人根/syteam/」下，每个 .md 即一个角色。
+# frontmatter 可选：有则用 name/title/emoji/group/datasources；无则按文件名 + 子文件夹推导。
+# 与项目内的技能库浏览器（skilllib）完全隔离：团队数据不进入项目侧 index。
+
+def _personal_root():
+    """个人资产根目录，默认 ~/拾元，可用环境变量 SEEGENT_PERSONAL_ROOT 覆盖。"""
+    return os.path.expanduser(os.environ.get('SEEGENT_PERSONAL_ROOT', '~/拾元'))
+
+
+def _default_team_path():
+    return os.path.join(_personal_root(), 'syteam')
+
+
+def _default_skill_path():
+    return os.path.join(_personal_root(), 'syskill')
+
+
+def _load_paths_config():
+    """团队 / 技能 模块的可手动覆盖文件夹路径（仅本人使用，存于 .seegent-paths.json）。"""
+    return _load_json(PATHS_FILE, {})
+
+
+def _save_paths_config(cfg):
+    _save_json(PATHS_FILE, cfg)
+    return cfg
+
+
+def _team_path():
+    cfg = _load_paths_config()
+    return cfg.get('teamPath') or _default_team_path()
+
+
+def _skill_path():
+    cfg = _load_paths_config()
+    return cfg.get('skillPath') or _default_skill_path()
+
+
+def _handle_open_in_finder(self):
+    """在 macOS 访达中打开文件或文件夹（仅限个人根/项目目录，防越权）。"""
+    body = self._read_body()
+    if not isinstance(body, dict):
+        return self._serve_json({'ok': False, 'error': '请求格式错误'})
+    target = (body.get('path') or '').strip()
+    if not target:
+        return self._serve_json({'ok': False, 'error': '路径为空'})
+    target = os.path.expanduser(target)
+    if not os.path.exists(target):
+        return self._serve_json({'ok': False, 'error': '路径不存在: ' + target})
+    # 防越权：仅允许个人根目录 / 项目目录 / 团队·技能文件夹 / 用户主目录及其子路径
+    allowed = [_personal_root(), BASE_DIR, os.path.abspath(_team_path()),
+               os.path.abspath(_skill_path()), os.path.abspath(os.path.expanduser('~'))]
+    ok = False
+    for base in allowed:
+        try:
+            base_abs = os.path.abspath(os.path.expanduser(base))
+            if os.path.commonpath([base_abs, os.path.abspath(target)]) == base_abs:
+                ok = True
+                break
+        except Exception:
+            pass
+    if not ok:
+        return self._serve_json({'ok': False, 'error': '仅允许打开个人目录或项目目录内的路径'})
+    if sys.platform != 'darwin':
+        return self._serve_json({'ok': False, 'error': '当前系统不支持在访达打开（仅 macOS）'})
+    try:
+        if os.path.isdir(target):
+            subprocess.run(['open', target], check=False)
+        else:
+            subprocess.run(['open', '-R', target], check=False)  # 文件：在访达中定位
+        return self._serve_json({'ok': True})
+    except Exception as e:
+        return self._serve_json({'ok': False, 'error': str(e)})
+
+
+def _handle_paths_config(self):
+    """GET 返回当前/默认路径；POST 保存（可分别覆盖团队/技能路径，空字符串=重置默认）。"""
+    if self.command == 'POST':
+        body = self._read_body()
+        if not isinstance(body, dict):
+            return self._serve_json({'error': '请求格式错误'}, 400)
+        cfg = _load_paths_config()
+        for key in ('teamPath', 'skillPath'):
+            if key in body:
+                v = (body.get(key) or '').strip()
+                if v:
+                    cfg[key] = os.path.expanduser(v)
+                else:
+                    cfg.pop(key, None)  # 空字符串 = 重置为默认
+        _save_paths_config(cfg)
+    return self._serve_json({
+        'teamPath': _team_path(),
+        'skillPath': _skill_path(),
+        'teamDefault': _default_team_path(),
+        'skillDefault': _default_skill_path(),
+        'teamExists': os.path.isdir(_team_path()),
+        'skillExists': os.path.isdir(_skill_path()),
+    })
+
+
+def _handle_fs_browse(self):
+    """GET /api/fs/browse?path=... — 服务端目录树（仅限用户目录/项目目录），供前端选文件夹。"""
+    from urllib.parse import urlparse, parse_qs
+    qs = parse_qs(urlparse(self.path).query)
+    p = (qs.get('path', [''])[0] or '').strip()
+    p = os.path.expanduser(p) if p else os.path.expanduser('~')
+    home = os.path.abspath(os.path.expanduser('~'))
+    bases = [home, os.path.abspath(BASE_DIR)]
+    ap = os.path.abspath(p)
+    if not any(os.path.commonpath([b, ap]) == b for b in bases):
+        return self._serve_json({'error': '已到允许的最顶层目录'}, 400)
+    if not os.path.isdir(ap):
+        return self._serve_json({'error': '目录不存在: ' + ap}, 400)
+    try:
+        names = sorted(os.listdir(ap))
+    except Exception:
+        names = []
+    entries = []
+    for n in names:
+        if n.startswith('.'):
+            continue
+        fp = os.path.join(ap, n)
+        if os.path.isdir(fp):
+            entries.append({'name': n, 'isDir': True})
+    return self._serve_json({'path': ap, 'parent': os.path.dirname(ap), 'entries': entries})
+
+
+def _scan_team_source(root_path):
+    """递归扫描 root_path（syteam/），返回按 group 分组的角色结构。
+    - 每个 .md（排除 README.md）= 一个角色
+    - frontmatter 可选；缺省时 name=文件名、group=所在子文件夹或「未分组」
+    - 子文件夹 = 分组层级（如 syteam/数据组/小辉.md → group=数据组）
+    """
+    root_path = os.path.expanduser(root_path)
+    groups = {}
+    if not os.path.isdir(root_path):
+        return {'root': root_path, 'groups': [], 'empty': True}
+    skip = {'.git', 'node_modules', '__pycache__', '.venv', 'venv', '.seegent-reports'}
+
+    def walk(dirpath, group):
+        try:
+            entries = sorted(os.listdir(dirpath))
+        except Exception:
+            return
+        for name in entries:
+            if name in skip:
+                continue
+            fp = os.path.join(dirpath, name)
+            if os.path.isdir(fp):
+                walk(fp, name if group == '未分组' else group)
+            elif os.path.isfile(fp) and name.lower().endswith('.md') and name not in ('README.md',):
+                try:
+                    with open(fp, 'r', encoding='utf-8', errors='replace') as f:
+                        raw = f.read()
+                except Exception:
+                    raw = ''
+                meta, body, perr = _parse_skill_frontmatter(raw)
+                disp = meta.get('name') or _first_markdown_heading(body) or name[:-3]
+                title = meta.get('title') or meta.get('displayName') or ''
+                emoji = meta.get('emoji') or '👤'
+                grp = meta.get('group') or group or '未分组'
+                desc = meta.get('description') or _derive_description(body)
+                ds = meta.get('datasources') or []
+                if isinstance(ds, str):
+                    ds = [ds]
+                rel = os.path.relpath(fp, root_path)
+                member = {
+                    'id': 'team_' + hashlib.sha1(fp.encode('utf-8')).hexdigest()[:12],
+                    'name': disp,
+                    'title': title,
+                    'emoji': emoji,
+                    'group': grp,
+                    'datasources': ds,
+                    'description': desc,
+                    'content': body,
+                    'path': fp,
+                    'relPath': rel,
+                    'parseError': bool(perr),
+                }
+                groups.setdefault(grp, []).append(member)
+
+    walk(root_path, '未分组')
+    result_groups = [{'name': g, 'members': ms} for g, ms in groups.items()]
+    empty = not any(g['members'] for g in result_groups)
+    return {'root': root_path, 'groups': result_groups, 'empty': empty}
+
+
+# ===== 个人能力：团队（Team）文件夹树浏览 =====
+# 与上面的「扁平角色扫描」并存：聊天角色仍用 _scan_team_source；
+# 团队页 UI 改用下面的树接口，按文件夹一层层呈现（目录在前、文件在后）。
+TEAM_SKIP = {'.git', 'node_modules', '__pycache__', '.venv', 'venv', '.seegent-reports', '.DS_Store', 'Thumbs.db'}
+
+
+def _team_safe_rel(rel):
+    """把前端传来的 rel 规整并做越界保护，返回相对 syteam 的安全子路径（'' 表示根）。"""
+    if not rel:
+        return ''
+    rel = rel.replace('\\', '/')
+    parts = [p for p in rel.split('/') if p not in ('', '.', '..')]
+    return '/'.join(parts)
+
+
+def _team_full_path(rel):
+    root = _team_path()
+    if not rel:
+        return root
+    return os.path.join(root, rel)
+
+
+def _scan_team_tree(rel=''):
+    """返回 syteam/<rel> 目录下的直接子项（目录在前、文件在后，均按名排序）。
+    目录 = 业务/工作流或子分组；.md 文件解析 frontmatter 取展示信息。"""
+    rel = _team_safe_rel(rel)
+    full = _team_full_path(rel)
+    root = _team_path()
+    if not os.path.isdir(full):
+        return {'root': root, 'rel': rel, 'parent': '', 'entries': [], 'empty': True}
+    try:
+        names = sorted(os.listdir(full))
+    except Exception:
+        return {'root': root, 'rel': rel, 'parent': '', 'entries': [], 'empty': True}
+    dirs = [n for n in names if os.path.isdir(os.path.join(full, n)) and n not in TEAM_SKIP]
+    # 二进制/压缩文件不在团队浏览器里呈现（无法作为内容预览，且点开会显示乱码）
+    TEAM_FILE_SKIP_EXT = {'.zip', '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.mp4', '.mov', '.mp3', '.wav', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'}
+    files = [n for n in names if os.path.isfile(os.path.join(full, n)) and n not in TEAM_SKIP
+             and os.path.splitext(n)[1].lower() not in TEAM_FILE_SKIP_EXT]
+    entries = []
+    for n in dirs:
+        entries.append({'name': n, 'isDir': True, 'sub': (rel + '/' + n).lstrip('/')})
+    for n in files:
+        fp = os.path.join(full, n)
+        try:
+            with open(fp, 'r', encoding='utf-8', errors='replace') as f:
+                raw = f.read()
+        except Exception:
+            raw = ''
+        meta, body, _ = _parse_skill_frontmatter(raw)
+        is_md = n.lower().endswith(('.md', '.markdown'))
+        disp = meta.get('name') or (_first_markdown_heading(body) if is_md else '') or n
+        emoji = meta.get('emoji') or ('📄' if is_md else '📃')
+        desc = meta.get('description') or _derive_description(body)
+        entries.append({
+            'name': n, 'isDir': False, 'sub': (rel + '/' + n).lstrip('/'),
+            'displayName': disp, 'emoji': emoji,
+            'title': meta.get('title') or meta.get('displayName') or '',
+            'description': desc, 'isMd': is_md,
+        })
+    parent = rel.rsplit('/', 1)[0] if rel else ''
+    return {'root': root, 'rel': rel, 'parent': parent, 'entries': entries, 'empty': not entries}
+
+
+def _read_team_file(rel):
+    """读取 syteam/<rel> 文件内容，带越界保护。返回 (data, error)。"""
+    rel = _team_safe_rel(rel)
+    if not rel:
+        return None, '缺少文件路径'
+    full = _team_full_path(rel)
+    root = os.path.abspath(_team_path())
+    abs_full = os.path.abspath(full)
+    if not (abs_full == root or abs_full.startswith(root + os.sep)):
+        return None, '路径越界'
+    if not os.path.isfile(full):
+        return None, '不是文件：' + rel
+    try:
+        with open(full, 'r', encoding='utf-8', errors='replace') as f:
+            content = f.read()
+    except Exception as e:
+        return None, str(e)
+    MAX = 300 * 1024
+    truncated = False
+    if len(content) > MAX:
+        content = content[:MAX]
+        truncated = True
+    name = os.path.basename(full)
+    low = name.lower()
+    if low.endswith(('.md', '.markdown')):
+        lang = 'markdown'
+    elif low.endswith(('.json', '.py', '.js', '.jsx', '.ts', '.tsx', '.sh', '.bash',
+                       '.yaml', '.yml', '.toml', '.cfg', '.ini', '.css', '.html', '.htm', '.txt', '.csv', '.xml', '.svg')):
+        lang = 'code'
+    else:
+        lang = 'text'
+    return {'content': content, 'lang': lang, 'truncated': truncated, 'name': name, 'path': full, 'rel': rel}, None
+
+
+def _collect_team_folder_text(rel='', limit=200 * 1024):
+    """递归收集 syteam/<rel> 下所有 .md/.txt 正文，拼成一段文本，供「召唤文件夹」的网页端指令内联。"""
+    rel = _team_safe_rel(rel)
+    full = _team_full_path(rel)
+    if not os.path.isdir(full):
+        return ''
+    parts = []
+    total = [0]
+    skip = TEAM_SKIP | {'.zip', '.png', '.jpg', '.jpeg', '.gif', '.mp4', '.mov', '.pdf', '.py', '.mjs', '.js', '.ts', '.tsx', '.json', '.css', '.html', '.svg'}
+
+    def walk(dp, prefix):
+        if total[0] >= limit:
+            return
+        try:
+            names = sorted(os.listdir(dp))
+        except Exception:
+            return
+        for n in names:
+            if n in skip or n.startswith('.'):
+                continue
+            fp = os.path.join(dp, n)
+            sub = (prefix + '/' + n).lstrip('/')
+            if os.path.isdir(fp):
+                walk(fp, sub)
+            elif n.lower().endswith(('.md', '.markdown', '.txt')):
+                if total[0] >= limit:
+                    return
+                try:
+                    with open(fp, 'r', encoding='utf-8', errors='replace') as f:
+                        c = f.read()
+                except Exception:
+                    c = ''
+                chunk = '===== ' + sub + ' =====\n\n' + c + '\n\n'
+                if total[0] + len(chunk) > limit:
+                    parts.append(chunk[:max(0, limit - total[0])])
+                    parts.append('\n……（内容过长，已截断）')
+                    total[0] = limit
+                    return
+                parts.append(chunk)
+                total[0] += len(chunk)
+    walk(full, rel)
+    return ''.join(parts)
+
+
+# ===== 技能（个人专属，syskill/）文件夹树接口：与团队同款，根目录换成技能目录 =====
+def _skill_full_path(rel):
+    root = _skill_path()
+    if not rel:
+        return root
+    return os.path.join(root, rel)
+
+
+def _scan_skill_tree(rel=''):
+    """返回 syskill/<rel> 目录下的直接子项（目录在前、文件在后），供技能模块文件夹树浏览器。"""
+    rel = _team_safe_rel(rel)  # 越界保护逻辑通用，直接复用
+    full = _skill_full_path(rel)
+    root = _skill_path()
+    if not os.path.isdir(full):
+        return {'root': root, 'rel': rel, 'parent': '', 'entries': [], 'empty': True}
+    try:
+        names = sorted(os.listdir(full))
+    except Exception:
+        return {'root': root, 'rel': rel, 'parent': '', 'entries': [], 'empty': True}
+    dirs = [n for n in names if os.path.isdir(os.path.join(full, n)) and n not in TEAM_SKIP]
+    SKILL_FILE_SKIP_EXT = {'.zip', '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.mp4', '.mov',
+                           '.mp3', '.wav', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'}
+    files = [n for n in names if os.path.isfile(os.path.join(full, n)) and n not in TEAM_SKIP
+             and os.path.splitext(n)[1].lower() not in SKILL_FILE_SKIP_EXT]
+    entries = []
+    for n in dirs:
+        entries.append({'name': n, 'isDir': True, 'sub': (rel + '/' + n).lstrip('/')})
+    for n in files:
+        fp = os.path.join(full, n)
+        try:
+            with open(fp, 'r', encoding='utf-8', errors='replace') as f:
+                raw = f.read()
+        except Exception:
+            raw = ''
+        meta, body, _ = _parse_skill_frontmatter(raw)
+        is_md = n.lower().endswith(('.md', '.markdown'))
+        disp = meta.get('name') or (_first_markdown_heading(body) if is_md else '') or n
+        emoji = meta.get('emoji') or ('📄' if is_md else '📃')
+        desc = meta.get('description') or _derive_description(body)
+        entries.append({
+            'name': n, 'isDir': False, 'sub': (rel + '/' + n).lstrip('/'),
+            'displayName': disp, 'emoji': emoji,
+            'title': meta.get('title') or meta.get('displayName') or '',
+            'description': desc, 'isMd': is_md,
+        })
+    parent = rel.rsplit('/', 1)[0] if rel else ''
+    return {'root': root, 'rel': rel, 'parent': parent, 'entries': entries, 'empty': not entries}
+
+
+def _read_skill_file(rel):
+    """读取 syskill/<rel> 文件内容，带越界保护。返回 (data, error)。"""
+    rel = _team_safe_rel(rel)
+    if not rel:
+        return None, '缺少文件路径'
+    full = _skill_full_path(rel)
+    root = os.path.abspath(_skill_path())
+    abs_full = os.path.abspath(full)
+    if not (abs_full == root or abs_full.startswith(root + os.sep)):
+        return None, '路径越界'
+    if not os.path.isfile(full):
+        return None, '不是文件：' + rel
+    try:
+        with open(full, 'r', encoding='utf-8', errors='replace') as f:
+            content = f.read()
+    except Exception as e:
+        return None, str(e)
+    MAX = 300 * 1024
+    truncated = False
+    if len(content) > MAX:
+        content = content[:MAX]
+        truncated = True
+    name = os.path.basename(full)
+    low = name.lower()
+    if low.endswith(('.md', '.markdown')):
+        lang = 'markdown'
+    elif low.endswith(('.json', '.py', '.js', '.jsx', '.ts', '.tsx', '.sh', '.bash',
+                       '.yaml', '.yml', '.toml', '.cfg', '.ini', '.css', '.html', '.htm', '.txt', '.csv', '.xml', '.svg')):
+        lang = 'code'
+    else:
+        lang = 'text'
+    return {'content': content, 'lang': lang, 'truncated': truncated, 'name': name, 'path': full, 'rel': rel}, None
+
+
+def _collect_skill_folder_text(rel='', limit=200 * 1024):
+    """递归收集 syskill/<rel> 下所有 .md/.txt 正文，供「召唤文件夹」的网页端指令内联。"""
+    rel = _team_safe_rel(rel)
+    full = _skill_full_path(rel)
+    if not os.path.isdir(full):
+        return ''
+    parts = []
+    total = [0]
+    skip = TEAM_SKIP | {'.zip', '.png', '.jpg', '.jpeg', '.gif', '.mp4', '.mov', '.pdf', '.py', '.mjs', '.js', '.ts', '.tsx', '.json', '.css', '.html', '.svg'}
+
+    def walk(dp, prefix):
+        if total[0] >= limit:
+            return
+        try:
+            names = sorted(os.listdir(dp))
+        except Exception:
+            return
+        for n in names:
+            if n in skip or n.startswith('.'):
+                continue
+            fp = os.path.join(dp, n)
+            sub = (prefix + '/' + n).lstrip('/')
+            if os.path.isdir(fp):
+                walk(fp, sub)
+            elif n.lower().endswith(('.md', '.markdown', '.txt')):
+                if total[0] >= limit:
+                    return
+                try:
+                    with open(fp, 'r', encoding='utf-8', errors='replace') as f:
+                        c = f.read()
+                except Exception:
+                    c = ''
+                chunk = '===== ' + sub + ' =====\n\n' + c + '\n\n'
+                if total[0] + len(chunk) > limit:
+                    parts.append(chunk[:max(0, limit - total[0])])
+                    parts.append('\n……（内容过长，已截断）')
+                    total[0] = limit
+                    return
+                parts.append(chunk)
+                total[0] += len(chunk)
+    walk(full, rel)
+    return ''.join(parts)
+
+
 def _rebuild_skill_index_from(index):
     """根据内存 index（含 sources）重新扫描、写盘并返回完整 index。"""
     index.setdefault('version', 1)
@@ -922,6 +1442,620 @@ def _get_logs(limit=100, agent_id=None, status=None, before=None):
     if before:
         logs = [l for l in logs if l.get('timestamp', '') < before]
     return logs[-limit:]
+
+# ===== 外部智能体日志聚合（跨工具本地记录汇总） =====
+# 不常驻进程、不调大模型。打开日志模块时实时读取各 AI 工具留在本地的记录文件，
+# 解析为统一元数据（模型 / Token / 工具 / 耗时 / 状态），与 Seegent 自有日志合并展示。
+EXTERNAL_LOG_SOURCES = [
+    {
+        'id': 'claude-code',
+        'name': 'Claude Code',
+        'type': 'claude_jsonl',
+        'roots': ['~/.claude/projects'],
+        'max_files': 400,        # 每次最多扫描的最近修改文件数
+        'max_per_source': 200,   # 每源最多返回的条目数
+    },
+    {
+        'id': 'workbuddy',
+        'name': 'WorkBuddy',
+        'type': 'workbuddy_audit',
+        'roots': ['~/.workbuddy/audit-log'],
+        'max_files': 60,         # 最近 60 天的审计文件（实际 24 个，全扫）
+        'max_per_source': 5000,  # 审计日志累计数千条命令，放开上限避免历史被截断
+    },
+    {
+        'id': 'codex',
+        'name': 'Codex',
+        'type': 'codex_rollout',
+        'roots': ['~/.codex/sessions'],
+        'max_files': 60,         # rollout transcript 较大，限制扫描数
+        'max_per_source': 60,    # 每源最多返回的条目数
+    },
+    {
+        'id': 'qoderwork',
+        'name': 'QoderWork',
+        'type': 'qoderwork_aistats',
+        'roots': ['~/.qoder-cli/ai-stats'],
+        'max_files': 80,
+        'max_per_source': 120,
+    },
+]
+
+# 缓存：filepath -> (mtime_ns, entries)，避免每次全量重解析
+_ext_log_cache = {}
+
+def _parse_claude_jsonl(path):
+    """解析一个 Claude Code transcript 文件，返回一条统一日志条目（或 None）"""
+    try:
+        session_id = None
+        first_ts = None
+        last_ts = None
+        task = ''
+        model = ''
+        prompt_tokens = 0
+        completion_tokens = 0
+        tools = []
+        artifacts = []  # 被编辑/新建的文件路径（交付物）
+        cwd = ''
+        n_msgs = 0
+        with open(path, 'r', encoding='utf-8', errors='replace') as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    o = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if session_id is None:
+                    session_id = o.get('sessionId', '')
+                ts = o.get('timestamp', '')
+                if ts:
+                    if first_ts is None:
+                        first_ts = ts
+                    last_ts = ts
+                msg = o.get('message') or {}
+                role = msg.get('role', '')
+                content = msg.get('content', '')
+                if not task:
+                    if role == 'user' and isinstance(content, str) and content.strip():
+                        task = content.strip()
+                    elif o.get('type') == 'summary' and isinstance(content, str) and content.strip():
+                        task = content.strip()
+                if role == 'assistant':
+                    if msg.get('model') and not model:
+                        model = msg.get('model')
+                    usage = msg.get('usage') or {}
+                    if usage.get('input_tokens'):
+                        prompt_tokens += int(usage.get('input_tokens', 0) or 0)
+                    if usage.get('output_tokens'):
+                        completion_tokens += int(usage.get('output_tokens', 0) or 0)
+                    if isinstance(content, list):
+                        for blk in content:
+                            if isinstance(blk, dict) and blk.get('type') == 'tool_use':
+                                tname = blk.get('name', '')
+                                if tname and tname not in tools:
+                                    tools.append(tname)
+                                # 提取文件编辑类工具产出的文件路径（交付物视图用）
+                                if tname in ('Write', 'Edit', 'MultiEdit', 'NotebookEdit'):
+                                    fp = (blk.get('input') or {}).get('file_path')
+                                    if fp and fp not in artifacts:
+                                        artifacts.append(fp)
+                if role:
+                    n_msgs += 1
+                if not cwd and o.get('cwd'):
+                    cwd = o.get('cwd')
+        if not session_id or first_ts is None:
+            return None
+
+        def _norm(ts):
+            try:
+                return ts.replace('Z', '+00:00')
+            except Exception:
+                return ts
+
+        def _fmt(ts):
+            try:
+                dt = datetime.datetime.fromisoformat(_norm(ts)).astimezone()
+                return dt.strftime('%Y-%m-%d %H:%M:%S')
+            except Exception:
+                return ts
+
+        duration = 0
+        try:
+            t1 = datetime.datetime.fromisoformat(_norm(first_ts))
+            t2 = datetime.datetime.fromisoformat(_norm(last_ts))
+            duration = max(0, int((t2 - t1).total_seconds()))
+        except Exception:
+            duration = 0
+        total = prompt_tokens + completion_tokens
+        return {
+            'source': 'claude-code',
+            'sourceName': 'Claude Code',
+            'agentName': 'Claude Code',
+            'engineId': 'claude-code',
+            'agentId': 'claude-code',
+            'sessionId': session_id,
+            'task': task[:200],
+            'model': model,
+            'modelId': model,
+            'timestamp': _fmt(first_ts),
+            'duration': duration,
+            'iterations': max(1, n_msgs),
+            'totalTokens': total,
+            'promptTokens': prompt_tokens,
+            'completionTokens': completion_tokens,
+            'toolsUsed': tools,
+            'artifacts': artifacts[:30],
+            'status': 'done',
+            'workspace': cwd,
+        }
+    except Exception:
+        return None
+
+def _summarize_workbuddy_cmd(cmd):
+    """把 WorkBuddy 命令文本翻译成人类可读摘要，并提取 workspace / 相关路径。
+    注意：audit-log 里的 commandPreview 本身已被截断，无法恢复完整命令。
+    注意：command 里可能包含 python3 -c / cat > / echo 等包裹的代码，要避免内部代码污染分类。"""
+    if not cmd:
+        return '执行命令', '', [], ''
+    c = cmd.strip()
+    first_line = c.split('\n')[0]
+
+    # 工作目录：从第一行的 cd 提取（避免代码字符串里的 cd 被误取）
+    workspace = ''
+    m = re.search(r'cd\s+["\']?(/Users/[^\s"\'|&;<>$`]+)["\']?(\s+&&|\s+;|\s*$)', first_line)
+    if not m:
+        m = re.search(r'cd\s+["\']?([^\s"\'|&;<>$`]+)["\']?(\s+&&|\s+;|\s*$)', first_line)
+    if m:
+        workspace = m.group(1)
+
+    # 提取命令中涉及的真实路径（去重、过滤代码污染）
+    artifacts = []
+    for p in re.findall(r'(/Users/[^\s"\'|&;<>$`]+)', c):
+        p = p.rstrip('/')
+        if not p or p in artifacts:
+            continue
+        # 过滤掉：正则/代码片段、纯二进制工具
+        if any(ch in p for ch in ['[', ']', '*', '?', '$', '\\', '**']):
+            continue
+        if re.search(r'/(python3?|node|npx|npm|git|curl|ls|cat|rm|mv|cp|mkdir|grep|find|wc|head|tail|bash|zsh|sh)$', p):
+            continue
+        artifacts.append(p)
+
+    # 动作分类：按顺序匹配第一个最具体的动作，避免内部代码污染
+    action = '执行 shell 命令'
+    detail = ''
+    # 1. 会包裹代码的命令优先（避免内部 curl/python 关键字污染）
+    if re.search(r'cat\s+>\s+\S+.*<<', c, re.M):
+        action = '写临时脚本/文件'
+    elif re.search(r'python3\s+-?\s*<<', c, re.M):
+        action = '执行 Python 脚本'
+    elif re.search(r'python3\s+-m\s+py_compile', c):
+        action = 'Python 语法检查'
+    elif re.search(r'\bnode\s+--check\b', c):
+        action = 'Node.js 语法检查'
+    elif re.search(r'python3\s+-c\b', c):
+        action = '执行 Python 内联脚本'
+    elif re.search(r'\bnode\s+-e\b', c):
+        action = '执行 Node.js 内联脚本'
+    elif re.search(r'\bnode\s+\S+\.(js|mjs|cjs)', c):
+        action = '运行 Node.js 脚本'
+    elif re.search(r'\bnode\b', c):
+        action = '执行 Node.js 命令'
+    elif re.search(r'python3\b', c) or 'bin/python' in c:
+        if re.search(r'python3\s+\S+\.(py|sh)', c):
+            action = '运行 Python 脚本'
+        else:
+            action = '执行 Python 命令'
+    elif re.search(r'curl\b', c):
+        action = '测试/查询 HTTP 接口'
+        mu = re.search(r'https?://[^\s"\']+', c)
+        if mu:
+            detail = mu.group(0)
+    elif re.search(r'\b(pkill|kill)\b', c):
+        action = '停止进程/服务'
+    elif re.search(r'http\.server|npx\s+.*serve', c):
+        action = '启动本地预览服务'
+    elif re.search(r'^\s*ls\b', c):
+        action = '查看目录'
+    elif re.search(r'^\s*rm\b', c):
+        action = '删除文件'
+    elif re.search(r'\bgit\b', c):
+        action = 'Git 操作'
+    elif re.search(r'\bmkdir\b', c):
+        action = '创建目录'
+    elif re.search(r'\bcp\b', c):
+        action = '复制文件'
+    elif re.search(r'\bmv\b', c):
+        action = '移动/重命名文件'
+    elif re.search(r'\b(cat|head|tail)\b', c):
+        action = '查看文件内容'
+    elif re.search(r'\bgrep\b', c):
+        action = '搜索文本'
+    elif re.search(r'\bfind\b', c):
+        action = '查找文件'
+    elif re.search(r'\bwc\b', c):
+        action = '统计文件'
+    elif re.search(r'\bfor\s+', c):
+        if re.search(r'node\s+--check', c):
+            action = '批量语法检查'
+        else:
+            action = '批量执行命令'
+    elif re.search(r'^echo\b', c, re.M):
+        action = '输出信息'
+    elif re.search(r'^sleep\b', c, re.M):
+        action = '等待'
+
+    task = f'{action} · {detail}' if detail else action
+    return task, workspace, artifacts[:10], c
+
+def _parse_workbuddy_audit_file(path):
+    """解析一个 WorkBuddy 审计日志文件（按天一个），每行是一次命令/工具执行。
+    返回统一日志条目列表（一个文件含多条事件）。只取元数据，不读对话内容。"""
+    out = []
+    try:
+        with open(path, 'r', encoding='utf-8', errors='replace') as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    o = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                ts = o.get('timestamp')
+                if not ts:
+                    continue
+                try:
+                    dt = datetime.datetime.fromtimestamp(int(ts) / 1000).astimezone()
+                    ts_str = dt.strftime('%Y-%m-%d %H:%M:%S')
+                except Exception:
+                    ts_str = str(ts)
+                decision = (o.get('decision') or '').lower()
+                status = 'error' if decision in ('denied', 'blocked', 'rejected') else 'done'
+                raw_cmd = o.get('commandPreview') or o.get('eventType') or o.get('category') or ''
+                cat = o.get('eventType') or o.get('category') or ''
+                is_cmd = 'command' in cat or o.get('commandPreview') is not None
+                task, workspace, artifacts, _ = _summarize_workbuddy_cmd(raw_cmd)
+                # 若没识别到目录，但从命令路径能推断项目，补充 workspace
+                if not workspace and artifacts:
+                    workspace = artifacts[0]
+                    # 若是文件路径，取所在目录作为工作区
+                    if workspace and '.' in os.path.basename(workspace):
+                        workspace = os.path.dirname(workspace)
+                out.append({
+                    'source': 'workbuddy',
+                    'sourceName': 'WorkBuddy',
+                    'agentName': 'WorkBuddy',
+                    'engineId': 'workbuddy',
+                    'agentId': 'workbuddy',
+                    'task': (task or '')[:200],
+                    'commandPreview': (raw_cmd or '')[:300],
+                    'model': '',
+                    'modelId': '',
+                    'timestamp': ts_str,
+                    'duration': None,
+                    'iterations': 0,
+                    'totalTokens': 0,
+                    'promptTokens': None,
+                    'completionTokens': None,
+                    'toolsUsed': ['shell'] if is_cmd else [],
+                    'status': status,
+                    'workspace': workspace,
+                    'artifacts': artifacts[:10],
+                    'category': cat,
+                })
+    except Exception:
+        return []
+    return out
+
+# Codex session_index 缓存：session_id -> thread_name（一次性加载）
+_CODEX_INDEX = None
+
+def _load_codex_index():
+    """加载 ~/.codex/session_index.jsonl -> {session_id: thread_name}"""
+    global _CODEX_INDEX
+    if _CODEX_INDEX is not None:
+        return _CODEX_INDEX
+    idx = {}
+    p = os.path.expanduser('~/.codex/session_index.jsonl')
+    try:
+        with open(p, 'r', encoding='utf-8', errors='replace') as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    o = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                sid = o.get('id')
+                if sid:
+                    idx[sid] = o.get('thread_name', '')
+    except OSError:
+        pass
+    _CODEX_INDEX = idx
+    return idx
+
+def _extract_text(content):
+    """从 message content（str 或 list[block]）里提取纯文本"""
+    if isinstance(content, str):
+        return content.strip()
+    if isinstance(content, list):
+        parts = []
+        for blk in content:
+            if isinstance(blk, dict):
+                if blk.get('type') == 'input_text' and blk.get('text'):
+                    parts.append(blk['text'])
+                elif blk.get('type') == 'text' and blk.get('text'):
+                    parts.append(blk['text'])
+                elif blk.get('text'):
+                    parts.append(blk['text'])
+        return ' '.join(parts).strip()
+    return ''
+
+def _is_boilerplate(text):
+    """判断是否为系统注入的环境上下文（非真实用户提示），跳过"""
+    if not text:
+        return True
+    t = text.lstrip()
+    if t.startswith('<'):
+        return True
+    if 'Filesystem sandboxing' in text or '<cwd>' in text or '<environment_context' in text:
+        return True
+    return False
+
+def _parse_codex_rollout(path):
+    """解析一个 Codex rollout transcript（一个会话一条记录）。
+    只取元数据：session_meta 的起始时间/cwd/provider、首个用户提示（task）、token 汇总。
+    不读取对话正文，零额外 token 消耗。"""
+    try:
+        session_id = None
+        m = re.search(r'rollout-.*?-([0-9a-f-]{36})\.jsonl', os.path.basename(path))
+        if m:
+            session_id = m.group(1)
+        first_ts = None
+        last_ts = None
+        cwd = ''
+        provider = ''
+        model = ''
+        task = ''
+        prompt_tokens = 0
+        completion_tokens = 0
+        tools = []
+        n_user = 0
+        with open(path, 'r', encoding='utf-8', errors='replace') as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    o = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                ts = o.get('timestamp', '')
+                if ts:
+                    if first_ts is None:
+                        first_ts = ts
+                    last_ts = ts
+                t = o.get('type')
+                if t == 'session_meta':
+                    pld = o.get('payload', {}) or {}
+                    if not cwd and pld.get('cwd'):
+                        cwd = pld['cwd']
+                    if not provider and pld.get('model_provider'):
+                        provider = pld['model_provider']
+                # 在 event_msg / response_item / 顶层 msg 中找首个用户文本
+                cand = o.get('msg') or o.get('message') or o.get('payload') or o
+                if isinstance(cand, dict):
+                    role = cand.get('role')
+                    if role == 'user' and not task:
+                        txt = _extract_text(cand.get('content', ''))
+                        if txt and not _is_boilerplate(txt):
+                            task = txt
+                            n_user += 1
+                    # 汇总 token：兼容多种字段命名
+                    u = cand.get('usage')
+                    if isinstance(u, dict):
+                        prompt_tokens += int(u.get('input_tokens', 0) or 0)
+                        completion_tokens += int(u.get('output_tokens', 0) or 0)
+                    it = cand.get('input_tokens')
+                    if it is not None:
+                        prompt_tokens += int(it or 0)
+                    ot = cand.get('output_tokens')
+                    if ot is not None:
+                        completion_tokens += int(ot or 0)
+                    # 工具调用名称
+                    content = cand.get('content')
+                    if isinstance(content, list):
+                        for blk in content:
+                            if isinstance(blk, dict) and blk.get('type') == 'function_call':
+                                nm = blk.get('name', '')
+                                if nm and nm not in tools:
+                                    tools.append(nm)
+        if first_ts is None:
+            return None
+        idx = _load_codex_index()
+        if not task and session_id and idx.get(session_id):
+            task = idx[session_id]
+        if not task:
+            task = 'Codex 会话'
+        def _norm(ts):
+            try:
+                return ts.replace('Z', '+00:00')
+            except Exception:
+                return ts
+        try:
+            ts_str = datetime.datetime.fromisoformat(_norm(first_ts)).astimezone().strftime('%Y-%m-%d %H:%M:%S')
+        except Exception:
+            ts_str = (first_ts or '')[:19]
+        total = prompt_tokens + completion_tokens
+        return {
+            'source': 'codex',
+            'sourceName': 'Codex',
+            'agentName': 'Codex',
+            'engineId': 'codex',
+            'agentId': 'codex',
+            'sessionId': session_id or '',
+            'task': task[:200],
+            'model': model or (provider or ''),
+            'modelId': model or (provider or ''),
+            'timestamp': ts_str,
+            'duration': 0,
+            'iterations': max(1, n_user),
+            'totalTokens': total,
+            'promptTokens': prompt_tokens,
+            'completionTokens': completion_tokens,
+            'toolsUsed': tools,
+            'status': 'done',
+            'workspace': cwd,
+        }
+    except Exception:
+        return None
+
+def _parse_qoderwork_ai_stats(path):
+    """解析一个 QoderWork ai-stats 文件（一个会话一条记录）。
+    每行是一次 AI 文件编辑，含 filePath / 增删行 / 修改内容。
+    只取元数据：编辑次数、首个文件路径；时间戳取文件 mtime（记录内无时间字段）。
+    绝不读取 aiModifiedContent 正文，零额外 token 消耗。"""
+    try:
+        mtime = os.stat(path).st_mtime
+        ts_str = datetime.datetime.fromtimestamp(mtime).strftime('%Y-%m-%d %H:%M:%S')
+    except OSError:
+        return None
+    first_path = ''
+    n_edits = 0
+    total_add = 0
+    total_del = 0
+    session_id = ''
+    all_paths = []
+    try:
+        with open(path, 'r', encoding='utf-8', errors='replace') as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    o = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                n_edits += 1
+                fp = o.get('filePath', '')
+                if not first_path and fp:
+                    first_path = fp
+                if fp and fp not in all_paths:
+                    all_paths.append(fp)
+                total_add += len(o.get('aiAddedLines', []) or [])
+                total_del += len(o.get('aiDeletedLines', []) or [])
+                ld = o.get('lineDetails') or []
+                if isinstance(ld, list) and ld and not session_id:
+                    session_id = (ld[0] or {}).get('sessionId', '')
+    except OSError:
+        return None
+    if not first_path:
+        return None
+    base = os.path.basename(first_path)
+    task = 'AI 编辑 %d 处 · %s' % (n_edits, base)
+    return {
+        'source': 'qoderwork',
+        'sourceName': 'QoderWork',
+        'agentName': 'QoderWork',
+        'engineId': 'qoderwork',
+        'agentId': 'qoderwork',
+        'sessionId': session_id,
+        'task': task[:200],
+        'model': '',
+        'modelId': '',
+        'timestamp': ts_str,
+        'duration': None,
+        'iterations': n_edits,
+        'totalTokens': 0,
+        'promptTokens': None,
+        'completionTokens': None,
+        'toolsUsed': ['edit'],
+        'artifacts': all_paths[:30],
+        'status': 'done',
+        'workspace': os.path.dirname(first_path),
+    }
+
+def _load_external_logs():
+    """聚合所有外部智能体工具的本地记录，返回统一日志条目列表（带 mtime 缓存）"""
+    out = []
+    for src in EXTERNAL_LOG_SOURCES:
+        stype = src.get('type')
+        if stype in ('claude_jsonl', 'workbuddy_audit', 'codex_rollout', 'qoderwork_aistats'):
+            files = []
+            for root in src.get('roots', []):
+                r = os.path.expanduser(root)
+                if not os.path.isdir(r):
+                    continue
+                for dirpath, dirnames, filenames in os.walk(r):
+                    # 跳过版本/缓存目录，减少无意义遍历
+                    dirnames[:] = [d for d in dirnames
+                                   if d not in ('.git', 'node_modules', '__pycache__')]
+                    for fn in filenames:
+                        if not fn.endswith('.jsonl'):
+                            continue
+                        fp = os.path.join(dirpath, fn)
+                        try:
+                            mtime = os.stat(fp).st_mtime_ns
+                        except OSError:
+                            continue
+                        files.append((mtime, fp))
+            files.sort(reverse=True)
+            max_files = src.get('max_files', 400)
+            entries = []
+            for _, fp in files[:max_files]:
+                try:
+                    mt = os.stat(fp).st_mtime_ns
+                except OSError:
+                    continue
+                cached = _ext_log_cache.get(fp)
+                if cached and cached[0] == mt:
+                    entries.extend(cached[1])
+                else:
+                    parsed = []
+                    if stype == 'claude_jsonl':
+                        e = _parse_claude_jsonl(fp)
+                        parsed = [e] if e else []
+                    elif stype == 'workbuddy_audit':
+                        parsed = _parse_workbuddy_audit_file(fp)
+                    elif stype == 'codex_rollout':
+                        e = _parse_codex_rollout(fp)
+                        parsed = [e] if e else []
+                    elif stype == 'qoderwork_aistats':
+                        e = _parse_qoderwork_ai_stats(fp)
+                        parsed = [e] if e else []
+                    _ext_log_cache[fp] = (mt, parsed)
+                    entries.extend(parsed)
+            entries.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
+            out.extend(entries[:src.get('max_per_source', 200)])
+    return out
+
+def _merge_all_logs(limit=200, agent_id=None, status=None, source=None):
+    """合并 Seegent 自有日志 + 外部智能体日志，统一返回"""
+    logs = _get_logs(limit=limit * 3, agent_id=None, status=None)
+    for l in logs:
+        if not l.get('source'):
+            l['source'] = 'seegent'
+            l['sourceName'] = 'Seegent'
+    ext = _load_external_logs()
+    if source == 'seegent':
+        merged = logs
+    elif source:
+        merged = [l for l in logs if l.get('source') == source] + \
+                 [e for e in ext if e.get('source') == source]
+    else:
+        merged = logs + ext
+    if status:
+        merged = [l for l in merged if l.get('status') == status]
+    if agent_id:
+        merged = [l for l in merged
+                  if l.get('agentId') == agent_id or l.get('engineId') == agent_id
+                  or l.get('callerId') == agent_id]
+    merged.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
+    return merged[:limit]
 
 # ===== 项目追踪 =====
 
@@ -1438,7 +2572,6 @@ def _scan_local_tokens():
     def _real_tokens(rec):
         return (rec.get('input', 0) + rec.get('output', 0)
                 + rec.get('cache_read', 0) + rec.get('cache_write', 0))
-
     tools_map = {}  # tool_id -> aggregates
     global_by_model = {}     # model_name -> total tokens (across all tools)
     global_model_records = {} # model_name -> record count
@@ -2064,7 +3197,51 @@ class Handler(SimpleHTTPRequestHandler):
         if self.path == '/api/skills':
             return self._serve_json(_load_json(SKILLS_FILE, DEFAULT_SKILLS))
         if self.path == '/api/roles':
-            return self._serve_json(_load_json(ROLES_FILE, DEFAULT_ROLES))
+            return self._serve_json(_handle_roles_get())
+        if self.path == '/api/team':
+            return self._serve_json(_scan_team_source(_team_path()))
+        if self.path == '/api/settings/paths':
+            return _handle_paths_config(self)
+        if self.path.startswith('/api/fs/browse'):
+            return _handle_fs_browse(self)
+        if self.path.startswith('/api/team/tree'):
+            from urllib.parse import urlparse, parse_qs
+            qs = parse_qs(urlparse(self.path).query)
+            rel = qs.get('rel', [''])[0]
+            return self._serve_json(_scan_team_tree(rel))
+        if self.path.startswith('/api/team/file'):
+            from urllib.parse import urlparse, parse_qs
+            qs = parse_qs(urlparse(self.path).query)
+            rel = qs.get('rel', [''])[0]
+            data, err = _read_team_file(rel)
+            if err:
+                return self._serve_json({'error': err}, 400)
+            return self._serve_json(data)
+        if self.path.startswith('/api/team/folder-text'):
+            from urllib.parse import urlparse, parse_qs
+            qs = parse_qs(urlparse(self.path).query)
+            rel = qs.get('rel', [''])[0]
+            return self._serve_json({'text': _collect_team_folder_text(rel)})
+        # 技能模块文件夹树（与团队同款，根目录/接口前缀换成 skill）
+        if self.path.startswith('/api/skill/tree') or self.path.startswith('/api/skill/file'):
+            from urllib.parse import urlparse, parse_qs
+            qs = parse_qs(urlparse(self.path).query)
+            sid = qs.get('rel', [''])[0]
+            if self.path.startswith('/api/skill/tree'):
+                return self._serve_json(_scan_skill_tree(sid))
+            data, err = _read_skill_file(sid)
+            if err:
+                return self._serve_json({'error': err}, 400)
+            return self._serve_json(data)
+        if self.path.startswith('/api/skill/folder-text'):
+            from urllib.parse import urlparse, parse_qs
+            qs = parse_qs(urlparse(self.path).query)
+            rel = qs.get('rel', [''])[0]
+            return self._serve_json({'text': _collect_skill_folder_text(rel)})
+        if self.path == '/api/personal-skills':
+            sp = _skill_path()
+            skills = _scan_skill_source(sp)
+            return self._serve_json({'root': sp, 'skills': skills, 'empty': not skills})
         if self.path == '/api/skilllib/index':
             return self._serve_json(_load_json(SKILLLIB_INDEX_FILE, {'version': 1, 'sources': [], 'skills': []}))
         if self.path.startswith('/api/skilllib/tree') or self.path.startswith('/api/skilllib/file'):
@@ -2099,12 +3276,21 @@ class Handler(SimpleHTTPRequestHandler):
             return self._handle_board_projects_get()
         if self.path.startswith('/api/board/bind/') and self.command == 'DELETE':
             return self._handle_board_bind_delete()
+        # 本地文件看板：监视目录
+        if self.path == '/api/filewatch':
+            return self._handle_filewatch_get()
+        if self.path == '/api/filewatch/pick':
+            return self._handle_filewatch_pick()
+        if self.path.startswith('/api/filewatch/') and self.command == 'DELETE':
+            return self._handle_filewatch_delete()
         # Agent 文件变更红点通知
         if self.path == '/api/file-changes':
             from urllib.parse import urlparse, parse_qs
             qs = parse_qs(urlparse(self.path).query)
             workspace = qs.get('workspace', [None])[0]
             return self._serve_json({'changes': _get_file_changes(workspace)})
+        if self.path == '/api/recent-activity':
+            return self._handle_recent_activity()
         if self.path == '/api/file-changes/clear' and self.command == 'POST':
             body = self._read_body()
             try:
@@ -2130,7 +3316,8 @@ class Handler(SimpleHTTPRequestHandler):
             limit = int(qs.get('limit', [100])[0])
             agent_id = qs.get('agent', [None])[0]
             status = qs.get('status', [None])[0]
-            return self._serve_json({'logs': _get_logs(limit=limit, agent_id=agent_id, status=status)})
+            source = qs.get('source', [None])[0]
+            return self._serve_json({'logs': _merge_all_logs(limit=limit, agent_id=agent_id, status=status, source=source)})
         if self.path.startswith('/api/usage'):
             from urllib.parse import urlparse, parse_qs
             qs = parse_qs(urlparse(self.path).query)
@@ -2273,7 +3460,21 @@ class Handler(SimpleHTTPRequestHandler):
         if self.path == '/api/skills':
             return self._save_json_endpoint(SKILLS_FILE)
         if self.path == '/api/roles':
-            return self._save_json_endpoint(ROLES_FILE)
+            # 只持久化用户自定义角色 + 当前选择；团队角色是动态派生的，不入文件
+            body = self._read_body()
+            if not isinstance(body, dict):
+                body = {}
+            saved = body.get('roles', []) or []
+            user_custom = [
+                r for r in saved
+                if isinstance(r, dict) and r.get('id') not in BUILTIN_ROLE_IDS and not r.get('isTeam')
+            ]
+            _save_json(ROLES_FILE, {'roles': user_custom, 'activeRole': body.get('activeRole', '') or ''})
+            return self._serve_json({'ok': True})
+        if self.path == '/api/open-in-finder':
+            return _handle_open_in_finder(self)
+        if self.path == '/api/settings/paths':
+            return _handle_paths_config(self)
         if self.path == '/api/skilllib/sources':
             body = self._read_body()
             if not isinstance(body, dict):
@@ -2346,6 +3547,8 @@ class Handler(SimpleHTTPRequestHandler):
             return self._handle_datasources_bind()
         if self.path == '/api/board/bind':
             return self._handle_board_bind_post()
+        if self.path == '/api/filewatch':
+            return self._handle_filewatch_post()
         if self.path == '/api/feishu-credentials':
             return self._handle_feishu_credentials_post()
         self.send_error(404)
@@ -2686,6 +3889,12 @@ class Handler(SimpleHTTPRequestHandler):
         if not sidecar_url:
             return self._serve_sse_error('侧车引擎未配置 url')
 
+        # 用引擎名作为日志中的智能体身份，使侧车 Agent 出现在「操作日志」模块
+        agent_name = engine_cfg.get('name', 'Sidecar')
+        agent_id = engine_cfg.get('name', 'sidecar').lower().replace(' ', '-')
+        model = req_data.get('model', '') or engine_cfg.get('model', '')
+        _log_start = time.time()
+
         # 构造转发请求体
         forward_body = json.dumps({
             'prompt': req_data.get('prompt', ''),
@@ -2711,9 +3920,39 @@ class Handler(SimpleHTTPRequestHandler):
                         break
                     self.wfile.write(chunk)
                     self.wfile.flush()
+            _append_log({
+                'type': 'chat',
+                'agentId': agent_id,
+                'engineId': agent_id,
+                'agentName': agent_name,
+                'engineName': agent_name,
+                'model': model,
+                'status': 'success',
+                'duration': round(time.time() - _log_start, 1),
+            })
         except urllib.error.URLError:
+            _append_log({
+                'type': 'chat',
+                'agentId': agent_id,
+                'engineId': agent_id,
+                'agentName': agent_name,
+                'engineName': agent_name,
+                'model': model,
+                'status': 'error',
+                'error': f'侧车服务不可用 ({sidecar_url})',
+            })
             self._serve_sse_error(f'侧车服务不可用 ({sidecar_url}), 请先启动对应服务')
         except Exception as e:
+            _append_log({
+                'type': 'chat',
+                'agentId': agent_id,
+                'engineId': agent_id,
+                'agentName': agent_name,
+                'engineName': agent_name,
+                'model': model,
+                'status': 'error',
+                'error': str(e)[:200],
+            })
             self._serve_sse_error(f'侧车引擎错误: {e}')
 
     def _handle_cli_engine(self, req_data, engine_cfg):
@@ -2729,6 +3968,11 @@ class Handler(SimpleHTTPRequestHandler):
             return self._serve_sse_error('CLI 引擎未配置 command')
         if not prompt:
             return self._serve_sse_error('缺少 prompt')
+
+        # 用引擎名作为日志中的智能体身份，使 Cursor / Claude / Hermes 等 CLI 工具出现在「操作日志」模块
+        agent_name = engine_cfg.get('name', 'CLI')
+        agent_id = engine_cfg.get('name', 'cli').lower().replace(' ', '-')
+        _log_start = time.time()
 
         cmd = [command] + args + [prompt]
         timeout = engine_cfg.get('timeout', 120)
@@ -2753,19 +3997,69 @@ class Handler(SimpleHTTPRequestHandler):
 
             if proc.returncode != 0:
                 stderr = proc.stderr.read()
+                _append_log({
+                    'type': 'cli',
+                    'agentId': agent_id,
+                    'engineId': agent_id,
+                    'agentName': agent_name,
+                    'engineName': agent_name,
+                    'status': 'error',
+                    'duration': round(time.time() - _log_start, 1),
+                    'error': (stderr or f'退出码: {proc.returncode}')[:200],
+                })
                 self._serve_sse('error', {
                     'code': 'CLI_ERROR',
                     'message': stderr or f'退出码: {proc.returncode}'
+                })
+            else:
+                _append_log({
+                    'type': 'cli',
+                    'agentId': agent_id,
+                    'engineId': agent_id,
+                    'agentName': agent_name,
+                    'engineName': agent_name,
+                    'status': 'success',
+                    'duration': round(time.time() - _log_start, 1),
                 })
 
             self._serve_sse('done', {})
 
         except subprocess.TimeoutExpired:
             proc.kill()
+            _append_log({
+                'type': 'cli',
+                'agentId': agent_id,
+                'engineId': agent_id,
+                'agentName': agent_name,
+                'engineName': agent_name,
+                'status': 'error',
+                'duration': round(time.time() - _log_start, 1),
+                'error': f'CLI 引擎超时 ({timeout}s)',
+            })
             self._serve_sse_error(f'CLI 引擎超时 ({timeout}s)')
         except FileNotFoundError:
+            _append_log({
+                'type': 'cli',
+                'agentId': agent_id,
+                'engineId': agent_id,
+                'agentName': agent_name,
+                'engineName': agent_name,
+                'status': 'error',
+                'duration': round(time.time() - _log_start, 1),
+                'error': f'未找到命令: {command}',
+            })
             self._serve_sse_error(f'未找到命令: {command}')
         except Exception as e:
+            _append_log({
+                'type': 'cli',
+                'agentId': agent_id,
+                'engineId': agent_id,
+                'agentName': agent_name,
+                'engineName': agent_name,
+                'status': 'error',
+                'duration': round(time.time() - _log_start, 1),
+                'error': str(e)[:200],
+            })
             self._serve_sse_error(f'CLI 引擎错误: {e}')
 
     def _handle_agent_engine(self, req_data, engine_cfg):
@@ -3242,6 +4536,9 @@ class Handler(SimpleHTTPRequestHandler):
 
     BOARD_BINDINGS_FILE = os.path.join(DATA_DIR, '.seegent-board-bindings.json')
 
+    # 本地文件看板：监视目录配置（与「绑定」彻底分离）
+    FILEWATCH_FILE = os.path.join(DATA_DIR, '.seegent-filewatch.json')
+
     # 待办标记：仅识别出现在行首的标记（避免误匹配代码示例）
     TODO_PREFIX_PATTERNS = ('- [ ]', '- []', '* [ ]', '+ [ ]', 'todo:', 'todo：', '待办:', '待办：', 'fixme:', 'fixme：')
     TODO_LINE_START_WORDS = ('todo', '待办', 'fixme')  # 整行以这些词开头（忽略 - * # 前缀）
@@ -3428,6 +4725,69 @@ class Handler(SimpleHTTPRequestHandler):
             projects.append(project)
         self._serve_json({'projects': projects})
 
+    def _load_filewatch(self):
+        """读取本地文件看板的监视目录配置；首次使用自动把工作区根目录加进去。"""
+        cfg = _load_json(self.FILEWATCH_FILE, None)
+        if not cfg or 'roots' not in cfg or not isinstance(cfg.get('roots'), list):
+            default_root = os.path.dirname(BASE_DIR)  # /Users/shiyuanchang/Seegent
+            cfg = {
+                'roots': [{
+                    'id': 'rt_workspace',
+                    'name': os.path.basename(default_root.rstrip('/')) or '工作区',
+                    'path': default_root,
+                    'addedAt': int(time.time() * 1000),
+                    'default': True,
+                }]
+            }
+            _save_json(self.FILEWATCH_FILE, cfg)
+        return cfg
+
+    def _handle_recent_activity(self):
+        """GET /api/recent-activity — 扫描「本地文件看板」监视目录里的真实文件，
+        取最近修改的若干文档/代码文件作为「最近动态」。不再依赖文件夹绑定。"""
+        import heapq
+        roots = self._load_filewatch().get('roots', [])
+        EXCLUDE_DIRS = {'.git', '.workbuddy', 'node_modules', '__pycache__', '.venv', 'venv',
+                        '.idea', '.vscode', 'UNKNOWN.egg-info', '.svn',
+                        'workbuddy-sidecar', 'build', 'dist', '.next', '.cache'}
+        EXCLUDE_EXT = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp', '.mp4', '.mov',
+                       '.webm', '.avi', '.mkv', '.mp3', '.wav', '.flac', '.zip', '.tar',
+                       '.gz', '.7z', '.rar', '.tgz', '.heic', '.psd', '.ai'}
+        MAX_DEPTH = 8
+        LIMIT = 200
+        candidates = []
+        for r in roots:
+            root = os.path.expanduser(r.get('path', ''))
+            if not root or not os.path.isdir(root):
+                continue
+            proj_name = r.get('name') or os.path.basename(root.rstrip('/')) or root
+            root_base = root.rstrip(os.sep)
+            for dirpath, dirnames, filenames in os.walk(root):
+                # 剪枝：排除大/缓存/版本目录
+                dirnames[:] = [d for d in dirnames
+                               if d not in EXCLUDE_DIRS and not d.startswith('.~')]
+                depth = dirpath[len(root_base):].count(os.sep)
+                if depth >= MAX_DEPTH:
+                    dirnames[:] = []
+                for fn in filenames:
+                    if fn.startswith('.'):
+                        continue
+                    ext = os.path.splitext(fn)[1].lower()
+                    if ext in EXCLUDE_EXT:
+                        continue
+                    fp = os.path.join(dirpath, fn)
+                    try:
+                        mtime = os.path.getmtime(fp)
+                    except OSError:
+                        continue
+                    rel = os.path.relpath(fp, root)
+                    candidates.append((mtime, proj_name, rel))
+        top = heapq.nlargest(LIMIT, candidates, key=lambda x: x[0])
+        items = [{'project': p, 'path': r, 'mtime': int(mt)} for mt, p, r in top]
+        self._serve_json({'items': items,
+                          'roots': [{'id': x.get('id'), 'name': x.get('name'), 'path': x.get('path')}
+                                    for x in roots]})
+
     def _handle_board_bind_post(self):
         """POST /api/board/bind — 绑定文件夹到看板（自动扫描待办文件）"""
         body = self._read_body()
@@ -3458,6 +4818,74 @@ class Handler(SimpleHTTPRequestHandler):
             del bindings['bindings'][folder_id]
             _save_json(self.BOARD_BINDINGS_FILE, bindings)
         self._serve_json({'ok': True})
+
+    # ===== 本地文件看板：监视目录 CRUD =====
+
+    def _handle_filewatch_get(self):
+        """GET /api/filewatch — 返回当前监视目录列表"""
+        cfg = self._load_filewatch()
+        self._serve_json({'roots': cfg.get('roots', [])})
+
+    def _handle_filewatch_post(self):
+        """POST /api/filewatch — 新增一个本地监视目录。Body: {path, name?}"""
+        body = self._read_body()
+        if not body:
+            return
+        path = (body.get('path') or '').strip()
+        if not path:
+            self._serve_json({'error': 'path 不能为空'}, 400)
+            return
+        path = os.path.expanduser(path)
+        if not os.path.isdir(path):
+            self._serve_json({'error': '路径不存在或不是目录：' + path}, 400)
+            return
+        cfg = self._load_filewatch()
+        roots = cfg.setdefault('roots', [])
+        norm = os.path.normpath(path)
+        if any(os.path.normpath(r.get('path', '')) == norm for r in roots):
+            self._serve_json({'ok': True, 'exists': True, 'roots': roots})
+            return
+        rid = 'rt_' + str(int(time.time() * 1000))
+        name = (body.get('name') or '').strip() or os.path.basename(norm.rstrip('/')) or norm
+        roots.append({'id': rid, 'name': name, 'path': norm, 'addedAt': int(time.time() * 1000)})
+        _save_json(self.FILEWATCH_FILE, cfg)
+        self._serve_json({'ok': True, 'roots': roots})
+
+    def _handle_filewatch_delete(self):
+        """DELETE /api/filewatch/:id — 移除一个监视目录"""
+        parts = self.path.rstrip('/').split('/')
+        rid = parts[-1] if len(parts) >= 3 and parts[-1] not in ('api', 'filewatch') else None
+        if not rid:
+            self._serve_json({'error': 'Missing id'}, 400)
+            return
+        cfg = self._load_filewatch()
+        roots = cfg.get('roots', [])
+        before = len(roots)
+        cfg['roots'] = [r for r in roots if r.get('id') != rid]
+        _save_json(self.FILEWATCH_FILE, cfg)
+        self._serve_json({'ok': True, 'removed': before != len(cfg['roots']), 'roots': cfg['roots']})
+
+    def _handle_filewatch_pick(self):
+        """GET /api/filewatch/pick — 调用 macOS 原生选目录弹窗，返回真实路径。
+        仅本机运行时有效；用户取消或非 macOS 时返回错误，前端回退到手动填路径。"""
+        try:
+            result = subprocess.run(
+                ['osascript', '-e',
+                 'POSIX path of (choose folder with prompt "选择要加入本地文件看板的目录")'],
+                capture_output=True, text=True, timeout=180)
+            if result.returncode != 0:
+                # 用户取消或 AppleScript 不可用
+                self._serve_json({'error': '已取消或未选择目录'}, 400)
+                return
+            path = result.stdout.strip()
+            if not path:
+                self._serve_json({'error': '未选择目录'}, 400)
+                return
+            self._serve_json({'path': path})
+        except subprocess.TimeoutExpired:
+            self._serve_json({'error': '选择超时'}, 400)
+        except Exception as e:
+            self._serve_json({'error': '无法调用系统选目录：' + str(e)}, 500)
 
     # ===== 数据源注册表 CRUD =====
 
@@ -5187,7 +6615,7 @@ def run_server(host='127.0.0.1', port=8765, data_dir=None, open_browser=False):
     _load_json(PROMPTS_FILE, DEFAULT_PROMPTS)
     _load_json(WORKSPACES_FILE, DEFAULT_WORKSPACES)
     _load_json(SKILLS_FILE, DEFAULT_SKILLS)
-    _load_json(ROLES_FILE, DEFAULT_ROLES)
+    _load_json(ROLES_FILE, {"roles": _preset_roles(), "activeRole": ""})
     _load_json(LOG_FILE, {'logs': []})
     _load_json(USAGE_FILE, {'usage': []})
 

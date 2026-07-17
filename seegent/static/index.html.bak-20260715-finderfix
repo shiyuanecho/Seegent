@@ -1925,28 +1925,6 @@ body {
 .log-filter-bar select { font-size:12px; padding:6px 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg-card); color:var(--text); font-family:var(--font); outline:none; cursor:pointer; transition:all var(--transition-fast); }
 .log-filter-bar select:hover { border-color:var(--accent); }
 .log-filter-bar select:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-light); }
-.log-src-badge { font-size:10px; padding:1px 7px; border-radius:10px; background:var(--bg-surface); color:var(--text-tertiary); border:1px solid var(--border); white-space:nowrap; }
-.log-src-badge[data-src="claude-code"] { color:#d97757; border-color:#d97757; background:rgba(217,119,87,0.08); }
-.log-src-badge[data-src="workbuddy"] { color:#3aa675; border-color:#3aa675; background:rgba(58,166,117,0.08); }
-.log-src-badge[data-src="codex"] { color:#6f8cff; border-color:#6f8cff; background:rgba(111,140,255,0.08); }
-.log-src-badge[data-src="qoderwork"] { color:#c879d9; border-color:#c879d9; background:rgba(200,121,217,0.08); }
-.log-src-badge[data-src="seegent"] { color:var(--accent); border-color:var(--accent); background:var(--accent-light); }
-.log-ov { display:flex; flex-direction:column; gap:12px; margin-bottom:16px; }
-.log-ov-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; }
-.log-ov-card { background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
-.log-ov-card .v { font-size:22px; font-weight:600; color:var(--text); line-height:1.2; }
-.log-ov-card .k { font-size:11px; color:var(--text-tertiary); margin-top:4px; }
-.log-ov-card .sub { font-size:11px; color:var(--text-secondary); margin-top:2px; }
-.log-ov-summary { font-size:13px; color:var(--text-secondary); background:var(--bg-surface); border:1px solid var(--border); border-radius:10px; padding:10px 14px; line-height:1.6; }
-.log-ov-summary b { color:var(--text); font-weight:600; }
-.log-proj-group { margin-bottom:18px; }
-.log-proj-head { display:flex; align-items:center; gap:8px; padding:8px 12px; background:var(--bg-surface); border:1px solid var(--border); border-radius:8px; margin-bottom:4px; position:sticky; top:0; z-index:2; }
-.log-proj-head .pn { font-size:13px; font-weight:600; color:var(--text); }
-.log-proj-head .pc { font-size:11px; color:var(--text-tertiary); }
-.log-artifact { display:inline-flex; align-items:center; gap:3px; font-size:10px; padding:1px 6px; background:var(--bg-surface); border:1px solid var(--border); border-radius:4px; color:var(--text-secondary); margin:2px 4px 0 0; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.log-more-btn { font-size:12px; padding:7px 18px; border:1px solid var(--border); border-radius:8px; background:var(--bg-card); color:var(--accent); cursor:pointer; }
-.log-more-btn:hover { background:var(--accent-light); }
-.log-cost { font-size:10px; color:var(--text-tertiary); }
 .log-refresh-btn { display:inline-flex; align-items:center; gap:4px; padding:6px 14px; border:1px solid var(--border); border-radius:8px; background:var(--bg-card); cursor:pointer; font-size:12px; color:var(--text-secondary); font-family:var(--font); transition:all var(--transition-fast); }
 .log-refresh-btn:hover { background:var(--bg-hover); color:var(--text); }
 .log-refresh-btn svg { width:14px; height:14px; }
@@ -2219,47 +2197,6 @@ body {
 .field-cb:hover { background:var(--bg-hover); }
 .field-cb input[type=checkbox] { width:16px; height:16px; accent-color:var(--accent); cursor:pointer; }
 .field-cb em { font-style:normal; font-size:11px; color:var(--text-tertiary); margin-left:4px; }
-
-
-/* ===== 看板改版：网格化，减少纵向滚动 ===== */
-.board-mgmt { overflow: hidden; display: flex; flex-direction: column; }
-.board-dash {
-  flex: 1; min-height: 0;
-  display: flex; flex-direction: column; gap: 16px;
-  overflow-y: auto;
-}
-.board-col { display: flex; flex-direction: column; gap: 16px; min-height: 0; min-width: 0; }
-.board-panel {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  display: flex; flex-direction: column;
-  min-height: 0; overflow: hidden;
-}
-/* 看板改为上下堆叠：最近动态（含本地文件看板）在上为主，业务数据在下为次 */
-.board-panel--filewatch { flex: 0 0 auto; max-height: 320px; }
-.board-panel--activity { flex: 1 1 auto; min-height: 70vh; }
-.board-panel--data { flex: 0 0 auto; min-height: 260px; }
-.board-panel-head {
-  flex-shrink: 0;
-  display: flex; align-items: center; gap: 6px;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  font-size: 13px; font-weight: 600; color: var(--text-secondary);
-}
-.board-panel-head-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-.board-head-btn {
-  background: none; border: none; cursor: pointer; padding: 4px;
-  color: var(--text-tertiary); border-radius: 6px; display: inline-flex; align-items: center;
-}
-.board-head-btn:hover { background: var(--bg-hover); color: var(--text); }
-.board-panel-body { padding: 14px 16px; overflow-y: auto; min-height: 0; flex: 1; }
-.board-panel--data #dash-datasources { margin-bottom: 8px; }
-@media (max-width: 920px) {
-  .board-mgmt { overflow-y: auto; }
-  .board-dash { display: flex; flex-direction: column; flex: none; height: auto; }
-  .board-panel { min-height: 240px; }
-}
 
 /* ===== 配置提示框 ===== */
 .config-hint { margin:0 0 18px; padding:14px 16px; border:1px solid var(--border); border-radius:10px; background:var(--bg-surface); font-size:12.5px; color:var(--text-secondary); line-height:1.7; }
@@ -2958,9 +2895,10 @@ body {
       <button class="header-seg" data-module="team">团队</button>
       <button class="header-seg" data-module="skill">技能</button>
       <button class="header-seg" data-module="skilllib">技能库</button>
-      <button class="header-seg" data-module="config">设置</button>
+      <button class="header-seg" data-module="config">配置</button>
       <button class="header-seg" data-module="usage">用量</button>
       <button class="header-seg" data-module="log">日志</button>
+      <button class="header-seg" data-module="settings">设置</button>
     </div>
   </header>
 
@@ -3075,46 +3013,30 @@ body {
       </div>
 
       <!-- 看板模块（数据优先：数据源 → 项目绑定） -->
-      <div id="board-module" class="module-content active">        <div class="mgmt-panel board-mgmt">
+      <div id="board-module" class="module-content active">
+        <div class="mgmt-panel">
           <div class="page-header">
-            <h2>看板</h2>
-            <p>业务数据 + 最近动态。</p>
+	            <h2>看板</h2>
+	            <p>项目信息 + 业务数据。右键文件夹 → 绑定到看板。</p>
           </div>
-          <div class="board-dash">
-            <section class="board-panel board-panel--filewatch">
-              <div class="board-panel-head" style="cursor:pointer" onclick="toggleFilewatch()">
-                <svg width="16" height="16"><use href="#icon-folder-open"/></svg> 本地文件看板
-                <div class="board-panel-head-actions">
-                  <button class="dash-add-btn" onclick="event.stopPropagation();filewatchPick()" title="调用系统选目录弹窗，自动拿真实路径"><span class="app-icon app-icon--sm"><svg width="14" height="14"><use href="#icon-plus"/></svg></span> 系统选目录</button>
-                  <span class="fw-chevron" id="fw-chevron" style="font-size:12px">▾</span>
-                </div>
-              </div>
-              <div class="board-panel-body" id="fw-body" style="display:none">
-                <div class="fw-roots" id="fw-roots"></div>
-                <div class="fw-hint" style="font-size:11px;color:var(--text-tertiary);margin-top:8px;line-height:1.5">「最近动态」会扫描下面这些目录里最近改动的文件（不依赖文件夹绑定）。点「系统选目录」添加要监视的本地目录。</div>
-              </div>
-            </section>
-            <section class="board-panel board-panel--activity">
-              <div class="board-panel-head">
-                <svg width="16" height="16"><use href="#icon-data"/></svg> 最近动态
-              </div>
-              <div class="board-panel-body" id="dash-recent-activity"></div>
-            </section>
-            <section class="board-panel board-panel--data">
-              <div class="board-panel-head">
-                <svg width="16" height="16"><use href="#icon-data"/></svg> 业务数据
-                <div class="board-panel-head-actions">
-                  <button class="dash-add-btn" onclick="openAddDatasourceModal()"><span class="app-icon app-icon--sm"><svg width="16" height="16"><use href="#icon-plus"/></svg></span> 添加数据源</button>
-                  <button onclick="loadDashboard()" title="刷新所有数据" class="board-head-btn"><span class="app-icon app-icon--sm"><svg width="18" height="18"><use href="#icon-refresh"/></svg></span></button>
-                </div>
-              </div>
-              <div class="board-panel-body">
-                <div id="dash-datasources"></div>
-                <div id="dash-cards"></div>
-              </div>
-            </section>
-          </div>
-        </div>      </div>
+		  <div class="dash-section-title" style="margin-top:0">
+		    <svg width="16" height="16"><use href="#icon-folder"/></svg> 项目信息
+		    <button onclick="refreshBoardProjects()" title="刷新项目信息" style="margin-left:auto;background:none;border:none;cursor:pointer;padding:4px;color:var(--text-tertiary);border-radius:6px" onmouseenter="this.style.background='var(--bg-hover)'" onmouseleave="this.style.background='none'"><span class="app-icon app-icon--sm"><svg width="16" height="16"><use href="#icon-refresh"/></svg></span></button>
+		  </div>
+		  <div id="dash-projects"></div>
+		<div class="dash-section-title" style="margin-top:18px"><svg width="16" height="16"><use href="#icon-check"/></svg> 待办汇总 <span id="dash-todo-filter" style="margin-left:auto;display:flex;gap:6px"></span></div>
+		<div id="dash-todo-summary"></div>
+		<div class="dash-section-title" style="margin-top:18px"><svg width="16" height="16"><use href="#icon-data"/></svg> 最近动态</div>
+		<div id="dash-recent-activity"></div>
+	          <div class="dash-section-title"><svg width="16" height="16"><use href="#icon-data"/></svg> 业务数据</div>
+	          <div class="dash-toolbar">
+	            <button class="dash-add-btn" onclick="openAddDatasourceModal()"><span class="app-icon app-icon--sm"><svg width="16" height="16"><use href="#icon-plus"/></svg></span> 添加数据源</button>
+	            <button onclick="loadDashboard()" title="刷新所有数据" style="background:none;border:none;cursor:pointer;padding:4px;color:var(--text-tertiary);border-radius:6px" onmouseenter="this.style.background='var(--bg-hover)'" onmouseleave="this.style.background='none'"><span class="app-icon app-icon--sm"><svg width="18" height="18"><use href="#icon-refresh"/></svg></span></button>
+	          </div>
+          <div id="dash-datasources"></div>
+          <div id="dash-cards"></div>
+        </div>
+      </div>
 
       <!-- 技能库浏览器模块 -->
       <div id="skilllib-module" class="module-content">
@@ -3155,45 +3077,35 @@ body {
         </div>
       </div>
 
-      <!-- 团队模块（个人业务 / 工作流，数据源 = 拾元/syteam，按文件夹树浏览） -->
+      <!-- 团队模块（个人虚拟组织架构，数据源 = 拾元/syteam） -->
       <div id="team-module" class="module-content">
         <style>
           #team-module { padding: 0; }
           .team-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:28px 40px 16px; }
           .team-header h2 { font-size:var(--text-2xl); font-weight:700; margin:0 0 6px; }
           .team-header p { font-size:var(--text-sm); color:var(--text-secondary); margin:0; max-width:680px; line-height:1.6; }
-          .team-header-actions { display:flex; gap:8px; flex-shrink:0; flex-wrap:wrap; justify-content:flex-end; }
-          .team-breadcrumb { display:flex; align-items:center; gap:6px; padding:0 40px 12px; font-size:13px; color:var(--text-secondary); flex-wrap:wrap; }
-          .team-crumb { cursor:pointer; color:var(--accent); }
-          .team-crumb:hover { text-decoration:underline; }
-          .team-crumb.current { color:var(--text); cursor:default; font-weight:600; }
-          .team-crumb-sep { color:var(--text-tertiary); }
-          .team-layout2 { display:grid; grid-template-columns:1fr 1fr; flex:1; min-height:0; border-top:1px solid var(--border); }
-          .team-entries { padding:20px 24px; overflow-y:auto; min-height:0; display:flex; flex-direction:column; gap:10px; }
-          .team-entry { border:1px solid var(--border); border-radius:12px; padding:12px 16px; background:var(--bg-card); display:flex; align-items:center; gap:12px; cursor:pointer; transition:all .15s; }
-          .team-entry:hover { border-color:var(--accent); }
-          .team-entry-emoji { font-size:22px; flex-shrink:0; }
-          .team-entry-main { min-width:0; flex:1; }
-          .team-entry-name { font-size:14px; font-weight:600; margin:0 0 2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-          .team-entry-desc { font-size:12px; color:var(--text-secondary); margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-          .team-entry-act { flex-shrink:0; }
-          .team-entry-btn { font-size:12px; padding:5px 10px; border:1px solid var(--border); background:var(--bg-card); color:var(--text); border-radius:7px; cursor:pointer; }
-          .team-entry-btn:hover { border-color:var(--accent); color:var(--accent); }
-          .team-entry-btn.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
-          .team-entry-btn.primary:hover { filter:brightness(1.08); color:#fff; }
-          /* 树状节点（展开/折叠） */
-          .team-node { display:flex; align-items:center; gap:8px; padding:6px 10px; border-radius:8px; cursor:pointer; font-size:14px; }
-          .team-node:hover { background:var(--bg-hover); }
-          .team-dir > .team-entry-name { font-weight:600; }
-          .team-caret { width:14px; flex-shrink:0; text-align:center; color:var(--text-tertiary); font-size:11px; line-height:1; }
-          .team-node > .team-entry-emoji { font-size:15px; flex-shrink:0; }
-          .team-node > .team-entry-name { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-          .team-entry-act { flex-shrink:0; opacity:0; transition:opacity .12s; }
-          .team-node:hover > .team-entry-act { opacity:1; }
+          .team-layout { display:grid; grid-template-columns:240px 1fr 420px; flex:1; min-height:0; border-top:1px solid var(--border); }
+          .team-side { border-right:1px solid var(--border); padding:16px; overflow-y:auto; min-height:0; }
+          .team-groups-title { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); font-weight:600; margin-bottom:10px; }
+          .team-group-link { padding:8px 12px; border-radius:8px; cursor:pointer; font-size:13px; color:var(--text-secondary); margin-bottom:4px; display:flex; align-items:center; justify-content:space-between; }
+          .team-group-link:hover { background:var(--bg-hover); color:var(--text); }
+          .team-group-link.active { background:var(--accent-light); color:var(--accent); font-weight:600; }
+          .team-group-count { font-size:11px; color:var(--text-tertiary); }
+          .team-cards { padding:20px 24px; overflow-y:auto; min-height:0; display:flex; flex-direction:column; gap:12px; }
+          .team-card { border:1px solid var(--border); border-radius:12px; padding:14px 16px; cursor:pointer; background:var(--bg-card); transition:all .15s; display:flex; align-items:center; gap:12px; }
+          .team-card:hover { border-color:var(--accent); }
+          .team-card.active { border-color:var(--accent); background:var(--accent-light); }
+          .team-card-emoji { font-size:24px; flex-shrink:0; }
+          .team-card-main { min-width:0; }
+          .team-card-name { font-size:14px; font-weight:600; margin:0 0 2px; }
+          .team-card-title { font-size:12px; color:var(--text-secondary); margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
           .team-detail { border-left:1px solid var(--border); padding:20px 22px; overflow-y:auto; min-height:0; }
           .team-detail-empty { color:var(--text-tertiary); font-size:var(--text-sm); text-align:center; margin-top:40px; }
           .team-detail h3 { font-size:18px; margin:0 0 4px; display:flex; align-items:center; gap:8px; }
+          .team-detail .td-title { font-size:13px; color:var(--text-secondary); margin:0 0 14px; }
           .team-detail .td-section { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); font-weight:600; margin:16px 0 6px; }
+          .team-detail .td-body { font-size:13px; line-height:1.7; color:var(--text); white-space:pre-wrap; word-break:break-word; }
+          .team-detail .td-ds { display:inline-block; font-size:11px; padding:1px 7px; border-radius:4px; background:var(--accent-light); color:var(--accent); margin:2px 4px 2px 0; }
           /* 渲染后的 markdown 正文（团队/技能共用） */
           .md-render { font-size:13px; line-height:1.7; color:var(--text); word-break:break-word; }
           .md-render h1, .md-render h2, .md-render h3, .md-render h4 { margin:18px 0 8px; line-height:1.35; font-weight:700; }
@@ -3210,6 +3122,10 @@ body {
           .md-render th { background:var(--bg-surface); font-weight:600; }
           .md-render a { color:var(--accent); }
           .md-render hr { border:none; border-top:1px solid var(--border); margin:14px 0; }
+          /* 技能卡片右键菜单 */
+          .skillp-ctx { position:fixed; z-index:400; background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:6px; box-shadow:0 12px 40px rgba(0,0,0,.28); min-width:170px; }
+          .skillp-ctx-item { padding:8px 12px; border-radius:7px; cursor:pointer; font-size:13px; color:var(--text); display:flex; align-items:center; gap:8px; }
+          .skillp-ctx-item:hover { background:var(--bg-hover); color:var(--accent); }
           .team-actions { display:flex; gap:8px; margin-top:16px; }
           .team-btn { padding:8px 14px; border:1px solid var(--border); background:var(--bg-card); color:var(--text); border-radius:8px; cursor:pointer; font-size:13px; }
           .team-btn:hover { background:var(--bg-hover); border-color:var(--accent); }
@@ -3227,166 +3143,99 @@ body {
         <div class="team-header">
           <div>
             <h2>团队</h2>
-            <p>你的成熟业务 / 工作流——不再只是单个角色。数据源 = <span id="team-ds">拾元/syteam</span>，按文件夹树呈现；它把多个 skill 融合在一起，做成了能一键干活的完整业务线。点文件夹展开/折叠看里面，点文件看内容，或一键召唤整个文件夹到任意智能体平台。</p>
-          </div>
-          <div class="team-header-actions">
-            <button class="team-btn" onclick="openPathEdit('team')">更改文件夹</button>
-            <button class="team-btn" onclick="openTeamFolder()">在访达中打开团队文件夹</button>
+            <p>你的虚拟团队成员。每个角色 = 拾元/syteam 下一个 .md 文件，按子文件夹分组。点击成员查看职责，或一键召唤到任意智能体平台。</p>
           </div>
         </div>
-        <div class="team-layout2">
-          <main class="team-entries" id="team-entries"></main>
+        <div class="team-layout">
+          <aside class="team-side">
+            <div class="team-groups-title">分组</div>
+            <div id="team-groups" class="team-groups"></div>
+          </aside>
+          <main class="team-cards" id="team-cards"></main>
           <section class="team-detail" id="team-detail">
-            <div class="team-detail-empty">点击左侧文件查看内容</div>
+            <div class="team-detail-empty">点击左侧成员查看详情</div>
           </section>
         </div>
         <script>
-        // ========== 团队（Team）模块：文件夹树（展开/折叠）==========
-        // teamTree 仅保留 root 路径（召唤 / 访达用）；树结构用 teamRoot 节点树
-        let teamTree = { root: '' };
-        let teamRoot = null;
-        let teamNodeMap = {};
-
-        function teamNode(rel, name, isDir) {
-          const n = { rel: rel, name: name, isDir: isDir, children: null, expanded: false, loaded: false, displayName: '', emoji: '', description: '' };
-          teamNodeMap[rel || ''] = n;
-          return n;
-        }
+        // ========== 团队（Team）模块 ==========
+        let teamData = { root: '', groups: [], empty: true };
+        let teamActiveGroup = 'all';
+        let teamSelectedId = null;
 
         function initTeam() {
-          teamNodeMap = {};
-          teamRoot = teamNode('', '团队根目录', true);
-          teamRoot.expanded = true;
-          teamLoadChildren(teamRoot).then(() => teamRender());
-        }
-
-        // 懒加载某文件夹的子项（首次展开时调用），并登记节点
-        function teamLoadChildren(node) {
-          if (!node.isDir || node.loaded) return Promise.resolve();
-          return fetch('/api/team/tree?rel=' + encodeURIComponent(node.rel || ''))
+          fetch('/api/team')
             .then(r => r.json())
-            .then(d => {
-              if (node.rel === '' && d && d.root) teamTree.root = d.root;
-              const entries = (d && d.entries) || [];
-              node.children = entries.map(e => {
-                const n = teamNode(e.sub, e.name, e.isDir);
-                n.displayName = e.displayName || e.name;
-                n.emoji = e.emoji || (e.isDir ? '📁' : '📄');
-                n.description = e.description || e.name;
-                return n;
-              });
-              node.loaded = true;
-            })
-            .catch(() => { node.loaded = true; node.children = []; });
+            .then(d => { teamData = d || { root: '', groups: [], empty: true }; renderTeam(); })
+            .catch(() => { teamData = { root: '', groups: [], empty: true }; renderTeam(); });
         }
 
-        // 点击文件夹：展开 / 折叠（首次展开才去拉子项）
-        function teamToggle(rel) {
-          const node = teamNodeMap[rel || ''];
-          if (!node || !node.isDir) return;
-          node.expanded = !node.expanded;
-          if (node.expanded && !node.loaded) {
-            teamLoadChildren(node).then(() => teamRender());
-          } else {
-            teamRender();
-          }
+        function teamAllMembers() {
+          const all = [];
+          (teamData.groups || []).forEach(g => (g.members || []).forEach(m => all.push(m)));
+          return all;
         }
 
-        function teamRender() {
-          const en = document.getElementById('team-entries');
-          const de = document.getElementById('team-detail');
-          const ds = document.getElementById('team-ds'); if (ds) ds.textContent = (teamTree.root || TEAM_DEFAULT);
-          if (!teamRoot) { en.innerHTML = '<div class="team-empty">加载中…</div>'; return; }
-          if (teamRoot.loaded && (!teamRoot.children || !teamRoot.children.length)) {
-            const full = teamTree.root || TEAM_DEFAULT;
-            en.innerHTML = '<div class="team-empty">这个文件夹是空的。<br>在 <code>' + escapeHtml(full) + '</code> 下添加子文件夹或 .md 文件，刷新即可出现。</div>';
-            de.innerHTML = '<div class="team-detail-empty">点击左侧文件查看内容</div>';
+        function renderTeam() {
+          const groupsEl = document.getElementById('team-groups');
+          const cardsEl = document.getElementById('team-cards');
+          const detailEl = document.getElementById('team-detail');
+          if (!teamData || teamData.empty) {
+            groupsEl.innerHTML = '';
+            const root = teamData.root || '~/拾元/syteam';
+            cardsEl.innerHTML = '<div class="team-empty">还没有团队成员。<br>在 <code>' + escapeHtml(root) + '</code> 下新建一个 <code>.md</code> 文件，刷新即可出现。<br>子文件夹 = 分组（如 <code>syteam/数据组/小辉.md</code>）。</div>';
+            detailEl.innerHTML = '<div class="team-detail-empty">点击左侧成员查看详情</div>';
             return;
           }
-          let html = '';
-          function renderNode(node, depth) {
-            const pad = 10 + depth * 18;
-            if (node.isDir) {
-              const kids = (node.loaded && node.children) ? node.children : [];
-              const caret = kids.length ? (node.expanded ? '▾' : '▸') : '·';
-              html += '<div class="team-node team-dir" style="padding-left:' + pad + 'px" onclick=\'teamToggle(' + JSON.stringify(node.rel) + ')\'>'
-                + '<span class="team-caret">' + caret + '</span>'
-                + '<span class="team-entry-emoji">📁</span>'
-                + '<span class="team-entry-name">' + escapeHtml(node.name) + '</span>'
-                + '<span class="team-entry-act"><button class="team-entry-btn" onclick=\'event.stopPropagation();summonTeamFolder(' + JSON.stringify(node.rel) + ')\'>召唤</button></span>'
-                + '</div>';
-              if (node.expanded && kids.length) kids.forEach(c => renderNode(c, depth + 1));
-            } else {
-              const name = node.displayName || node.name;
-              html += '<div class="team-node team-file" style="padding-left:' + pad + 'px" onclick=\'teamOpenFile(' + JSON.stringify(node.rel) + ')\'>'
-                + '<span class="team-caret"></span>'
-                + '<span class="team-entry-emoji">' + escapeHtml(node.emoji || '📄') + '</span>'
-                + '<span class="team-entry-name">' + escapeHtml(name) + '</span>'
-                + '<span class="team-entry-act"><button class="team-entry-btn" onclick=\'event.stopPropagation();summonTeamFile(' + JSON.stringify(node.rel) + ',' + JSON.stringify(name) + ')\'>召唤</button></span>'
-                + '</div>';
-            }
-          }
-          (teamRoot.children || []).forEach(c => renderNode(c, 0));
-          en.innerHTML = html;
-          if (!de.innerHTML.trim()) de.innerHTML = '<div class="team-detail-empty">点击左侧文件查看内容</div>';
+          let gh = '<div class="team-group-link' + (teamActiveGroup === 'all' ? ' active' : '') + '" onclick="teamActiveGroup=\'all\';renderTeam()">全部<span class="team-group-count">' + teamAllMembers().length + '</span></div>';
+          teamData.groups.forEach(g => {
+            const gn = g.name;
+            gh += '<div class="team-group-link' + (teamActiveGroup === gn ? ' active' : '') + '" onclick="teamActiveGroup=' + JSON.stringify(gn).replace(/"/g, '&quot;') + ';renderTeam()">' + escapeHtml(gn) + '<span class="team-group-count">' + (g.members ? g.members.length : 0) + '</span></div>';
+          });
+          groupsEl.innerHTML = gh;
+          let members = [];
+          teamData.groups.forEach(g => { if (teamActiveGroup === 'all' || teamActiveGroup === g.name) members = members.concat(g.members || []); });
+          if (!members.length) { cardsEl.innerHTML = '<div class="team-empty">该分组下暂无成员。</div>'; return; }
+          let ch = '';
+          members.forEach(m => {
+            ch += '<div class="team-card' + (teamSelectedId === m.id ? ' active' : '') + '" onclick=\'renderTeamDetail(' + JSON.stringify(m.id) + ')\'>'
+              + '<div class="team-card-emoji">' + (m.emoji || '👤') + '</div>'
+              + '<div class="team-card-main"><p class="team-card-name">' + escapeHtml(m.name) + '</p>'
+              + (m.title ? '<p class="team-card-title">' + escapeHtml(m.title) + '</p>' : '') + '</div></div>';
+          });
+          cardsEl.innerHTML = ch;
         }
 
-        function teamOpenFile(sub) {
-          fetch('/api/team/file?rel=' + encodeURIComponent(sub))
-            .then(r => r.json())
-            .then(d => {
-              const de = document.getElementById('team-detail');
-              if (d.error) { de.innerHTML = '<div class="team-detail-empty">' + escapeHtml(d.error) + '</div>'; return; }
-              let html = '<h3>' + (d.lang === 'markdown' ? '📄' : '📃') + ' ' + escapeHtml(d.name) + '</h3>';
-              html += '<div class="td-section">路径</div><div style="font-size:12px;color:var(--text-secondary);word-break:break-all">' + escapeHtml(d.rel) + (d.truncated ? '（内容过长已截断）' : '') + '</div>';
-              if (d.lang === 'markdown') {
-                html += '<div class="td-section">内容</div><div class="md-render">' + renderMarkdown(d.content || '') + '</div>';
-              } else {
-                html += '<div class="td-section">内容</div><pre style="white-space:pre-wrap;word-break:break-word;font-size:12px;line-height:1.6;max-height:60vh;overflow:auto;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;padding:12px;">' + escapeHtml(d.content || '') + '</pre>';
-              }
-              html += '<div class="team-actions"><button class="team-btn team-btn-primary" onclick=\'summonTeamFile(' + JSON.stringify(d.rel) + ',' + JSON.stringify(d.name) + ')\'>召唤</button><button class="team-btn" onclick=\'openInFinder(' + JSON.stringify(d.path) + ')\'>在访达中打开文件</button></div>';
-              de.innerHTML = html;
-            })
-            .catch(() => { document.getElementById('team-detail').innerHTML = '<div class="team-detail-empty">读取失败</div>'; });
+        function renderTeamDetail(id) {
+          teamSelectedId = id;
+          const m = teamAllMembers().find(x => x.id === id);
+          const detailEl = document.getElementById('team-detail');
+          if (!m) { detailEl.innerHTML = '<div class="team-detail-empty">未找到成员</div>'; renderTeam(); return; }
+          let html = '<h3>' + (m.emoji || '👤') + ' ' + escapeHtml(m.name) + '</h3>';
+          if (m.title) html += '<p class="td-title">' + escapeHtml(m.title) + '</p>';
+          if (m.datasources && m.datasources.length) { html += '<div class="td-section">关联数据</div><div>' + m.datasources.map(d => '<span class="td-ds">' + escapeHtml(d) + '</span>').join('') + '</div>'; }
+          if (m.description) html += '<div class="td-section">简介</div><div class="md-render">' + renderMarkdown(m.description || '') + '</div>';
+          html += '<div class="td-section">完整设定</div><div class="md-render">' + renderMarkdown(m.content || '') + '</div>';
+          html += '<div class="team-actions"><button class="team-btn team-btn-primary" onclick=\'summonTeam(' + JSON.stringify(m.id) + ')\'>召唤</button></div>';
+          detailEl.innerHTML = html;
+          renderTeam();
         }
 
-        function summonTeamFolder(rel) {
-          const path = (teamTree.root || TEAM_DEFAULT) + (rel ? '/' + rel : '');
-          const localCmd = '请读取 ' + path + ' 整个文件夹（含所有子文件夹与文件），理解里面每个业务/工作流的设定（重点看各目录下的 SKILL.md），然后按需要帮我：<在这里写你的任务>';
-          fetch('/api/team/folder-text?rel=' + encodeURIComponent(rel || ''))
-            .then(r => r.json())
-            .then(d => {
-              const text = (d && d.text) || '';
-              const webCmd = (text ? text + '\n\n' : '') + '请按以上文件夹内容所定义的业务/工作流设定，帮我：<在这里写你的任务>';
-              showSummonModal('召唤文件夹：' + (rel || '团队根目录'), localCmd, webCmd);
-            });
+        function summonTeam(id) {
+          const m = teamAllMembers().find(x => x.id === id);
+          if (!m) return;
+          const rel = m.relPath || ('syteam/' + m.name + '.md');
+          const localCmd = '请读取 ./' + rel + ' 并按其设定扮演对应角色，帮我：<在这里写你的任务>';
+          const webCmd = (m.content || '') + '\n\n请按以上设定扮演「' + m.name + '」角色，帮我：<在这里写你的任务>';
+          showSummonModal('召唤：' + m.name, localCmd, webCmd);
         }
 
-        function summonTeamFile(sub, name) {
-          const path = (teamTree.root || TEAM_DEFAULT) + '/' + sub;
-          const localCmd = '请读取 ' + path + ' 并按其设定扮演/执行对应业务，帮我：<在这里写你的任务>';
-          fetch('/api/team/file?rel=' + encodeURIComponent(sub))
-            .then(r => r.json())
-            .then(d => {
-              const webCmd = (d && d.content ? d.content + '\n\n' : '') + '请按以上设定扮演「' + (name || sub) + '」业务，帮我：<在这里写你的任务>';
-              showSummonModal('召唤：' + (name || sub), localCmd, webCmd);
-            });
-        }
-
-        function openTeamFolder() {
-          const root = (teamTree && teamTree.root) || '';
-          if (!root) { alert('团队目录尚未加载，请稍候重试'); return; }
-          openInFinder(root);
-        }
-
-        // 通用召唤弹窗（团队复用）
         function showSummonModal(title, localCmd, webCmd) {
           const ov = document.createElement('div');
           ov.className = 'summon-overlay';
           ov.innerHTML = '<div class="summon-box">'
             + '<button class="summon-x" onclick="this.parentNode.parentNode.remove()">×</button>'
             + '<h3>' + escapeHtml(title) + '</h3>'
-            + '<p class="sb-sub">复制对应指令，粘贴到目标平台即可。Seegent 不执行，只负责把业务/工作流导出。</p>'
+            + '<p class="sb-sub">复制对应指令，粘贴到目标平台即可。Seegent 不执行，只负责把角色导出。</p>'
             + '<div class="td-section">本地智能体（Claude Code / WorkBuddy / Cursor，能读拾元/）</div>'
             + '<textarea class="summon-text" readonly onclick="this.select()">' + escapeHtml(localCmd) + '</textarea>'
             + '<div class="team-actions"><button class="team-btn team-btn-primary" onclick="copyText(this.parentNode.previousElementSibling.value, this)">复制本地指令</button></div>'
@@ -3454,156 +3303,139 @@ body {
         <div class="skillp-header">
           <div>
             <h2>技能</h2>
-            <p>你<span class="sp-key">个人专属</span>的技能，数据源 = <span class="sp-key" id="skill-ds">拾元/syskill</span>。它与左侧「技能库」（本机通用、全电脑共享的 Skill 资产）不是一回事——这里只管你自己的。按文件夹树呈现：点文件夹展开/折叠看里面，点文件看内容，或一键召唤到任意智能体平台。</p>
+            <p>你<span class="sp-key">个人专属</span>的技能，数据源 = <span class="sp-key">拾元/syskill</span>。它与左侧「技能库」（本机通用、全电脑共享的 Skill 资产）不是一回事——这里只管你自己的。点开查看全文，或一键召唤到任意智能体平台。</p>
           </div>
           <div class="skillp-actions">
-            <button class="skillp-btn" onclick="openPathEdit('skill')">更改文件夹</button>
-            <button class="skillp-btn" onclick="openSkillFolder()">在访达中打开技能文件夹</button>
+            <button class="skillp-btn skillp-btn-primary" onclick="initSkill()">刷新</button>
           </div>
         </div>
-        <div class="team-layout2">
-          <main class="team-entries" id="skill-entries"></main>
-          <section class="team-detail" id="skill-detail">
-            <div class="team-detail-empty">点击左侧文件查看内容</div>
+        <div class="skillp-layout">
+          <aside class="skillp-side">
+            <div class="skillp-groups-title">分组</div>
+            <div id="skillp-groups" class="skillp-groups"></div>
+          </aside>
+          <main class="skillp-cards" id="skillp-cards"></main>
+          <section class="skillp-detail" id="skillp-detail">
+            <div class="skillp-detail-empty">点击左侧技能查看详情</div>
           </section>
         </div>
         <script>
-        // ========== 技能（Personal Skill）模块：文件夹树浏览器（与团队同款呈现） ==========
-        let skillpTree = { root: '' };
-        let skillRoot = null;
-        let skillNodeMap = {};
-
-        function skillNode(rel, name, isDir) {
-          const n = { rel: rel, name: name, isDir: isDir, children: null, expanded: false, loaded: false, displayName: '', emoji: '', description: '' };
-          skillNodeMap[rel || ''] = n;
-          return n;
-        }
+        // ========== 技能（Personal Skill）模块 ==========
+        let skillpData = { root: '', skills: [], empty: true };
+        let skillpActiveGroup = 'all';
+        let skillpSelectedId = null;
 
         function initSkill() {
-          skillNodeMap = {};
-          skillRoot = skillNode('', '技能根目录', true);
-          skillRoot.expanded = true;
-          skillLoadChildren(skillRoot).then(() => skillRender());
-        }
-
-        // 懒加载某文件夹子项（首次展开时调用），并登记节点
-        function skillLoadChildren(node) {
-          if (!node.isDir || node.loaded) return Promise.resolve();
-          return fetch('/api/skill/tree?rel=' + encodeURIComponent(node.rel || ''))
+          fetch('/api/personal-skills')
             .then(r => r.json())
-            .then(d => {
-              if (node.rel === '' && d && d.root) skillpTree.root = d.root;
-              const ds = document.getElementById('skill-ds'); if (ds) ds.textContent = (skillpTree.root || SKILL_DEFAULT);
-              const entries = (d && d.entries) || [];
-              node.children = entries.map(e => {
-                const n = skillNode(e.sub, e.name, e.isDir);
-                n.displayName = e.displayName || e.name;
-                n.emoji = e.emoji || (e.isDir ? '📁' : '📄');
-                n.description = e.description || e.name;
-                return n;
-              });
-              node.loaded = true;
-            })
-            .catch(() => { node.loaded = true; node.children = []; });
+            .then(d => { skillpData = d || { root: '', skills: [], empty: true }; renderSkillp(); })
+            .catch(() => { skillpData = { root: '', skills: [], empty: true }; renderSkillp(); });
         }
 
-        // 点击文件夹：展开 / 折叠（首次展开才去拉子项）
-        function skillToggle(rel) {
-          const node = skillNodeMap[rel || ''];
-          if (!node || !node.isDir) return;
-          node.expanded = !node.expanded;
-          if (node.expanded && !node.loaded) {
-            skillLoadChildren(node).then(() => skillRender());
-          } else {
-            skillRender();
+        function skillpGroupsMap() {
+          // 按 category 分组；无 category 归为「未分类」
+          const map = {};
+          (skillpData.skills || []).forEach(s => {
+            const g = (s.category && String(s.category).trim()) || '未分类';
+            if (!map[g]) map[g] = [];
+            map[g].push(s);
+          });
+          return map;
+        }
+
+        function skillpRelPath(s) {
+          // 由绝对 dirPath 与 root 推导相对路径，用于本地指令
+          const root = (skillpData.root || '').replace(/\/$/, '');
+          let rel = (s.dirPath || '').slice(root.length).replace(/^\//, '');
+          if (s.isFileSkill) {
+            return (rel ? rel + '/' : '') + (s.entryName || (s.dirName || ''));
           }
+          return rel ? rel + '/SKILL.md' : 'SKILL.md';
         }
 
-        function skillRender() {
-          const en = document.getElementById('skill-entries');
-          const de = document.getElementById('skill-detail');
-          const ds = document.getElementById('skill-ds'); if (ds) ds.textContent = (skillpTree.root || SKILL_DEFAULT);
-          if (!skillRoot) { en.innerHTML = '<div class="team-empty">加载中…</div>'; return; }
-          if (skillRoot.loaded && (!skillRoot.children || !skillRoot.children.length)) {
-            const full = skillpTree.root || SKILL_DEFAULT;
-            en.innerHTML = '<div class="team-empty">这个文件夹是空的。<br>在 <code>' + escapeHtml(full) + '</code> 下放一个 .md 文件（或含 SKILL.md 的文件夹）即可出现。</div>';
-            de.innerHTML = '<div class="team-detail-empty">点击左侧文件查看内容</div>';
+        function renderSkillp() {
+          const groupsEl = document.getElementById('skillp-groups');
+          const cardsEl = document.getElementById('skillp-cards');
+          const detailEl = document.getElementById('skillp-detail');
+          if (!skillpData || skillpData.empty || !(skillpData.skills && skillpData.skills.length)) {
+            groupsEl.innerHTML = '';
+            const root = skillpData.root || '~/拾元/syskill';
+            cardsEl.innerHTML = '<div class="skillp-empty">还没有个人技能。<br>在 <code>' + escapeHtml(root) + '</code> 下放一个 .md 文件（或含 SKILL.md 的文件夹）即可出现。<br>带 <code>category:</code> frontmatter 的会自动分组。</div>';
+            detailEl.innerHTML = '<div class="skillp-detail-empty">点击左侧技能查看详情</div>';
             return;
           }
-          let html = '';
-          function renderNode(node, depth) {
-            const pad = 10 + depth * 18;
-            if (node.isDir) {
-              const kids = (node.loaded && node.children) ? node.children : [];
-              const caret = kids.length ? (node.expanded ? '▾' : '▸') : '·';
-              html += '<div class="team-node team-dir" style="padding-left:' + pad + 'px" onclick=\'skillToggle(' + JSON.stringify(node.rel) + ')\'>'
-                + '<span class="team-caret">' + caret + '</span>'
-                + '<span class="team-entry-emoji">📁</span>'
-                + '<span class="team-entry-name">' + escapeHtml(node.name) + '</span>'
-                + '<span class="team-entry-act"><button class="team-entry-btn" onclick=\'event.stopPropagation();summonSkillFolder(' + JSON.stringify(node.rel) + ')\'>召唤</button></span>'
-                + '</div>';
-              if (node.expanded && kids.length) kids.forEach(c => renderNode(c, depth + 1));
-            } else {
-              const name = node.displayName || node.name;
-              html += '<div class="team-node team-file" style="padding-left:' + pad + 'px" onclick=\'skillOpenFile(' + JSON.stringify(node.rel) + ')\'>'
-                + '<span class="team-caret"></span>'
-                + '<span class="team-entry-emoji">' + escapeHtml(node.emoji || '📄') + '</span>'
-                + '<span class="team-entry-name">' + escapeHtml(name) + '</span>'
-                + '<span class="team-entry-act"><button class="team-entry-btn" onclick=\'event.stopPropagation();summonSkillFile(' + JSON.stringify(node.rel) + ',' + JSON.stringify(name) + ')\'>召唤</button></span>'
-                + '</div>';
-            }
-          }
-          (skillRoot.children || []).forEach(c => renderNode(c, 0));
-          en.innerHTML = html;
-          if (!de.innerHTML.trim()) de.innerHTML = '<div class="team-detail-empty">点击左侧文件查看内容</div>';
+          const map = skillpGroupsMap();
+          const groupNames = Object.keys(map);
+          let gh = '<div class="skillp-group-link' + (skillpActiveGroup === 'all' ? ' active' : '') + '" onclick="skillpActiveGroup=\'all\';renderSkillp()">全部<span class="skillp-group-count">' + skillpData.skills.length + '</span></div>';
+          groupNames.forEach(gn => {
+            gh += '<div class="skillp-group-link' + (skillpActiveGroup === gn ? ' active' : '') + '" onclick="skillpActiveGroup=' + JSON.stringify(gn).replace(/"/g, '&quot;') + ';renderSkillp()">' + escapeHtml(gn) + '<span class="skillp-group-count">' + map[gn].length + '</span></div>';
+          });
+          groupsEl.innerHTML = gh;
+          let list = [];
+          if (skillpActiveGroup === 'all') list = skillpData.skills.slice();
+          else if (map[skillpActiveGroup]) list = map[skillpActiveGroup];
+          if (!list.length) { cardsEl.innerHTML = '<div class="skillp-empty">该分组下暂无技能。</div>'; return; }
+          let ch = '';
+          list.forEach(s => {
+            const icon = s.isFileSkill ? '📄' : '📦';
+            ch += '<div class="skillp-card' + (skillpSelectedId === s.id ? ' active' : '') + '" onclick=\'renderSkillpDetail(' + JSON.stringify(s.id) + ')\' oncontextmenu=\'skillpCtxMenu(event,' + JSON.stringify(s.id) + ')\'>'
+              + '<div class="skillp-card-icon">' + icon + '</div>'
+              + '<div class="skillp-card-main"><p class="skillp-card-name">' + escapeHtml(s.name || s.displayName || s.dirName) + '</p>'
+              + (s.description ? '<p class="skillp-card-desc">' + escapeHtml(s.description) + '</p>' : '') + '</div></div>';
+          });
+          cardsEl.innerHTML = ch;
         }
 
-        function skillOpenFile(sub) {
-          fetch('/api/skill/file?rel=' + encodeURIComponent(sub))
-            .then(r => r.json())
-            .then(d => {
-              const de = document.getElementById('skill-detail');
-              if (d.error) { de.innerHTML = '<div class="team-detail-empty">' + escapeHtml(d.error) + '</div>'; return; }
-              let html = '<h3>' + (d.lang === 'markdown' ? '📄' : '📃') + ' ' + escapeHtml(d.name) + '</h3>';
-              html += '<div class="td-section">路径</div><div style="font-size:12px;color:var(--text-secondary);word-break:break-all">' + escapeHtml(d.rel) + (d.truncated ? '（内容过长已截断）' : '') + '</div>';
-              if (d.lang === 'markdown') {
-                html += '<div class="td-section">内容</div><div class="md-render">' + renderMarkdown(d.content || '') + '</div>';
-              } else {
-                html += '<div class="td-section">内容</div><pre style="white-space:pre-wrap;word-break:break-word;font-size:12px;line-height:1.6;max-height:60vh;overflow:auto;background:var(--bg-surface);border:1px solid var(--border);border-radius:8px;padding:12px;">' + escapeHtml(d.content || '') + '</pre>';
-              }
-              html += '<div class="team-actions"><button class="team-btn team-btn-primary" onclick=\'summonSkillFile(' + JSON.stringify(d.rel) + ',' + JSON.stringify(d.name) + ')\'>召唤</button><button class="team-btn" onclick=\'openInFinder(' + JSON.stringify(d.path) + ')\'>在访达中打开文件</button></div>';
-              de.innerHTML = html;
-            })
-            .catch(() => { document.getElementById('skill-detail').innerHTML = '<div class="team-detail-empty">读取失败</div>'; });
+        function renderSkillpDetail(id) {
+          skillpSelectedId = id;
+          const s = (skillpData.skills || []).find(x => x.id === id);
+          const detailEl = document.getElementById('skillp-detail');
+          if (!s) { detailEl.innerHTML = '<div class="skillp-detail-empty">未找到技能</div>'; renderSkillp(); return; }
+          const name = s.name || s.displayName || s.dirName;
+          let html = '<h3>' + (s.isFileSkill ? '📄' : '📦') + ' ' + escapeHtml(name) + '</h3>';
+          if (s.description) html += '<p class="sp-title">' + escapeHtml(s.description) + '</p>';
+          let badges = [];
+          if (s.category) badges.push(escapeHtml(s.category));
+          if (s.version) badges.push('v' + escapeHtml(s.version));
+          if (s.platforms && s.platforms.length) badges = badges.concat(s.platforms.map(p => escapeHtml(p)));
+          badges.push(s.isFileSkill ? '文件型' : '目录型');
+          if (badges.length) html += '<div>' + badges.map(b => '<span class="sp-badge">' + b + '</span>').join('') + '</div>';
+          html += '<div class="sp-section">技能全文</div><div class="md-render">' + renderMarkdown(s.content || '') + '</div>';
+          let actions = '<div class="skillp-actions-inline">';
+          actions += '<button class="skillp-btn skillp-btn-primary" onclick=\'summonSkill(' + JSON.stringify(s.id) + ')\'>召唤</button>';
+          if (!s.isFileSkill) actions += '<button class="skillp-btn" onclick=\'openInFinder(' + JSON.stringify(s.dirPath) + ')\'>在访达中打开文件夹</button>';
+          actions += '</div>';
+          html += actions;
+          detailEl.innerHTML = html;
+          renderSkillp();
         }
 
-        function summonSkillFolder(rel) {
-          const path = (skillpTree.root || SKILL_DEFAULT) + (rel ? '/' + rel : '');
-          const localCmd = '请读取 ' + path + ' 整个文件夹（含所有子文件夹与文件），理解里面每个技能（重点看各目录下的 SKILL.md），然后按需要帮我：<在这里写你的任务>';
-          fetch('/api/skill/folder-text?rel=' + encodeURIComponent(rel || ''))
-            .then(r => r.json())
-            .then(d => {
-              const text = (d && d.text) || '';
-              const webCmd = (text ? text + '\n\n' : '') + '请按以上文件夹内容所定义的技能设定，帮我：<在这里写你的任务>';
-              showSummonModal('召唤文件夹：' + (rel || '技能根目录'), localCmd, webCmd);
-            });
+        function summonSkill(id) {
+          const s = (skillpData.skills || []).find(x => x.id === id);
+          if (!s) return;
+          const name = s.name || s.displayName || s.dirName;
+          const rel = skillpRelPath(s);
+          const localCmd = '请读取 ./syskill/' + rel + ' 并按其设定执行，帮我：<在这里写你的任务>';
+          const webCmd = (s.content || '') + '\n\n请按以上设定执行「' + name + '」技能，帮我：<在这里写你的任务>';
+          showSkillpSummonModal('召唤：' + name, localCmd, webCmd);
         }
 
-        function summonSkillFile(sub, name) {
-          const path = (skillpTree.root || SKILL_DEFAULT) + '/' + sub;
-          const localCmd = '请读取 ' + path + ' 并按其设定扮演/执行对应技能，帮我：<在这里写你的任务>';
-          fetch('/api/skill/file?rel=' + encodeURIComponent(sub))
-            .then(r => r.json())
-            .then(d => {
-              const webCmd = (d && d.content ? d.content + '\n\n' : '') + '请按以上设定扮演「' + (name || sub) + '」技能，帮我：<在这里写你的任务>';
-              showSummonModal('召唤：' + (name || sub), localCmd, webCmd);
-            });
-        }
-
-        function openSkillFolder() {
-          const root = (skillpTree && skillpTree.root) || '';
-          if (!root) { alert('技能目录尚未加载，请稍候重试'); return; }
-          openInFinder(root);
+        function showSkillpSummonModal(title, localCmd, webCmd) {
+          const ov = document.createElement('div');
+          ov.className = 'summon-overlay';
+          ov.innerHTML = '<div class="summon-box">'
+            + '<button class="summon-x" onclick="this.parentNode.parentNode.remove()">×</button>'
+            + '<h3>' + escapeHtml(title) + '</h3>'
+            + '<p class="sb-sub">复制对应指令，粘贴到目标平台即可。Seegent 不执行，只负责把技能导出。</p>'
+            + '<div class="td-section">本地智能体（Claude Code / WorkBuddy / Cursor，能读拾元/）</div>'
+            + '<textarea class="summon-text" readonly onclick="this.select()">' + escapeHtml(localCmd) + '</textarea>'
+            + '<div class="team-actions"><button class="team-btn team-btn-primary" onclick="copyText(this.parentNode.previousElementSibling.value, this)">复制本地指令</button></div>'
+            + '<div class="td-section" style="margin-top:16px">通用平台（ChatGPT 网页等，读不到本地路径）</div>'
+            + '<textarea class="summon-text" readonly onclick="this.select()">' + escapeHtml(webCmd) + '</textarea>'
+            + '<div class="team-actions"><button class="team-btn team-btn-primary" onclick="copyText(this.parentNode.previousElementSibling.value, this)">复制通用指令</button></div>'
+            + '</div>';
+          document.body.appendChild(ov);
+          ov.addEventListener('click', (e) => { if (e.target === ov) ov.remove(); });
         }
 
         // 在访达中打开（后端调 macOS open；文件夹直接开，文件用 open -R 定位）
@@ -3613,43 +3445,45 @@ body {
             .then(d => { if (!d.ok) alert('无法打开：' + (d.error || '未知错误')); })
             .catch(() => alert('打开失败（网络错误）'));
         }
+
+        // 技能卡片右键菜单
+        function skillpCtxMenu(e, id) {
+          e.preventDefault();
+          const s = (skillpData.skills || []).find(x => x.id === id);
+          if (!s) return;
+          closeSkillpCtx();
+          const menu = document.createElement('div');
+          menu.className = 'skillp-ctx';
+          menu.id = 'skillp-ctx-menu';
+          const path = s.isFileSkill ? (s.dirPath + '/' + (s.entryName || s.dirName)) : s.dirPath;
+          const label = s.isFileSkill ? '在访达中打开文件' : '在访达中打开文件夹';
+          menu.innerHTML = '<div class="skillp-ctx-item" onclick="openInFinder(' + JSON.stringify(path) + ');closeSkillpCtx()"><svg width="14" height="14"><use href="#icon-folder-open"/></svg>' + label + '</div>';
+          document.body.appendChild(menu);
+          const w = menu.offsetWidth, h = menu.offsetHeight;
+          let x = e.clientX, y = e.clientY;
+          if (x + w > window.innerWidth) x = window.innerWidth - w - 8;
+          if (y + h > window.innerHeight) y = window.innerHeight - h - 8;
+          menu.style.left = x + 'px';
+          menu.style.top = y + 'px';
+          setTimeout(() => document.addEventListener('click', closeSkillpCtx), 0);
+        }
+        function closeSkillpCtx() {
+          const m = document.getElementById('skillp-ctx-menu');
+          if (m) m.remove();
+          document.removeEventListener('click', closeSkillpCtx);
+        }
         </script>
       </div>
 
-      <!-- 设置模块（模型 + 扩展 + 偏好） -->
+      <!-- 配置模块（模型 + CLI + MCP + 助手 + 技能） -->
       <div id="config-module" class="module-content">
         <div class="mgmt-panel">
           <div class="config-subtabs">
             <button class="config-subtab active" data-config-tab="model">模型</button>
             <button class="config-subtab" data-config-tab="mcp">扩展</button>
-            <button class="config-subtab" data-config-tab="pref">偏好</button>
           </div>
           <div id="config-panel-model" class="config-panel active"></div>
           <div id="config-panel-mcp" class="config-panel" style="display:none"></div>
-          <div id="config-panel-pref" class="config-panel" style="display:none">
-            <div class="config-card" style="cursor:pointer" onclick="toggleTheme()">
-              <div class="config-card-body">
-                <h4>外观</h4>
-                <p>切换深色 / 浅色模式</p>
-              </div>
-              <div class="config-card-actions">
-                <span id="settings-theme-label" style="font-size:12px;color:var(--text-secondary)"></span>
-              </div>
-            </div>
-
-            <div class="config-card">
-              <div class="config-card-body">
-                <h4>向量检索</h4>
-                <p id="emb-settings-note" style="font-size:11px;color:var(--text-tertiary);line-height:1.6;margin-top:2px"></p>
-              </div>
-              <div class="config-card-actions">
-                <label class="skill-toggle" title="开启/关闭向量语义检索">
-                  <input type="checkbox" id="emb-enable-toggle" onchange="toggleEmbeddingEnable(this.checked)">
-                  <span class="slider"></span>
-                </label>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -3767,7 +3601,7 @@ body {
         <div class="mgmt-panel">
           <div class="page-header">
             <h2>操作日志</h2>
-            <p>记录所有智能体的调用记录，包括 Seegent 主智能体、侧车 Agent（WorkBuddy 等）以及各 CLI 工具（Cursor / Claude / Hermes 等）：任务、模型、轮次、工具、产出文件、Token、耗时、状态。</p>
+            <p>记录 Seegent 每次 Agent 调用的任务、模型、轮次、工具、产出文件、Token、耗时、状态。</p>
           </div>
           <div class="log-filter-bar">
             <select id="log-filter-agent" onchange="renderLogList()">
@@ -3779,23 +3613,43 @@ body {
               <option value="error">失败</option>
               <option value="max_iter">超轮次</option>
             </select>
-            <select id="log-range" onchange="setLogRange()">
-              <option value="all">全部时间</option>
-              <option value="1d">今天</option>
-              <option value="7d">近 7 天</option>
-              <option value="30d">近 30 天</option>
-            </select>
-            <select id="log-view" onchange="renderLogList()">
-              <option value="timeline">时间流</option>
-              <option value="project">按项目</option>
-            </select>
             <button class="log-refresh-btn" onclick="loadLogs()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9 9 9 0 0 1-6.36-2.64L3 21"/><path d="M3 7v5h5"/><path d="M3 12a9 9 0 0 1 9-9 9 9 0 0 1 6.36 2.64L21 3"/><path d="M21 17v-5h-5"/></svg>
               刷新
             </button>
           </div>
-          <div id="log-overview" class="log-ov"></div>
           <div id="log-list"></div>
+        </div>
+      </div>
+
+      <!-- 设置模块 -->
+      <div id="settings-module" class="module-content">
+        <div class="mgmt-panel">
+          <div class="page-header">
+            <h2>设置</h2>
+          </div>
+          <div class="config-card" style="cursor:pointer" onclick="toggleTheme()">
+            <div class="config-card-body">
+              <h4>外观</h4>
+              <p>切换深色 / 浅色模式</p>
+            </div>
+            <div class="config-card-actions">
+              <span id="settings-theme-label" style="font-size:12px;color:var(--text-secondary)"></span>
+            </div>
+          </div>
+
+          <div class="config-card">
+            <div class="config-card-body">
+              <h4>向量检索</h4>
+              <p id="emb-settings-note" style="font-size:11px;color:var(--text-tertiary);line-height:1.6;margin-top:2px"></p>
+            </div>
+            <div class="config-card-actions">
+              <label class="skill-toggle" title="开启/关闭向量语义检索">
+                <input type="checkbox" id="emb-enable-toggle" onchange="toggleEmbeddingEnable(this.checked)">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -5656,6 +5510,7 @@ function showContextMenu(x, y, node, parentFolder) {
       parentFolder.path = null; // 清空以触发重新绑定
       bindFolderPath(parentFolder);
     }});
+    items.push({ label: '绑定到看板', cls: '', action: () => bindFolderToBoard(parentFolder) });
     items.push({ sep: true });
   }
   items.push({ label: '复制', cls: '', action: () => copyEntry(node.handle, node.name, node.kind) });
@@ -7604,7 +7459,7 @@ let activeModule = localStorage.getItem('seegent-module') || 'board';
 let activeConfigTab = localStorage.getItem('seegent-config-tab') || 'model';
 
 function switchConfigTab(tabName) {
-  if (tabName !== 'model' && tabName !== 'mcp' && tabName !== 'pref') tabName = 'model';  // 设置页含「模型」+「扩展(MCP)」+「偏好」
+  if (tabName !== 'model' && tabName !== 'mcp') tabName = 'model';  // 配置页仅保留「模型」+「扩展(MCP)」，其余入口已移除
   activeConfigTab = tabName;
   localStorage.setItem('seegent-config-tab', tabName);
 
@@ -7630,21 +7485,20 @@ function switchConfigTab(tabName) {
   // 加载数据
   if (tabName === 'model') { loadModelList(); }
   if (tabName === 'mcp') { loadCliList(); renderMcpList(); loadMcpList(); }
-  if (tabName === 'pref') { initSettingsEmbToggle(); }
 }
 
 function switchModule(name) {
-  if (name === 'settings') name = 'config';  // 旧「设置」模块已并入「配置」
   activeModule = name;
   localStorage.setItem('seegent-module', name);
   // 同步顶栏分段控件
   document.querySelectorAll('.header-seg').forEach(s => s.classList.toggle('active', s.dataset.module === name));
   // 切换内容面板
   document.querySelectorAll('.module-content').forEach(c => c.classList.toggle('active', c.id === name + '-module'));
-  if (name === 'config') { switchConfigTab(activeConfigTab); initSettingsEmbToggle(); return; }
+  if (name === 'config') { switchConfigTab(activeConfigTab); return; }
   if (name === 'log') loadLogs();
   if (name === 'usage') { loadAiMonitor(); }
   if (name === 'board') { initDashboard(); }
+  if (name === 'settings') { initSettingsEmbToggle(); }
   if (name === 'skilllib') { initSkillLibrary(); }
   if (name === 'team') { initTeam(); }
   if (name === 'skill') { initSkill(); }
@@ -8283,7 +8137,7 @@ setTimeout(() => {
   try {
     const saved = localStorage.getItem('seegent-module');
     // 旧模块名映射：model/cli/mcp/agent → config
-    const oldToNew = { model: 'config', cli: 'config', mcp: 'config', agent: 'config', settings: 'config' };
+    const oldToNew = { model: 'config', cli: 'config', mcp: 'config', agent: 'config' };
     const actual = oldToNew[saved] || saved;
     if (actual && actual !== 'file' && document.getElementById(actual + '-module')) {
       switchModule(actual);
@@ -10499,95 +10353,50 @@ function renderBoardProjects() {
 }
 
 function renderBoardExtras() {
-  // 待办已统一在项目信息卡片内展示（renderBoardProjects），此处不再重复聚合
-  // 最近动态：扫描绑定项目的真实文件，取最近修改的若干文档/代码，按时间展示
+  // 待办汇总：跨项目聚合 + 状态筛选
+  const todoEl = document.getElementById('dash-todo-summary');
+  const filterEl = document.getElementById('dash-todo-filter');
+  if (todoEl) {
+    const projects = (boardProjectsData && boardProjectsData.projects) || [];
+    const all = [];
+    projects.forEach(p => (p.todos || []).forEach(t => all.push({ text: t.text, file: t.file, project: p.folderName })));
+    if (!all.length) {
+      todoEl.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);padding:8px 0">各项目暂无待办项</div>';
+    } else {
+      const done = it => /\[x\]|✅|done|完成/i.test(it.text);
+      const mode = window.__todoMode || 'all';
+      const btn = (k, label) => '<button data-mode="' + k + '" style="font-size:12px;padding:3px 10px;border-radius:6px;border:1px solid var(--border);background:' + (mode===k?'var(--accent)':'var(--bg-surface)') + ';color:' + (mode===k?'#fff':'var(--text-secondary)') + ';cursor:pointer">' + label + '</button>';
+      if (filterEl) filterEl.innerHTML = btn('all','全部') + btn('active','进行中') + btn('done','已完成');
+      const filtered = all.filter(it => mode==='all' ? true : mode==='done' ? done(it) : !done(it));
+      let h = '<ul class="dash-project-todos">';
+      filtered.forEach((it,i) => {
+        const tag = done(it) ? ' style="opacity:.55;text-decoration:line-through"' : '';
+        h += '<li class="dash-project-todo-item"' + tag + '><span class="dash-project-idx">' + (i+1) + '.</span><span class="dash-project-text">' + escapeHtml(it.text) + '</span><span class="dash-project-todo-src">' + escapeHtml(it.project) + (it.file?(' · '+escapeHtml(it.file)):'') + '</span></li>';
+      });
+      h += '</ul>';
+      todoEl.innerHTML = h;
+      if (filterEl) filterEl.querySelectorAll('button').forEach(b => b.onclick = () => { window.__todoMode = b.dataset.mode; renderBoardExtras(); });
+    }
+  }
+  // 最近动态：文件变更，取最新 5 条
   const actEl = document.getElementById('dash-recent-activity');
   if (actEl) {
-    actEl.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);padding:8px 0">正在加载最近动态…</div>';
-    fetch('/api/recent-activity').then(r => r.json()).then(d => {
-      const items = (d && d.items) || [];
-      if (!items.length) { actEl.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);padding:8px 0">暂无近期文件改动</div>'; return; }
+    fetch('/api/file-changes').then(r => r.json()).then(d => {
+      const changes = (d && d.changes) || {};
+      const items = Object.entries(changes).map(([p, mt]) => ({ p, mt })).sort((a,b) => b.mt - a.mt).slice(0,5);
+      if (!items.length) { actEl.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);padding:8px 0">暂无文件变更记录</div>'; return; }
       const now = Date.now();
       const fmt = ts => { const s = Math.floor((now - ts*1000)/1000); if (s<60) return '刚刚'; if (s<3600) return Math.floor(s/60)+' 分钟前'; if (s<86400) return Math.floor(s/3600)+' 小时前'; return Math.floor(s/86400)+' 天前'; };
-      let h = '<div style="font-size:11px;color:var(--text-tertiary);padding:0 0 8px;display:flex;align-items:center;gap:6px"><span class="app-icon app-icon--sm"><svg width="12" height="12"><use href="#icon-list"/></svg></span>共 ' + items.length + ' 条 · 滚动查看更多</div>';
-      h += '<ul style="list-style:none;margin:0;padding:0">';
+      let h = '<ul style="list-style:none;margin:0;padding:0">';
       items.forEach(it => {
-        const ptag = it.project ? escapeHtml(it.project) : '';
-        h += '<li style="display:flex;gap:8px;align-items:center;padding:6px 0;font-size:13px;border-bottom:1px solid var(--border)"><span class="app-icon app-icon--sm" style="color:var(--text-tertiary)"><svg width="14" height="14"><use href="#icon-file"/></svg></span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + escapeHtml(it.path) + '">' + escapeHtml(it.path) + '</span>' + (ptag?'<span style="font-size:11px;color:var(--accent)">'+ptag+'</span>':'') + '<span style="font-size:11px;color:var(--text-tertiary);white-space:nowrap">'+fmt(it.mtime)+'</span></li>';
+        const proj = ((boardProjectsData && boardProjectsData.projects)||[]).find(p => it.p.startsWith(p.path));
+        const ptag = proj ? escapeHtml(proj.folderName) : '';
+        h += '<li style="display:flex;gap:8px;align-items:center;padding:6px 0;font-size:13px;border-bottom:1px solid var(--border)"><span class="app-icon app-icon--sm" style="color:var(--text-tertiary)"><svg width="14" height="14"><use href="#icon-file"/></svg></span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escapeHtml(it.p) + '</span>' + (ptag?'<span style="font-size:11px;color:var(--accent)">'+ptag+'</span>':'') + '<span style="font-size:11px;color:var(--text-tertiary)">'+fmt(it.mt)+'</span></li>';
       });
       h += '</ul>';
       actEl.innerHTML = h;
     }).catch(() => { actEl.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);padding:8px 0">动态加载失败</div>'; });
   }
-}
-
-// ===== 本地文件看板：监视目录 =====
-function loadFilewatch() {
-  const box = document.getElementById('fw-roots');
-  if (!box) return;
-  fetch('/api/filewatch').then(r => r.json()).then(d => {
-    const roots = (d && d.roots) || [];
-    if (!roots.length) { box.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);padding:4px 0">还没有监视目录</div>'; return; }
-    let h = '';
-    roots.forEach(r => {
-      const isDefault = r.default ? ' <span style="font-size:10px;color:var(--text-tertiary)">（默认）</span>' : '';
-      h += '<div style="display:flex;gap:6px;align-items:center;padding:6px 0;font-size:12px;border-bottom:1px solid var(--border)">'
-        + '<span class="app-icon app-icon--sm" style="color:var(--text-tertiary)"><svg width="14" height="14"><use href="#icon-folder"/></svg></span>'
-        + '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + escapeHtml(r.path) + '">' + escapeHtml(r.name || r.path) + isDefault + '</span>';
-      if (!r.default) {
-        h += '<button class="board-head-btn" title="移除" onclick="filewatchRemove(\'' + r.id + '\')"><span class="app-icon app-icon--sm"><svg width="14" height="14"><use href="#icon-close"/></svg></span></button>';
-      }
-      h += '</div>';
-    });
-    box.innerHTML = h;
-  }).catch(() => { box.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);padding:4px 0">读取失败</div>'; });
-}
-
-async function filewatchPick() {
-  try {
-    const resp = await fetch('/api/filewatch/pick');
-    const d = await resp.json();
-    if (!resp.ok || !d.path) { if (d && d.error) alert('系统选目录：' + d.error); return; }
-    await filewatchAdd(d.path);
-  } catch (e) {
-    alert('系统选目录失败：' + e.message);
-  }
-}
-
-async function filewatchAdd(path) {
-  try {
-    const resp = await fetch('/api/filewatch', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ path })
-    });
-    const d = await resp.json();
-    if (!resp.ok) { alert('添加失败：' + (d.error || '未知错误')); return; }
-    await loadFilewatch();
-    renderBoardExtras();
-  } catch (e) {
-    alert('添加失败：' + e.message);
-  }
-}
-
-async function filewatchRemove(id) {
-  if (!confirm('确定从本地文件看板移除该目录？')) return;
-  try {
-    await fetch('/api/filewatch/' + encodeURIComponent(id), { method: 'DELETE' });
-    await loadFilewatch();
-    renderBoardExtras();
-  } catch (e) {
-    alert('移除失败：' + e.message);
-  }
-}
-
-function toggleFilewatch() {
-  const body = document.getElementById('fw-body');
-  const chev = document.getElementById('fw-chevron');
-  if (!body) return;
-  const hidden = body.style.display === 'none';
-  body.style.display = hidden ? '' : 'none';
-  if (chev) chev.textContent = hidden ? '▾' : '▸';
-  if (hidden) loadFilewatch();
 }
 
 async function bindFolderToBoard(folder) {
@@ -10626,9 +10435,8 @@ async function initDashboard() {
   refreshDashboardFolders();
   populateDashboardFolderSelect();
   await loadDatasourcesRegistry();
-  loadFilewatch();       // 本地文件看板：监视目录
-  renderBoardExtras();   // 最近动态
-  loadDashboard();        // 业务数据
+  await loadBoardProjects();
+  loadDashboard();
 }
 
 function refreshDashboardFolders() {
@@ -11477,174 +11285,39 @@ async function confirmAnalysis() {
 // ========== 业务数据看板模块结束 ==========
 
 // ========== 操作日志模块 ==========
-let logEntries = [];      // 当前展示（已按时间范围 + 筛选过滤）
-let allLogEntries = [];   // 全量缓存（用于概览统计与时间范围切换）
-let logRange = 'all';     // all | 7d | 30d
-let logView = 'timeline'; // timeline | project
-let logRenderCount = 250; // 列表分批渲染，每次最多显示条数（「加载更多」递增）
-
-// 模型单价（USD / 每百万 token [输入, 输出]），公开价估算，会随厂商变动
-const MODEL_PRICE = {
-  'claude-opus': [15, 75], 'claude-sonnet': [3, 15], 'claude-haiku': [0.25, 1.25],
-  'deepseek': [0.5, 1.5], 'gpt': [5, 15], 'qwen': [0.3, 0.9], 'glm': [0.5, 1.5],
-  'kimi': [0.5, 1.5], 'gemini': [1.5, 5], 'default': [1, 3],
-};
-const USD_TO_RMB = 7.2;
-function priceForModel(model) {
-  if (!model) return MODEL_PRICE['default'];
-  const m = String(model).toLowerCase();
-  for (const k in MODEL_PRICE) {
-    if (k !== 'default' && m.includes(k)) return MODEL_PRICE[k];
-  }
-  return MODEL_PRICE['default'];
-}
-// 估算单条花费（人民币）。优先用输入/输出拆分，缺失时用总量均值
-function estCostRMB(model, pin, pout, total) {
-  const p = priceForModel(model);
-  if (!p) return null;
-  let inT = pin, outT = pout;
-  if ((inT == null || outT == null) && total) { inT = total / 2; outT = total / 2; }
-  if (!inT && !outT) return 0;
-  const usd = (inT || 0) / 1e6 * p[0] + (outT || 0) / 1e6 * p[1];
-  return usd * USD_TO_RMB;
-}
-
-function applyLogRange(arr) {
-  if (logRange === 'all') return arr.slice();
-  let cutoff;
-  if (logRange === '1d') {
-    // 今天：当天 00:00 起（本地时区）
-    const now = new Date();
-    cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).getTime();
-  } else {
-    const days = logRange === '7d' ? 7 : 30;
-    cutoff = Date.now() - days * 86400000;
-  }
-  const out = [];
-  for (const l of arr) {
-    const ts = l.timestamp || '';
-    // 'YYYY-MM-DD HH:MM:SS' -> 解析为本地时间
-    const m = ts.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})/);
-    if (!m) { out.push(l); continue; } // 无时间的不丢弃，归入
-    const t = new Date(+m[1], +m[2]-1, +m[3], +m[4], +m[5], +m[6]).getTime();
-    if (t >= cutoff) out.push(l);
-  }
-  return out;
-}
+let logEntries = [];
 
 async function loadLogs() {
   try {
+    const agent = document.getElementById('log-filter-agent')?.value || '';
+    const status = document.getElementById('log-filter-status')?.value || '';
     const params = new URLSearchParams();
-    params.set('limit', '6000'); // 拉全量（含 WorkBuddy 全部审计，约数千条），概览与时间范围在前端算
+    if (agent) params.set('agent', agent);
+    if (status) params.set('status', status);
+    params.set('limit', '200');
     const r = await fetch('/api/logs?' + params.toString());
     const d = await r.json();
-    // 后端已按时间倒序（最新在前），前端不再反转
-    allLogEntries = (d.logs || []);
-  } catch(e) { allLogEntries = []; }
-  refreshLogViews();
-}
-
-function setLogRange() {
-  logRange = document.getElementById('log-range')?.value || 'all';
-  refreshLogViews();
-}
-
-// 统一刷新：概览（按时间范围，不受 agent/status 筛选影响）+ 列表（再加 agent/status 筛选）
-function refreshLogViews() {
-  logEntries = applyLogRange(allLogEntries);
-  renderLogOverview();
+    logEntries = (d.logs || []).reverse();
+  } catch(e) { logEntries = []; }
   renderLogList();
 }
 
-function renderLogOverview() {
-  const box = document.getElementById('log-overview');
-  if (!box) return;
-  const rangeLogs = applyLogRange(allLogEntries);
-  const total = rangeLogs.length;
-  if (!total) {
-    box.innerHTML = '<div class="log-ov-summary">所选时间范围内暂无记录。</div>';
-    return;
-  }
-  // 活跃智能体
-  const bySrc = {};
-  const byWs = {};
-  let tokSum = 0;
-  let costSum = 0;   // 估算花费（¥），仅含带 token 的来源
-  let minTs = null, maxTs = null;
-  for (const l of rangeLogs) {
-    const s = l.sourceName || l.source || '?';
-    bySrc[s] = (bySrc[s] || 0) + 1;
-    const ws = l.workspace;
-    if (ws) {
-      const name = ws.split('/').filter(Boolean).pop();
-      if (name === 'shiyuanchang') continue; // 跳过主目录，不算「项目」
-      byWs[name] = (byWs[name] || 0) + 1;
-    }
-    tokSum += (l.totalTokens || 0);
-    const c = estCostRMB(l.model || l.modelId, l.promptTokens, l.completionTokens, l.totalTokens);
-    if (c) costSum += c;
-    if (l.timestamp) {
-      if (!minTs || l.timestamp < minTs) minTs = l.timestamp;
-      if (!maxTs || l.timestamp > maxTs) maxTs = l.timestamp;
-    }
-  }
-  const topAgent = Object.entries(bySrc).sort((a,b)=>b[1]-a[1])[0];
-  const topProj = Object.entries(byWs).sort((a,b)=>b[1]-a[1])[0];
-  const agentN = Object.keys(bySrc).length;
-  const projN = Object.keys(byWs).length;
-  const rangeLabel = logRange === '1d' ? '今天' : (logRange === '7d' ? '近 7 天' : (logRange === '30d' ? '近 30 天' : '全部时间'));
-
-  const cards = [
-    { v: total, k: '记录总数', sub: rangeLabel },
-    { v: agentN, k: '活跃智能体', sub: '个来源' },
-    { v: topAgent[0], k: '最活跃智能体', sub: topAgent[1] + ' 条' },
-    { v: projN, k: '涉及项目', sub: topProj ? ('最忙：' + topProj[0]) : '—' },
-    { v: '¥' + (costSum >= 0.01 ? costSum.toFixed(2) : '0.00'), k: '估算花费', sub: '仅含 Claude Code / Seegent 等带 token 的来源' },
-  ];
-  let html = '<div class="log-ov-cards">';
-  for (const c of cards) {
-    html += '<div class="log-ov-card"><div class="v">' + escapeHtml(String(c.v)) + '</div>' +
-            '<div class="k">' + escapeHtml(c.k) + '</div>' +
-            (c.sub ? '<div class="sub">' + escapeHtml(c.sub) + '</div>' : '') + '</div>';
-  }
-  html += '</div>';
-  // 一句话总结
-  const span = (minTs && maxTs) ? (minTs.slice(5,10) + ' ~ ' + maxTs.slice(5,10)) : '';
-  html += '<div class="log-ov-summary">在 <b>' + escapeHtml(rangeLabel) + '</b> 内，共 <b>' + total +
-          '</b> 条智能体记录，覆盖 <b>' + agentN + '</b> 个来源，最活跃的是 <b>' + escapeHtml(topAgent[0]) +
-          '</b>（' + topAgent[1] + ' 条）' +
-          (topProj ? '；涉及 <b>' + projN + '</b> 个项目，最忙的是 <b>' + escapeHtml(topProj[0]) + '</b>' : '') +
-          (span ? '。时间跨度 ' + escapeHtml(span) : '') + '。</div>';
-  box.innerHTML = html;
-}
-
-function renderLogList(more) {
+function renderLogList() {
   const container = document.getElementById('log-list');
   if (!container) return;
-  logView = document.getElementById('log-view')?.value || 'timeline';
-  if (!more) logRenderCount = 250; // 切换筛选/范围/视图时重置分页
 
-  // 根据日志里实际出现过的智能体动态构建筛选下拉（覆盖 Seegent 主智能体、侧车、CLI 等）
+  // Update agent filter options
   const agentSel = document.getElementById('log-filter-agent');
-  if (agentSel) {
-    const curVal = agentSel.value;
-    const agentsMap = new Map(); // id -> 显示名
-    for (const l of logEntries) {
-      const id = l.agentId || l.engineId || l.callerId || '';
-      const name = l.agentName || l.engineName || id || '';
-      if (id) agentsMap.set(id, name);
-    }
+  if (agentSel && agentSel.options.length <= 1) {
+    const agentIds = new Set();
+    // Get agents from config
     if (agentConfig && agentConfig.agents) {
-      for (const a of agentConfig.agents) agentsMap.set(a.id, a.name);
+      for (const a of agentConfig.agents) {
+        agentIds.add(a.id);
+        agentSel.innerHTML += '<option value="' + a.id + '">' + escapeHtml(a.name) + '</option>';
+      }
     }
-    agentsMap.set('main', '主 Agent');
-    let opts = '<option value="">全部 Agent</option>';
-    for (const [id, name] of agentsMap) {
-      opts += '<option value="' + escapeHtml(id) + '">' + escapeHtml(name) + '</option>';
-    }
-    agentSel.innerHTML = opts;
-    // 还原上次选中的筛选值（若该智能体仍存在）
-    if ([...agentSel.options].some(o => o.value === curVal)) agentSel.value = curVal;
+    agentSel.innerHTML += '<option value="main">主 Agent</option>';
   }
 
   const statusFilter = document.getElementById('log-filter-status')?.value || '';
@@ -11652,108 +11325,56 @@ function renderLogList(more) {
 
   let filtered = logEntries;
   if (agentFilter) {
-    filtered = filtered.filter(l => l.agentId === agentFilter || l.engineId === agentFilter || l.callerId === agentFilter);
+    filtered = filtered.filter(l => l.agentId === agentFilter);
   }
   if (statusFilter) {
     filtered = filtered.filter(l => l.status === statusFilter);
   }
 
   if (!filtered.length) {
-    container.innerHTML = '<div class="empty-state">暂无日志记录。使用任意智能体（主智能体 / 侧车 / CLI 工具）后，日志会自动出现。</div>';
+    container.innerHTML = '<div class="empty-state">暂无日志记录。开始使用 Agent 后，日志会自动出现。</div>';
     return;
   }
 
-  const entriesHtml = (arr) => arr.map(logEntryHtml).join('');
-
-  const visible = filtered.slice(0, logRenderCount);
   let html = '';
-  if (logView === 'project') {
-    const groups = new Map();
-    for (const l of visible) {
-      const key = projKeyOf(l);
-      if (!groups.has(key)) groups.set(key, []);
-      groups.get(key).push(l);
-    }
-    for (const [key, arr] of groups) {
-      html += '<div class="log-proj-group">';
-      html += '<div class="log-proj-head"><span class="pn">' + escapeHtml(key) + '</span>' +
-              '<span class="pc">' + arr.length + ' 条</span></div>';
-      html += entriesHtml(arr) + '</div>';
-    }
-  } else {
-    html = entriesHtml(visible);
-  }
+  for (const l of filtered) {
+    const isErr = l.status === 'error';
+    const isMaxIter = l.status === 'max_iter';
+    const statusIcon = isErr ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-danger)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>' : (isMaxIter ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-warning)" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>');
+    const statusCls = isErr ? 'log-status-err' : (isMaxIter ? 'log-status-warn' : 'log-status-ok');
 
-  // 超过一屏时分批加载，避免一次性渲染数千行卡顿
-  if (filtered.length > visible.length) {
-    const left = filtered.length - visible.length;
-    html += '<div style="padding:14px;text-align:center">' +
-            '<button class="log-more-btn" onclick="renderLogList(true)">加载更多（还剩 ' + left + ' 条）</button></div>';
+    const toolsHtml = (l.toolsUsed || []).length
+      ? l.toolsUsed.map(t => '<code style="font-size:10px;padding:1px 5px;background:var(--bg-surface);border-radius:3px">' + escapeHtml(t) + '</code>').join(' ')
+      : '<span style="color:var(--text-tertiary);font-size:11px">无工具调用</span>';
+
+    const artifactsHtml = (l.artifacts || []).length
+      ? l.artifacts.map(a => '<span class="artifact-tag" style="font-size:10px;padding:1px 6px" onclick="previewArtifact(\'' + escapeHtml(a) + '\', \'' + (a.split('.').pop() || '') + '\')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:2px"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M13 2v7h7"/></svg>' + escapeHtml(a.split('/').pop()) + '</span>').join(' ')
+      : '';
+
+    const taskPreview = (l.task || l.userMsg || '').slice(0, 100);
+
+    html += '<div class="log-entry" style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
+        '<span class="' + statusCls + '" style="font-size:14px">' + statusIcon + '</span>' +
+        '<strong>' + escapeHtml(l.agentName || l.engineName || l.agentId || l.engineId || '') + '</strong>' +
+        '<span style="font-size:11px;color:var(--text-tertiary)">' + escapeHtml(l.modelId || l.model || '') + '</span>' +
+        '<span style="margin-left:auto;font-size:11px;color:var(--text-tertiary)">' + escapeHtml(l.timestamp || '') + '</span>' +
+        '<span style="font-size:11px;color:var(--text-tertiary)">' + (l.duration != null ? l.duration + 's' : '') + '</span>' +
+      '</div>' +
+      (taskPreview ? '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:6px">"' + escapeHtml(taskPreview) + (taskPreview.length >= 100 ? '...' : '') + '"</div>' : '') +
+      '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
+        (l.iterations ? '<span style="font-size:10px;color:var(--text-tertiary)">' + l.iterations + ' 轮</span>' : '') +
+        (l.totalTokens ? '<span style="font-size:10px;color:var(--text-tertiary)">' + formatTokenNum(l.totalTokens) + ' tokens</span>' : '') +
+        (l.promptTokens != null ? '<span style="font-size:10px;color:var(--text-tertiary)">输入 ' + formatTokenNum(l.promptTokens) + '</span>' : '') +
+        (l.completionTokens != null ? '<span style="font-size:10px;color:var(--text-tertiary)">输出 ' + formatTokenNum(l.completionTokens) + '</span>' : '') +
+        toolsHtml +
+      '</div>' +
+      (artifactsHtml ? '<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">' + artifactsHtml + '</div>' : '') +
+      (l.error ? '<div style="margin-top:4px;font-size:11px;color:var(--color-danger-text)">' + escapeHtml(l.error) + '</div>' : '') +
+      (l.workspace ? '<div style="margin-top:4px;font-size:10px;color:var(--text-tertiary)">工作区：' + escapeHtml(l.workspace) + '</div>' : '') +
+    '</div>';
   }
   container.innerHTML = html;
-}
-
-function projKeyOf(l) {
-  const ws = l.workspace;
-  if (!ws) return '未归类';
-  const name = ws.split('/').filter(Boolean).pop();
-  if (name === 'shiyuanchang') return '未归类';
-  return name;
-}
-
-function logEntryHtml(l) {
-  const isErr = l.status === 'error';
-  const isMaxIter = l.status === 'max_iter';
-  const statusIcon = isErr ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-danger)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>' : (isMaxIter ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-warning)" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>');
-  const statusCls = isErr ? 'log-status-err' : (isMaxIter ? 'log-status-warn' : 'log-status-ok');
-
-  const toolsHtml = (l.toolsUsed || []).length
-    ? l.toolsUsed.map(t => '<code style="font-size:10px;padding:1px 5px;background:var(--bg-surface);border-radius:3px">' + escapeHtml(t) + '</code>').join(' ')
-    : '<span style="color:var(--text-tertiary);font-size:11px">无工具调用</span>';
-
-  // 交付物：只读展示文件名（本地路径不调 previewArtifact，避免打不开）
-  const artifactsHtml = (l.artifacts || []).length
-    ? l.artifacts.map(a => '<span class="log-artifact" title="' + escapeHtml(a) + '">' + escapeHtml(a.split('/').pop()) + '</span>').join(' ')
-    : '';
-
-  const rawTask = (l.task || l.userMsg || '');
-  const taskPreview = rawTask.slice(0, 100);
-  const taskCut = rawTask.length >= 100;
-  // Seegent 自己的旧日志不记录「问了什么」，只存 token/状态，task 必然为空——给个诚实占位
-  const taskFallback = (!taskPreview && l.source === 'seegent')
-    ? '<div style="font-size:11px;color:var(--text-tertiary);margin-bottom:6px">历史日志 · 未记录任务描述（仅 token / 状态）</div>'
-    : '';
-  const cost = estCostRMB(l.model || l.modelId, l.promptTokens, l.completionTokens, l.totalTokens);
-  // 原始命令：WorkBuddy 等 shell 命令展示，帮助理解到底跑了什么
-  const rawCmd = (l.commandPreview || '');
-  const showCmd = rawCmd && rawCmd !== rawTask && l.source === 'workbuddy'
-    ? '<div style="font-size:11px;color:var(--text-tertiary);margin-top:4px;font-family:monospace;background:var(--bg-surface);padding:4px 8px;border-radius:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + escapeHtml(rawCmd) + '">$ ' + escapeHtml(rawCmd.slice(0, 140)) + (rawCmd.length > 140 ? '...' : '') + '</div>'
-    : '';
-
-  let html = '<div class="log-entry" style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px">';
-  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
-      '<span class="' + statusCls + '" style="font-size:14px">' + statusIcon + '</span>' +
-      '<strong>' + escapeHtml(l.agentName || l.engineName || l.agentId || l.engineId || '') + '</strong>' +
-      (l.sourceName ? ' <span class="log-src-badge" data-src="' + escapeHtml(l.source || '') + '">' + escapeHtml(l.sourceName) + '</span>' : '') +
-      '<span style="font-size:11px;color:var(--text-tertiary)">' + escapeHtml(l.modelId || l.model || '') + '</span>' +
-      '<span style="margin-left:auto;font-size:11px;color:var(--text-tertiary)">' + escapeHtml(l.timestamp || '') + '</span>' +
-      '<span style="font-size:11px;color:var(--text-tertiary)">' + (l.duration != null ? l.duration + 's' : '') + '</span>' +
-    '</div>';
-  html += taskPreview
-    ? '<div style="font-size:13px;color:var(--text);margin-bottom:6px;font-weight:500;">' + escapeHtml(taskPreview) + (taskCut ? '...' : '') + '</div>'
-    : taskFallback;
-  html += showCmd;
-  html += '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
-      (l.iterations ? '<span style="font-size:10px;color:var(--text-tertiary)">' + l.iterations + ' 轮</span>' : '') +
-      (l.totalTokens ? '<span style="font-size:10px;color:var(--text-tertiary)">' + formatTokenNum(l.totalTokens) + ' tokens</span>' : '') +
-      (cost ? '<span class="log-cost">¥' + cost.toFixed(2) + '</span>' : '') +
-      toolsHtml +
-    '</div>';
-  html += (artifactsHtml ? '<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">' + artifactsHtml + '</div>' : '');
-  html += (l.error ? '<div style="margin-top:4px;font-size:11px;color:var(--color-danger-text)">' + escapeHtml(l.error) + '</div>' : '');
-  html += (l.workspace ? '<div style="margin-top:4px;font-size:10px;color:var(--text-tertiary)">工作区：' + escapeHtml(l.workspace) + '</div>' : '');
-  html += '</div>';
-  return html;
 }
 
 // ========== MCP 服务器管理 ==========
@@ -13882,175 +13503,5 @@ setTimeout(() => {
   const origActivate = activateTab;
   activateTab = function(id) { origActivate(id); updateChatContext(); };
 }, 500);
-</script>
-<!-- ========== 团队 / 技能 模块：文件夹路径设置 ========== -->
-<style>
-  .pe-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:400; display:flex; align-items:center; justify-content:center; }
-  .pe-box { background:var(--bg-card); border:1px solid var(--border); border-radius:14px; width:min(620px,92vw); padding:22px 24px; box-shadow:0 20px 60px rgba(0,0,0,.3); position:relative; }
-  .pe-box h3 { margin:0 0 4px; font-size:17px; }
-  .pe-x, .fp-x { position:absolute; top:14px; right:16px; cursor:pointer; border:none; background:none; font-size:20px; color:var(--text-tertiary); line-height:1; }
-  .pe-sub { font-size:12px; color:var(--text-secondary); margin:0 0 16px; line-height:1.6; }
-  .pe-field label { font-size:12px; color:var(--text-secondary); display:block; margin-bottom:6px; }
-  .pe-input-row { display:flex; gap:8px; }
-  .pe-input-row input { flex:1; padding:9px 12px; border:1px solid var(--border); border-radius:8px; background:var(--bg-surface); color:var(--text); font-family:var(--font-mono); font-size:13px; min-width:0; }
-  .pe-btn { padding:8px 14px; border:1px solid var(--border); background:var(--bg-card); color:var(--text); border-radius:8px; cursor:pointer; font-size:13px; }
-  .pe-btn:hover { background:var(--bg-hover); border-color:var(--accent); }
-  .pe-btn-primary { background:var(--accent); border-color:var(--accent); color:#fff; }
-  .pe-btn-primary:hover { filter:brightness(1.08); color:#fff; }
-  .pe-status { font-size:12px; margin:10px 0 2px; min-height:16px; color:var(--text-secondary); word-break:break-word; }
-  .pe-actions { display:flex; gap:8px; align-items:center; margin-top:8px; }
-  .fp-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:500; display:flex; align-items:center; justify-content:center; }
-  .fp-box { background:var(--bg-card); border:1px solid var(--border); border-radius:14px; width:min(560px,92vw); padding:22px 24px; box-shadow:0 20px 60px rgba(0,0,0,.3); position:relative; }
-  .fp-box h3 { margin:0 0 4px; font-size:17px; }
-  .fp-crumb { font-size:12px; color:var(--text-secondary); margin:6px 0 12px; word-break:break-all; font-family:var(--font-mono); }
-  .fp-list { max-height:50vh; overflow:auto; border:1px solid var(--border); border-radius:10px; padding:6px; }
-  .fp-item { padding:9px 12px; border-radius:8px; cursor:pointer; font-size:13px; display:flex; align-items:center; gap:8px; }
-  .fp-item:hover { background:var(--bg-hover); }
-  .fp-item.up { color:var(--text-secondary); }
-  .fp-ico { font-size:14px; width:16px; text-align:center; }
-  .fp-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:14px; }
-  .fp-btn { padding:8px 14px; border:1px solid var(--border); background:var(--bg-card); color:var(--text); border-radius:8px; cursor:pointer; font-size:13px; }
-  .fp-btn:hover { background:var(--bg-hover); border-color:var(--accent); }
-  .fp-btn-primary { background:var(--accent); border-color:var(--accent); color:#fff; }
-  .fp-btn-primary:hover { filter:brightness(1.08); color:#fff; }
-</style>
-
-<div id="path-edit-overlay" class="pe-overlay" style="display:none;">
-  <div class="pe-box">
-    <button class="pe-x" onclick="closePathEdit()">x</button>
-    <h3 id="pe-title">更改文件夹</h3>
-    <p class="pe-sub" id="pe-sub"></p>
-    <div class="pe-field">
-      <label>文件夹路径</label>
-      <div class="pe-input-row">
-        <input id="pe-input" type="text" spellcheck="false" placeholder="如 /Users/shiyuanchang/拾元/syteam" />
-        <button class="pe-btn" onclick="openFolderPickerForEdit()">浏览...</button>
-      </div>
-    </div>
-    <div id="pe-status" class="pe-status"></div>
-    <div class="pe-actions">
-      <button class="pe-btn" onclick="peOpenInFinder()">在访达中打开</button>
-      <span style="flex:1"></span>
-      <button class="pe-btn" onclick="peResetDefault()">重置默认</button>
-      <button class="pe-btn pe-btn-primary" onclick="peSave()">保存</button>
-    </div>
-  </div>
-</div>
-
-<div id="folder-picker-overlay" class="fp-overlay" style="display:none;">
-  <div class="fp-box">
-    <button class="fp-x" onclick="closeFolderPicker()">x</button>
-    <h3>选择文件夹</h3>
-    <div class="fp-crumb" id="fp-crumb"></div>
-    <div class="fp-list" id="fp-list"></div>
-    <div class="fp-actions">
-      <button class="fp-btn" onclick="closeFolderPicker()">取消</button>
-      <button class="fp-btn fp-btn-primary" onclick="fpChoose()">选择此文件夹</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// ========== 团队 / 技能 模块文件夹路径设置 ==========
-let TEAM_DEFAULT = '~/拾元/syteam';
-let SKILL_DEFAULT = '~/拾元/syskill';
-let pathsConfig = {};
-let peModule = 'team';
-let peDefault = '';
-let fpCurrent = '';
-
-function loadPathsConfig() {
-  return fetch('/api/settings/paths').then(r => r.json()).then(d => {
-    pathsConfig = d || {};
-    if (d && d.teamDefault) TEAM_DEFAULT = d.teamDefault;
-    if (d && d.skillDefault) SKILL_DEFAULT = d.skillDefault;
-    return d;
-  }).catch(() => ({}));
-}
-loadPathsConfig();
-
-function openPathEdit(moduleKey) {
-  peModule = moduleKey;
-  const isTeam = moduleKey === 'team';
-  const cur = (pathsConfig && (isTeam ? pathsConfig.teamPath : pathsConfig.skillPath)) || (isTeam ? TEAM_DEFAULT : SKILL_DEFAULT);
-  peDefault = (pathsConfig && (isTeam ? pathsConfig.teamDefault : pathsConfig.skillDefault)) || cur;
-  document.getElementById('pe-title').textContent = '更改「' + (isTeam ? '团队' : '技能') + '」文件夹';
-  document.getElementById('pe-sub').textContent = '数据源将指向该文件夹。留空或点「重置默认」即恢复默认：' + peDefault;
-  document.getElementById('pe-input').value = cur;
-  peShowStatus('', false);
-  document.getElementById('path-edit-overlay').style.display = 'flex';
-}
-function closePathEdit() { document.getElementById('path-edit-overlay').style.display = 'none'; }
-function peShowStatus(msg, isErr) {
-  const el = document.getElementById('pe-status');
-  el.textContent = msg || '';
-  el.style.color = isErr ? '#e5484d' : 'var(--text-secondary)';
-}
-function peOpenInFinder() {
-  const v = document.getElementById('pe-input').value.trim();
-  if (!v) { alert('请先填写路径'); return; }
-  openInFinder(v);
-}
-function peResetDefault() {
-  document.getElementById('pe-input').value = peDefault;
-  peShowStatus('已填入默认路径，点「保存」生效。', false);
-}
-function peSave() {
-  const v = document.getElementById('pe-input').value.trim();
-  const body = peModule === 'team' ? { teamPath: v } : { skillPath: v };
-  fetch('/api/settings/paths', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) })
-    .then(r => r.json())
-    .then(d => {
-      if (d.error) { peShowStatus(d.error, true); return; }
-      pathsConfig = d;
-      closePathEdit();
-      showToast((peModule === 'team' ? '团队' : '技能') + '文件夹已更新');
-      if (peModule === 'team') { if (typeof initTeam === 'function') initTeam(); }
-      else { if (typeof initSkill === 'function') initSkill(); }
-    })
-    .catch(e => peShowStatus('保存失败: ' + e, true));
-}
-
-// 文件夹选择器（服务端目录树，仅限用户目录 / 项目目录）
-function openFolderPickerForEdit() {
-  const cur = document.getElementById('pe-input').value.trim();
-  fpCurrent = cur || (pathsConfig && pathsConfig.teamDefault) || '~';
-  document.getElementById('folder-picker-overlay').style.display = 'flex';
-  fpLoad(fpCurrent);
-}
-function fpLoad(path) {
-  fetch('/api/fs/browse?path=' + encodeURIComponent(path))
-    .then(r => r.json())
-    .then(d => {
-      if (d.error) { showToast(d.error); return; }
-      fpCurrent = d.path;
-      document.getElementById('fp-crumb').textContent = fpCurrent;
-      const list = document.getElementById('fp-list');
-      list.innerHTML = '';
-      if (d.parent && d.parent !== d.path) {
-        const up = document.createElement('div');
-        up.className = 'fp-item up';
-        up.innerHTML = '<span class="fp-ico">↑</span> 上级目录';
-        up.onclick = () => fpLoad(d.parent);
-        list.appendChild(up);
-      }
-      (d.entries || []).forEach(e => {
-        const row = document.createElement('div');
-        row.className = 'fp-item';
-        row.innerHTML = '<span class="fp-ico">▸</span>' + escapeHtml(e.name);
-        row.onclick = () => fpLoad(fpCurrent + '/' + e.name);
-        list.appendChild(row);
-      });
-      if (!(d.entries || []).length && !(d.parent && d.parent !== d.path)) {
-        list.innerHTML = '<div style="padding:14px;color:var(--text-tertiary);font-size:12px;">此目录下没有子文件夹</div>';
-      }
-    })
-    .catch(e => showToast('读取目录失败: ' + e));
-}
-function fpChoose() {
-  document.getElementById('pe-input').value = fpCurrent;
-  closeFolderPicker();
-}
-function closeFolderPicker() { document.getElementById('folder-picker-overlay').style.display = 'none'; }
 </script>
 </html>
