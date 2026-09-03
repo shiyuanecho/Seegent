@@ -1,0 +1,16 @@
+{
+  "quotes": [
+    {
+      "tokenSymbol": "TSLA",
+      "bid": "366.81",
+      "ask": "366.90",
+      "dailyTradingVolume": "61732015",
+      "dailyHigh": "367.50",
+      "dailyLow": "365.81",
+      "mintBurnTokenVolume": "1551.576",
+      "mintBurnUsdVolume": "569203.41348",
+      "generatedAt": "2026-09-01T00:00:00Z",
+      "isTradingHalt": false
+    }
+  ]
+}

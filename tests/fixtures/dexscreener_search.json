@@ -1,0 +1,28 @@
+{
+  "pairs": [
+    {
+      "chainId": "ethereum",
+      "dexId": "uniswap",
+      "pairAddress": "0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "url": "https://dexscreener.com/ethereum/pool",
+      "baseToken": {
+        "address": "0xBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "name": "Example Token",
+        "symbol": "EXM"
+      },
+      "quoteToken": {
+        "address": "0xCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+        "name": "USD Coin",
+        "symbol": "USDC"
+      },
+      "priceUsd": "1.25",
+      "priceChange": {"h24": "4.2"},
+      "volume": {"m5": 100, "h1": 1000, "h24": 25000},
+      "liquidity": {"usd": 500000},
+      "txns": {"h24": {"buys": 120, "sells": 80}},
+      "fdv": 1250000,
+      "marketCap": 1000000,
+      "pairCreatedAt": 1700000000000
+    }
+  ]
+}

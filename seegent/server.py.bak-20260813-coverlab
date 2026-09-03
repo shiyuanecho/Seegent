@@ -51,13 +51,6 @@ def _get_data_dir():
 
 
 DATA_DIR = _get_data_dir()
-
-try:
-    from .trend import TrendError, TrendService
-except ImportError:  # 兼容 python seegent/server.py 直接启动
-    from trend import TrendError, TrendService
-
-TREND_SERVICE = TrendService(DATA_DIR)
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 STATE_FILE = os.path.join(DATA_DIR, '.seegent-state.json')
 TRACKS_FILE = os.path.join(DATA_DIR, '.seegent-tracks.json')
@@ -2132,21 +2125,9 @@ class Handler(SimpleHTTPRequestHandler):
         if '://' in self.path:
             from urllib.parse import urlparse
             self.path = urlparse(self.path).path
-        request_path = urllib.parse.urlparse(self.path).path
         # 根路径和 index.html 从包内 static/ 目录提供
-        if request_path in ('/', '/index.html'):
+        if self.path in ('/', '/index.html'):
             return self._serve_static('index.html')
-        trend_static = {
-            '/trend.css': ('trend.css', 'text/css'),
-            '/trend.js': ('trend.js', 'application/javascript'),
-            '/lightweight-charts.production.mjs': ('lightweight-charts.production.mjs', 'application/javascript'),
-            '/lightweight-charts.LICENSE': ('lightweight-charts.LICENSE', 'text/plain'),
-        }
-        if request_path in trend_static:
-            filename, content_type = trend_static[request_path]
-            return self._serve_static(filename, content_type)
-        if request_path.startswith('/api/trend/'):
-            return self._handle_trend_get(request_path)
         if self.path == '/api/state':
             return self._serve_json(_load_json(STATE_FILE, {}))
         if self.path.startswith('/api/logs'):
@@ -2300,11 +2281,6 @@ class Handler(SimpleHTTPRequestHandler):
             if self.command == 'DELETE':
                 return self._handle_datasources_delete()
             return self._handle_datasources()
-        # 封面生成器模块（Coverlab）：从 STATIC_DIR/coverlab 提供构建产物。
-        # 注意：SimpleHTTPRequestHandler 默认的 super().do_GET() 以进程 cwd 为静态根，
-        # 而 Seegent 启动时 cwd 为项目根目录而非 static/，故这里显式指定目录。
-        if self.path == '/coverlab' or self.path.startswith('/coverlab/'):
-            return self._serve_coverlab()
         return super().do_GET()
 
     def do_POST(self):
@@ -2316,8 +2292,6 @@ class Handler(SimpleHTTPRequestHandler):
         from urllib.parse import urlparse, parse_qs
         request_path = urlparse(self.path).path
 
-        if request_path == '/api/trend/watchlist':
-            return self._handle_trend_post()
         if self.path == '/api/state':
             return self._save_json_endpoint(STATE_FILE)
         if self.path == '/api/open-in-finder':
@@ -2481,63 +2455,6 @@ class Handler(SimpleHTTPRequestHandler):
         _save_json(path, data)
         self._serve_json({'ok': True})
 
-    # ========== 趋势：多链行情与链上活动 ==========
-
-    def _handle_trend_get(self, request_path):
-        """趋势读接口。资产 assetId 与市场 marketId 分离，避免同名币和不同交易池被静默合并。"""
-        from urllib.parse import parse_qs, urlparse
-
-        query = parse_qs(urlparse(self.path).query)
-        first = lambda key, default='': query.get(key, [default])[0]
-        try:
-            if request_path == '/api/trend/capabilities':
-                result = TREND_SERVICE.capabilities()
-            elif request_path == '/api/trend/overview':
-                result = TREND_SERVICE.overview()
-            elif request_path == '/api/trend/search':
-                result = TREND_SERVICE.search(first('q'), first('chainId'), first('limit', '20'))
-            elif request_path == '/api/trend/asset':
-                result = TREND_SERVICE.asset(first('assetId'), first('marketId'))
-            elif request_path == '/api/trend/ohlcv':
-                market_id = first('marketId')
-                range_key = first('range', '1d')
-                interval_key = first('interval') or None
-                cursor = first('cursor') or None
-                if cursor:
-                    result = TREND_SERVICE.ohlcv(market_id, range_key, interval_key, cursor)
-                else:
-                    result = TREND_SERVICE.ohlcv(market_id, range_key, interval_key)
-            elif request_path == '/api/trend/flows':
-                result = TREND_SERVICE.flows(first('assetId'), first('marketId'), first('range', '1d'))
-            elif request_path == '/api/trend/trades':
-                result = TREND_SERVICE.trades(first('marketId'), first('range', '1d'), first('limit', '80'))
-            elif request_path == '/api/trend/risk':
-                result = TREND_SERVICE.risk(first('assetId'))
-            elif request_path == '/api/trend/watchlist' and self.command == 'DELETE':
-                result = TREND_SERVICE.delete_watch_item(first('targetId'))
-            elif request_path == '/api/trend/watchlist':
-                result = TREND_SERVICE.get_watchlist()
-            else:
-                return self._serve_json({'error': {'code': 'not_found', 'message': '趋势接口不存在'}}, 404)
-            return self._serve_json(result)
-        except TrendError as error:
-            return self._serve_json({'error': error.as_dict()}, error.status)
-        except (TypeError, ValueError):
-            return self._serve_json({'error': {'code': 'invalid_parameter', 'message': '请求参数无效'}}, 400)
-        except Exception:
-            return self._serve_json({'error': {'code': 'internal_error', 'message': '趋势服务暂时不可用'}}, 500)
-
-    def _handle_trend_post(self):
-        try:
-            body = self._read_body()
-            if not isinstance(body, dict):
-                raise TrendError('invalid_json', '请提供有效 JSON', 400)
-            return self._serve_json(TREND_SERVICE.save_watch_item(body))
-        except TrendError as error:
-            return self._serve_json({'error': error.as_dict()}, error.status)
-        except Exception:
-            return self._serve_json({'error': {'code': 'internal_error', 'message': '关注列表暂时无法保存'}}, 500)
-
     def _serve_static(self, filename, content_type='text/html'):
         """Serve a static file from the package static/ directory."""
         filepath = os.path.join(STATIC_DIR, filename)
@@ -2551,46 +2468,6 @@ class Handler(SimpleHTTPRequestHandler):
             self.wfile.write(content)
         except FileNotFoundError:
             self.send_error(404, 'File not found')
-
-    def _serve_coverlab(self):
-        """从 STATIC_DIR/coverlab 提供封面生成器（Coverlab）的静态构建产物。
-
-        去掉 URL 中的 /coverlab 前缀后，复用 SimpleHTTPRequestHandler 自带的
-        MIME 推断与 index.html 目录首页逻辑，静态根锁定为 STATIC_DIR/coverlab，
-        与进程 cwd 解耦，避免依赖 Seegent 的启动目录。
-        """
-        # 自实现静态文件服务，并强制 no-store：coverlab 的资源（含 index-64-p7EtE.js
-        # 等固定文件名的 chunk）一经修改必须让浏览器重新拉取，否则用户会长期命中
-        # 旧缓存、修复不生效。
-        import mimetypes
-        from urllib.parse import urlparse, unquote
-        base = os.path.normpath(os.path.join(STATIC_DIR, 'coverlab'))
-        path_only = urlparse(self.path).path  # 去掉查询串
-        rel = path_only[len('/coverlab'):] if path_only.startswith('/coverlab') else path_only
-        if not rel:
-            rel = '/'
-        fs_path = os.path.normpath(os.path.join(base, rel.lstrip('/')))
-        if not fs_path.startswith(base):
-            self.send_error(403); return
-        if os.path.isdir(fs_path):
-            fs_path = os.path.join(fs_path, 'index.html')
-        if not os.path.isfile(fs_path):
-            self.send_error(404); return
-        ctype, _ = mimetypes.guess_type(fs_path)
-        if ctype is None:
-            ctype = 'application/octet-stream'
-        try:
-            with open(fs_path, 'rb') as fh:
-                data = fh.read()
-        except OSError:
-            self.send_error(404); return
-        self.send_response(200)
-        self.send_header('Content-Type', ctype)
-        self.send_header('Content-Length', str(len(data)))
-        self.send_header('Cache-Control', 'no-store')
-        self.end_headers()
-        if self.command != 'HEAD':
-            self.wfile.write(data)
 
     def _send_cors(self):
         """仅放行同源请求的跨域头。
@@ -2617,18 +2494,9 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_response(status)
         self.send_header('Content-Type', 'application/json')
         self.send_header('Content-Length', str(len(body)))
-        # Trend polling uses stable URLs for cache identity. Dynamic API
-        # responses must not be served from the browser's HTTP cache, otherwise
-        # a fresh provider response can still look stale in the page.
-        self.send_header('Cache-Control', 'no-store, max-age=0')
         self._send_cors()
         self.end_headers()
-        try:
-            self.wfile.write(body)
-        except (BrokenPipeError, ConnectionResetError):
-            # 页面离开“趋势”模块时会主动取消在途请求。客户端已断开属于
-            # 正常生命周期事件，无需再尝试写入一个二次错误响应。
-            return
+        self.wfile.write(body)
 
 
     # ===== 项目追踪 API =====
@@ -3355,8 +3223,6 @@ def run_server(host='127.0.0.1', port=8765, data_dir=None, open_browser=False):
         os.environ['SEEGENT_DATA_DIR'] = data_dir
         DATA_DIR = _get_data_dir()
         STATE_FILE = os.path.join(DATA_DIR, '.seegent-state.json')
-
-    TREND_SERVICE.set_data_dir(DATA_DIR)
 
     # 确保数据目录存在
     os.makedirs(DATA_DIR, exist_ok=True)

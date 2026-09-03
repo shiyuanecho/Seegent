@@ -1,0 +1,1085 @@
+/* Additional Coverlab templates. Kept separate from the generated bundle so
+   future template work can be reviewed and maintained without editing minified CSS. */
+
+.template-index.quote-index {
+  background: #8a6a13;
+}
+
+.template-index.announcement-index {
+  background: #d08700;
+}
+
+.template-index.interview-index {
+  background: #6554cc;
+}
+
+.template-index.minimal-index {
+  color: #201c18;
+  background: #e8e1d7;
+}
+
+.range-row + .range-row {
+  margin-top: -2px;
+}
+
+.range-row input[type="range"] {
+  height: 20px;
+  margin-top: 4px;
+  cursor: ew-resize;
+}
+
+.cover-art {
+  cursor: grab;
+  touch-action: none;
+}
+
+.cover-art.is-dragging {
+  cursor: grabbing;
+}
+
+.position-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: -2px 0 16px;
+}
+
+.position-grid button {
+  height: 28px;
+  color: var(--text-secondary);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 10px;
+  transition: color .15s, background .15s, border-color .15s;
+}
+
+.position-grid button:hover,
+.position-grid button.is-active {
+  color: var(--info);
+  background: var(--info-bg);
+  border-color: var(--info);
+}
+
+.position-hint {
+  color: var(--text-tertiary);
+  margin: -8px 0 15px;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* E · Quote poster */
+.quote-cover {
+  background-color: #1d1712;
+}
+
+.quote-cover .cover-darken {
+  background: #180f09;
+}
+
+.quote-cover .editorial-grain {
+  opacity: .12;
+  mix-blend-mode: soft-light;
+  background-image:
+    linear-gradient(105deg, transparent 0 62%, rgba(242, 193, 78, .28) 62% 64%, transparent 64%),
+    radial-gradient(rgba(255, 255, 255, .7) .5px, transparent .8px);
+  background-size: auto, 5px 5px;
+}
+
+.quote-cover .editorial-topline {
+  top: 6cqh;
+  padding-bottom: 2cqh;
+  border-bottom: 1px solid rgba(255, 255, 255, .45);
+}
+
+.quote-cover .editorial-title {
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 16cqh 8cqw 18cqh;
+  text-align: left;
+  font-size: clamp(24px, 10.5cqmin, 88px);
+  line-height: 1.14;
+  letter-spacing: -.075em;
+}
+
+.quote-cover .editorial-title::before {
+  content: "“";
+  color: #f2c14e;
+  margin-bottom: 1cqh;
+  font-family: Georgia, serif;
+  font-size: 18cqmin;
+  font-weight: 700;
+  line-height: .55;
+}
+
+.quote-cover .editorial-footer {
+  bottom: 5cqh;
+}
+
+/* H · Announcement */
+.announcement-cover {
+  background-color: #271b08;
+}
+
+.announcement-cover .cover-darken {
+  background: linear-gradient(180deg, #201400 0%, #15110b 70%, #090807 100%);
+}
+
+.announcement-cover::before {
+  content: "NEW";
+  z-index: 1;
+  color: rgba(255, 255, 255, .13);
+  position: absolute;
+  top: 14cqh;
+  right: 5cqw;
+  font-family: "DM Mono", monospace;
+  font-size: 23cqmin;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -.12em;
+  pointer-events: none;
+}
+
+.announcement-cover .kids-topline {
+  padding-bottom: 2cqh;
+  border-bottom: 1px solid rgba(255, 255, 255, .55);
+}
+
+.announcement-cover .kids-title {
+  bottom: 20cqh;
+  left: 7cqw;
+  right: 7cqw;
+  padding: 4cqh 4cqw;
+  background: rgba(20, 14, 5, .52);
+  border: 1px solid rgba(255, 255, 255, .35);
+  font-size: clamp(27px, 12cqmin, 100px);
+  line-height: 1.04;
+}
+
+.announcement-cover .kids-footer {
+  bottom: 0;
+  padding-top: 3cqh;
+  padding-bottom: 3cqh;
+}
+
+/* I · Interview */
+.interview-cover {
+  background-color: #15131d;
+}
+
+.interview-cover .cover-darken {
+  background: linear-gradient(180deg, rgba(18, 15, 27, .12), #100e18 92%);
+}
+
+.interview-cover::after {
+  content: "“";
+  z-index: 1;
+  color: rgba(139, 124, 255, .88);
+  position: absolute;
+  top: 11cqh;
+  left: 7cqw;
+  font-family: Georgia, serif;
+  font-size: 23cqmin;
+  font-weight: 700;
+  line-height: .7;
+  pointer-events: none;
+}
+
+.interview-cover .knowledge-frame {
+  top: 6cqh;
+  right: auto;
+  bottom: 6cqh;
+  left: 5.5cqw;
+  width: 0;
+  border-width: 0 0 0 4px;
+}
+
+.interview-cover .knowledge-side {
+  display: none;
+}
+
+.interview-cover .knowledge-topline {
+  left: 8cqw;
+  right: 7cqw;
+}
+
+.interview-cover .knowledge-title {
+  bottom: 10cqh;
+  left: 8cqw;
+  right: 7cqw;
+  padding: 3.5cqh 4cqw;
+  background: rgba(13, 11, 20, .74);
+  border: 1px solid rgba(255, 255, 255, .25);
+  font-size: clamp(21px, 7.7cqmin, 66px);
+  line-height: 1.13;
+  letter-spacing: -.055em;
+}
+
+.interview-cover .knowledge-footer {
+  bottom: 5cqh;
+  left: 8cqw;
+}
+
+/* J · Minimal text */
+.minimal-cover {
+  background-color: #181614;
+}
+
+.minimal-cover .cover-darken {
+  background: #151311;
+}
+
+.minimal-cover .editorial-grain {
+  opacity: .06;
+  mix-blend-mode: screen;
+  background-size: 7px 7px;
+}
+
+.minimal-cover .editorial-topline {
+  top: 7cqh;
+}
+
+.minimal-cover .editorial-topline i {
+  width: 18cqw;
+  height: 1px;
+}
+
+.minimal-cover .editorial-title {
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 18cqh 9cqw 21cqh;
+  text-align: left;
+  font-family: "Noto Sans SC", sans-serif;
+  font-size: clamp(23px, 9cqmin, 76px);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -.07em;
+}
+
+.minimal-cover .editorial-title span + span {
+  color: rgba(243, 239, 231, .72);
+  margin-top: 1.2cqh;
+}
+
+.minimal-cover .editorial-footer {
+  bottom: 6cqh;
+  padding-top: 2cqh;
+  border-top: 1px solid rgba(255, 255, 255, .35);
+}
+
+/* 隐藏预览下方的模板说明注脚（用户反馈不需要） */
+.preview-footnote {
+  display: none;
+}
+
+/* N · Flush right（右齐竖线：全部右对齐 + 左侧竖线） */
+.template-index.flush-index {
+  color: #fca311;
+  background: #14213d;
+}
+
+.flush-cover .cover-darken {
+  background: #0d1526;
+}
+
+.flush-bar {
+  z-index: 2;
+  width: max(3px, .55cqw);
+  position: absolute;
+  top: 16cqh;
+  bottom: 16cqh;
+  left: 6.5cqw;
+}
+
+.flush-topline {
+  z-index: 2;
+  justify-content: flex-end;
+  gap: 3cqw;
+  font-family: "DM Mono", monospace;
+  font-size: clamp(7px, 1.7cqmin, 12px);
+  letter-spacing: .16em;
+  color: rgba(245, 241, 232, .55);
+  display: flex;
+  position: absolute;
+  top: 5.5cqh;
+  left: 8cqw;
+  right: 8cqw;
+}
+
+.flush-title {
+  z-index: 2;
+  align-content: center;
+  justify-items: end;
+  gap: 1cqh;
+  text-align: right;
+  font-size: clamp(26px, 11.5cqmin, 96px);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  color: #f5f1e8;
+  display: grid;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 12cqw;
+  right: 8cqw;
+}
+
+.flush-footer {
+  z-index: 2;
+  justify-content: flex-end;
+  gap: 3cqw;
+  font-family: "DM Mono", monospace;
+  font-size: clamp(7px, 1.6cqmin, 11px);
+  letter-spacing: .12em;
+  color: rgba(245, 241, 232, .55);
+  display: flex;
+  position: absolute;
+  bottom: 6cqh;
+  left: 8cqw;
+  right: 8cqw;
+}
+
+/* O · Top title（顶天标题：标题置顶） */
+.template-index.topline-index {
+  background: #e94f4f;
+}
+
+.topline-cover .cover-darken {
+  background: linear-gradient(180deg, #0b0b0d 0%, rgba(11, 11, 13, .5) 45%, rgba(11, 11, 13, .8) 100%);
+}
+
+.topline-head {
+  z-index: 2;
+  justify-content: space-between;
+  font-family: "DM Mono", monospace;
+  font-size: clamp(7px, 1.7cqmin, 12px);
+  letter-spacing: .16em;
+  color: rgba(255, 255, 255, .65);
+  display: flex;
+  position: absolute;
+  top: 4.5cqh;
+  left: 7cqw;
+  right: 7cqw;
+}
+
+.topline-title {
+  z-index: 2;
+  gap: .8cqh;
+  font-size: clamp(25px, 10.8cqmin, 92px);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -.04em;
+  color: #fff;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, .4);
+  display: grid;
+  position: absolute;
+  top: 10cqh;
+  left: 7cqw;
+  right: 7cqw;
+}
+
+.topline-foot {
+  z-index: 2;
+  justify-content: space-between;
+  padding-top: 2cqh;
+  border-top: 1px solid rgba(255, 255, 255, .45);
+  font-family: "DM Mono", monospace;
+  font-size: clamp(7px, 1.6cqmin, 11px);
+  letter-spacing: .12em;
+  color: rgba(255, 255, 255, .75);
+  display: flex;
+  position: absolute;
+  bottom: 5.5cqh;
+  left: 7cqw;
+  right: 7cqw;
+}
+
+/* P · Center band（横贯色带：中间色带 + 深色标题） */
+.template-index.band-index {
+  color: #17130a;
+  background: #f2c14e;
+}
+
+.band-cover .cover-darken {
+  background: #0e0e10;
+}
+
+.band-topline {
+  z-index: 2;
+  justify-content: space-between;
+  font-family: "DM Mono", monospace;
+  font-size: clamp(7px, 1.7cqmin, 12px);
+  letter-spacing: .16em;
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .55);
+  display: flex;
+  position: absolute;
+  top: 5.5cqh;
+  left: 8cqw;
+  right: 8cqw;
+}
+
+.band-strip {
+  z-index: 2;
+  gap: 2.2cqh;
+  padding: 5cqh 8cqw;
+  display: grid;
+  position: absolute;
+  top: 33cqh;
+  left: 0;
+  right: 0;
+}
+
+.band-title {
+  gap: .5cqh;
+  font-size: clamp(21px, 9.2cqmin, 76px);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -.03em;
+  color: #17130a;
+  display: grid;
+}
+
+.band-brand {
+  font-family: "DM Mono", monospace;
+  font-size: clamp(7px, 1.6cqmin, 11px);
+  letter-spacing: .18em;
+  color: rgba(23, 19, 10, .62);
+}
+
+.band-footer {
+  z-index: 2;
+  justify-content: space-between;
+  font-family: "DM Mono", monospace;
+  font-size: clamp(7px, 1.6cqmin, 11px);
+  letter-spacing: .1em;
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .55);
+  display: flex;
+  position: absolute;
+  bottom: 5.5cqh;
+  left: 8cqw;
+  right: 8cqw;
+}
+
+/* P · 横贯色带：文字居中（2026-08-18 用户调整） */
+.band-strip {
+  justify-items: center;
+  text-align: center;
+}
+
+.band-title {
+  justify-items: center;
+}
+
+/* ===== 全局文字强化：让标题成为封面主角（2026-08-18） ===== */
+
+/* 人物 IP 家族：更大 + 阴影加强 */
+.knowledge-title {
+  font-size: clamp(24px, 13cqmin, 104px);
+  text-shadow: 0 3px 18px rgba(0, 0, 0, .55), 0 1px 4px rgba(0, 0, 0, .45);
+}
+
+/* 知识卡片家族：更大 + 字重 900 + 阴影加强 */
+.lesson-title {
+  font-size: clamp(25px, 13cqmin, 104px);
+  font-weight: 900;
+  text-shadow: 0 3px 18px rgba(0, 0, 0, .6), 0 1px 4px rgba(0, 0, 0, .4);
+}
+
+/* 观点杂志家族：更大 + 字重 700 */
+.editorial-title {
+  font-size: clamp(22px, 11.5cqmin, 96px);
+  font-weight: 700;
+  text-shadow: 0 2px 22px rgba(0, 0, 0, .7), 0 1px 5px rgba(0, 0, 0, .5);
+}
+
+/* 金句海报 */
+.quote-cover .editorial-title {
+  font-size: clamp(25px, 11.5cqmin, 96px);
+}
+
+/* 极简留白：保持气质但不再轻飘 */
+.minimal-cover .editorial-title {
+  font-size: clamp(24px, 10.5cqmin, 88px);
+  font-weight: 600;
+}
+
+/* 访谈人物：字号明显加大 */
+.interview-cover .knowledge-title {
+  font-size: clamp(22px, 9.2cqmin, 76px);
+  letter-spacing: -.045em;
+}
+
+/* 横贯色带 */
+.band-title {
+  font-size: clamp(24px, 11.5cqmin, 92px);
+}
+
+/* 右齐竖线 */
+.flush-title {
+  font-size: clamp(30px, 13cqmin, 108px);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, .3);
+}
+
+/* 顶天标题 */
+.topline-title {
+  font-size: clamp(28px, 12.5cqmin, 104px);
+  text-shadow: 0 2px 18px rgba(0, 0, 0, .5);
+}
+
+/* ===== Q–W · Horizontal-first title layouts (2026-09-02) =====
+   Five layouts keep Chinese reading left-to-right; two short-copy layouts
+   use centered alignment. All key copy stays inside a 6–10cqw safe zone. */
+
+.template-index.upperleft-index {
+  background: #d9532f;
+}
+
+.template-index.midleft-index {
+  background: #167f78;
+}
+
+.template-index.lowerleft-index {
+  background: #d63f61;
+}
+
+.template-index.singleline-index {
+  color: #211904;
+  background: #e6b72f;
+}
+
+.template-index.leftcard-index {
+  color: #1a2108;
+  background: #b9d94a;
+}
+
+.template-index.centerfocus-index {
+  color: #29231d;
+  background: #e2d8cc;
+}
+
+.template-index.centerline-index {
+  color: #10252b;
+  background: #65bfd2;
+}
+
+.upperleft-cover,
+.midleft-cover,
+.lowerleft-cover,
+.singleline-cover,
+.leftcard-cover,
+.centerfocus-cover,
+.centerline-cover {
+  background-color: #111216;
+}
+
+.upperleft-cover .topline-title,
+.midleft-cover .topline-title,
+.lowerleft-cover .topline-title,
+.singleline-cover .topline-title,
+.leftcard-cover .topline-title,
+.centerfocus-cover .topline-title,
+.centerline-cover .topline-title {
+  z-index: 2;
+  color: #fff;
+  font-family: "Noto Sans SC", sans-serif;
+  font-weight: 900;
+  letter-spacing: -.045em;
+}
+
+/* Q · 左上双行：最常用的左上安全区，保留右下主体。 */
+.upperleft-cover .cover-darken {
+  background: linear-gradient(135deg, #090a0d 0%, rgba(9, 10, 13, .88) 34%, rgba(9, 10, 13, .18) 74%);
+}
+
+.upperleft-cover .topline-title {
+  top: 13cqh;
+  left: 7cqw;
+  right: 15cqw;
+  gap: .5cqh;
+  font-size: clamp(27px, 12cqmin, 100px);
+  line-height: 1.06;
+}
+
+.upperleft-cover .topline-title span:first-child {
+  color: rgba(255, 255, 255, .76);
+  font-size: .58em;
+  letter-spacing: -.02em;
+}
+
+/* R · 左中标题：文字仍左对齐，只把标题块放在垂直中段。 */
+.midleft-cover .cover-darken {
+  background: linear-gradient(90deg, #071412 0%, rgba(7, 20, 18, .86) 42%, rgba(7, 20, 18, .12) 78%);
+}
+
+.midleft-cover .topline-title {
+  align-content: center;
+  top: 0;
+  bottom: 0;
+  left: 8cqw;
+  right: 20cqw;
+  gap: .8cqh;
+  padding-left: 4cqw;
+  font-size: clamp(26px, 11.5cqmin, 96px);
+  line-height: 1.08;
+}
+
+/* S · 底部双行：把画面主体完整留在上半区。 */
+.lowerleft-cover .cover-darken {
+  background: linear-gradient(0deg, #12080d 0%, rgba(18, 8, 13, .92) 32%, rgba(18, 8, 13, .08) 72%);
+}
+
+.lowerleft-cover .topline-title {
+  top: auto;
+  bottom: 15cqh;
+  left: 7cqw;
+  right: 12cqw;
+  gap: .6cqh;
+  font-size: clamp(28px, 12.5cqmin, 104px);
+  line-height: 1.06;
+}
+
+.lowerleft-cover .topline-foot {
+  border-top-color: rgba(255, 255, 255, .28);
+}
+
+/* T · 单行通栏：一条横向阅读带，适合短结论。 */
+.singleline-cover .cover-darken {
+  background: rgba(8, 9, 12, .72);
+}
+
+.singleline-cover .topline-title {
+  justify-items: center;
+  top: 42cqh;
+  left: 0;
+  right: 0;
+  padding: 3.8cqh 7cqw 4.2cqh;
+  text-align: center;
+  background: rgba(9, 10, 13, .76);
+  border-top: 1px solid rgba(255, 255, 255, .38);
+  border-bottom: 1px solid rgba(255, 255, 255, .22);
+  font-size: clamp(22px, 7.2cqmin, 72px);
+  line-height: 1.12;
+  letter-spacing: -.025em;
+}
+
+/* U · 左侧卡片：浅色承托，让复杂照片也能清楚读字。 */
+.leftcard-cover .cover-darken {
+  background: linear-gradient(90deg, rgba(8, 9, 10, .2), rgba(8, 9, 10, .42));
+}
+
+.leftcard-cover .topline-title {
+  top: 28cqh;
+  left: 6cqw;
+  right: 18cqw;
+  gap: .7cqh;
+  padding: 4.6cqh 5cqw;
+  color: #171914;
+  background: rgba(247, 244, 234, .94);
+  border-radius: 1.3cqmin;
+  box-shadow: 0 2.2cqh 6cqh rgba(0, 0, 0, .34);
+  font-size: clamp(24px, 10.2cqmin, 86px);
+  line-height: 1.1;
+  text-shadow: none;
+}
+
+.leftcard-cover .topline-title::after {
+  content: "";
+  width: 18cqw;
+  height: max(4px, .7cqh);
+  margin-top: 1.6cqh;
+  background: #e9ff70;
+}
+
+/* V · 中心短句：只用于短标题，水平和垂直都居中。 */
+.centerfocus-cover .cover-darken {
+  background: #0f0f12;
+}
+
+.centerfocus-cover .topline-head,
+.centerfocus-cover .topline-foot {
+  justify-content: center;
+  gap: 4cqw;
+}
+
+.centerfocus-cover .topline-title {
+  align-content: center;
+  justify-items: center;
+  top: 0;
+  bottom: 0;
+  left: 10cqw;
+  right: 10cqw;
+  gap: 1cqh;
+  text-align: center;
+  font-size: clamp(29px, 13cqmin, 108px);
+  line-height: 1.08;
+}
+
+/* W · 中下大字：标题左右居中，落在画面中下部。 */
+.centerline-cover .cover-darken {
+  background: linear-gradient(0deg, #081114 0%, rgba(8, 17, 20, .9) 34%, rgba(8, 17, 20, .2) 78%);
+}
+
+.centerline-cover .topline-head {
+  justify-content: center;
+  gap: 4cqw;
+}
+
+.centerline-cover .topline-title {
+  justify-items: center;
+  top: auto;
+  bottom: 18cqh;
+  left: 7cqw;
+  right: 7cqw;
+  padding: 1.5cqh 3cqw 2cqh;
+  text-align: center;
+  font-size: clamp(28px, 10.5cqmin, 96px);
+  line-height: 1.08;
+  letter-spacing: -.04em;
+}
+
+/* ===== F–AD · Centered typography collection (2026-09-02) =====
+   Twelve clean, type-led directions derived from poster hierarchy research.
+   Every headline is centered on both axes; no frame or edge rule is used. */
+
+.template-index.scaleup-index { background: #d95438; }
+.template-index.scaledown-index { color: #182008; background: #c9e95d; }
+.template-index.serifstage-index { color: #2b2118; background: #e4c9a5; }
+.template-index.wideair-index { color: #122522; background: #b9d8d2; }
+.template-index.inverseblocks-index { color: #191714; background: #eee8df; }
+.template-index.outlinepair-index { color: #172331; background: #a9caef; }
+.template-index.colorbeat-index { color: #2b2106; background: #e9b943; }
+.template-index.glassnote-index { color: #1b252b; background: #d8e4eb; }
+.template-index.monostatement-index { color: #10261c; background: #9fd8bc; font-size: 10px; }
+.template-index.tightstack-index { color: #111; background: #f2f2f0; font-size: 10px; }
+.template-index.softglow-index { color: #281f31; background: #d7c5e7; font-size: 10px; }
+.template-index.numberstage-index { color: #35140f; background: #e46f5c; font-size: 10px; }
+
+.scaleup-cover,
+.scaledown-cover,
+.serifstage-cover,
+.wideair-cover,
+.inverseblocks-cover,
+.outlinepair-cover,
+.colorbeat-cover,
+.glassnote-cover,
+.monostatement-cover,
+.tightstack-cover,
+.softglow-cover,
+.numberstage-cover {
+  background-color: #101114;
+}
+
+:is(.scaleup-cover, .scaledown-cover, .serifstage-cover, .wideair-cover,
+    .inverseblocks-cover, .outlinepair-cover, .colorbeat-cover, .glassnote-cover,
+    .monostatement-cover, .tightstack-cover, .softglow-cover, .numberstage-cover) .topline-head,
+:is(.scaleup-cover, .scaledown-cover, .serifstage-cover, .wideair-cover,
+    .inverseblocks-cover, .outlinepair-cover, .colorbeat-cover, .glassnote-cover,
+    .monostatement-cover, .tightstack-cover, .softglow-cover, .numberstage-cover) .topline-foot {
+  justify-content: center;
+  gap: 3.2cqw;
+  color: rgba(255, 255, 255, .62);
+  border: 0;
+  padding: 0;
+  text-align: center;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .52);
+}
+
+:is(.scaleup-cover, .scaledown-cover, .serifstage-cover, .wideair-cover,
+    .inverseblocks-cover, .outlinepair-cover, .colorbeat-cover, .glassnote-cover,
+    .monostatement-cover, .tightstack-cover, .softglow-cover, .numberstage-cover) .topline-title {
+  align-content: center;
+  justify-items: center;
+  top: 0;
+  bottom: 0;
+  left: 7cqw;
+  right: 7cqw;
+  gap: 1cqh;
+  padding: 13cqh 0;
+  color: #fff;
+  font-family: "Noto Sans SC", sans-serif;
+  font-weight: 900;
+  text-align: center;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, .5);
+}
+
+/* F · 小大对句：前句轻，结论大。 */
+.scaleup-cover .cover-darken {
+  background: radial-gradient(circle at 50% 50%, rgba(12, 13, 17, .9), rgba(12, 13, 17, .4) 68%, rgba(12, 13, 17, .72));
+}
+
+.scaleup-cover .topline-title {
+  font-size: clamp(31px, 13cqmin, 112px);
+  line-height: .98;
+  letter-spacing: -.06em;
+}
+
+.scaleup-cover .topline-title span:first-child {
+  margin-bottom: 1.1cqh;
+  font-size: .5em;
+  font-weight: 600;
+  letter-spacing: .12em;
+}
+
+.scaleup-cover .topline-title span:last-child {
+  font-size: 1.08em;
+}
+
+.scaleup-cover .topline-title span:only-child {
+  margin: 0;
+  font-size: 1em;
+  font-weight: 900;
+  letter-spacing: -.06em;
+}
+
+/* G · 大字收束：第一句抓眼，第二句轻声落地。 */
+.scaledown-cover .cover-darken {
+  background: radial-gradient(circle at 50% 46%, rgba(8, 13, 11, .92), rgba(8, 13, 11, .38) 66%, rgba(8, 13, 11, .75));
+}
+
+.scaledown-cover .topline-title {
+  font-size: clamp(31px, 13cqmin, 112px);
+  line-height: .98;
+  letter-spacing: -.065em;
+}
+
+.scaledown-cover .topline-title span:first-child {
+  font-size: 1.08em;
+}
+
+.scaledown-cover .topline-title span:last-child {
+  margin-top: 1.15cqh;
+  font-size: .56em;
+  font-weight: 600;
+  letter-spacing: .1em;
+}
+
+.scaledown-cover .topline-title span:only-child {
+  margin: 0;
+  font-size: 1em;
+  font-weight: 900;
+  letter-spacing: -.065em;
+}
+
+/* K · 宋体银幕：衬线字形承担电影感，不叠加装饰。 */
+.serifstage-cover .cover-darken {
+  background: radial-gradient(ellipse at center, rgba(22, 16, 13, .84), rgba(13, 11, 11, .54) 70%, rgba(10, 9, 9, .78));
+}
+
+.serifstage-cover .topline-title {
+  color: #f5eadb;
+  font-family: "Noto Serif SC", serif;
+  font-size: clamp(28px, 10.8cqmin, 94px);
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: -.055em;
+  text-shadow: 0 3px 24px rgba(0, 0, 0, .58);
+}
+
+/* L · 宽字留白：较小字号、宽字距、充足呼吸。 */
+.wideair-cover .cover-darken {
+  background: radial-gradient(circle at center, rgba(9, 17, 17, .88), rgba(9, 17, 17, .5) 72%, rgba(9, 17, 17, .72));
+}
+
+.wideair-cover .topline-title {
+  font-size: clamp(23px, 8cqmin, 72px);
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: .16em;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, .7);
+}
+
+.wideair-cover .topline-title span {
+  padding-left: .16em;
+}
+
+/* M · 黑白双块：两行都在中心，以明暗反转制造识别。 */
+.inverseblocks-cover .cover-darken {
+  background: rgba(8, 8, 9, .78);
+}
+
+.inverseblocks-cover .topline-title {
+  gap: 1.2cqh;
+  font-size: clamp(25px, 9.6cqmin, 86px);
+  line-height: 1.06;
+  letter-spacing: -.045em;
+  text-shadow: none;
+}
+
+.inverseblocks-cover .topline-title span {
+  width: max-content;
+  max-width: 100%;
+  padding: .7cqh 2.4cqw 1cqh;
+  color: #151515;
+  background: #f4f0e8;
+}
+
+.inverseblocks-cover .topline-title span:nth-child(even) {
+  color: #f4f0e8;
+  background: rgba(12, 12, 13, .94);
+}
+
+/* X · 虚实对句：描边和实字形成两级阅读。 */
+.outlinepair-cover .cover-darken {
+  background: radial-gradient(circle at center, rgba(10, 14, 20, .9), rgba(10, 14, 20, .44) 68%, rgba(10, 14, 20, .78));
+}
+
+.outlinepair-cover .topline-title {
+  font-size: clamp(28px, 11cqmin, 98px);
+  line-height: 1.04;
+  letter-spacing: -.055em;
+}
+
+.outlinepair-cover .topline-title span:first-child {
+  color: transparent;
+  -webkit-text-stroke: max(1px, .34cqw) rgba(255, 255, 255, .92);
+  text-shadow: none;
+}
+
+.outlinepair-cover .topline-title span:last-child {
+  color: #fff;
+}
+
+.outlinepair-cover .topline-title span:only-child {
+  color: #fff;
+  -webkit-text-stroke: 0;
+}
+
+/* Y · 双色节拍：轻字铺垫，暖色重字给出动作。 */
+.colorbeat-cover .cover-darken {
+  background: radial-gradient(circle at center, rgba(20, 16, 9, .9), rgba(20, 16, 9, .42) 68%, rgba(20, 16, 9, .74));
+}
+
+.colorbeat-cover .topline-title {
+  font-size: clamp(29px, 11.5cqmin, 102px);
+  line-height: 1.04;
+  letter-spacing: -.055em;
+}
+
+.colorbeat-cover .topline-title span:first-child {
+  font-size: .7em;
+  font-weight: 500;
+  letter-spacing: .08em;
+}
+
+.colorbeat-cover .topline-title span:last-child {
+  color: #ffd166;
+  font-size: 1.06em;
+  font-style: italic;
+}
+
+.colorbeat-cover .topline-title span:only-child {
+  color: #ffd166;
+  font-size: 1em;
+  font-weight: 900;
+  letter-spacing: -.055em;
+}
+
+/* Z · 雾面字幕：局部柔雾保护文字，不遮满整张图片。 */
+.glassnote-cover .cover-darken {
+  background: rgba(8, 12, 15, .34);
+}
+
+.glassnote-cover .topline-title {
+  top: 50%;
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  width: 82cqw;
+  padding: 5cqh 5cqw 5.4cqh;
+  transform: translate(-50%, -50%);
+  gap: .8cqh;
+  color: #f8fbfd;
+  background: rgba(12, 16, 19, .62);
+  border-radius: 2.2cqmin;
+  backdrop-filter: blur(max(6px, 1.3cqmin));
+  font-size: clamp(25px, 9.8cqmin, 88px);
+  line-height: 1.12;
+  letter-spacing: -.045em;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, .42);
+}
+
+/* AA · 等宽宣言：理性字距和稳定行高表达系统观点。 */
+.monostatement-cover .cover-darken {
+  background: radial-gradient(circle at center, rgba(6, 16, 13, .93), rgba(6, 16, 13, .5) 70%, rgba(6, 16, 13, .78));
+}
+
+.monostatement-cover .topline-title {
+  font-family: "DM Mono", "Noto Sans SC", monospace;
+  font-size: clamp(23px, 8.5cqmin, 78px);
+  font-weight: 600;
+  line-height: 1.48;
+  letter-spacing: .1em;
+}
+
+.monostatement-cover .topline-title span {
+  padding-left: .1em;
+}
+
+/* AB · 紧排方阵：近方形的大字块，适合缩略图阅读。 */
+.tightstack-cover .cover-darken {
+  background: radial-gradient(circle at center, rgba(8, 8, 9, .92), rgba(8, 8, 9, .45) 66%, rgba(8, 8, 9, .78));
+}
+
+.tightstack-cover .topline-title {
+  font-size: clamp(32px, 12.5cqmin, 112px);
+  line-height: .91;
+  letter-spacing: -.1em;
+  text-shadow: 0 3px 20px rgba(0, 0, 0, .62);
+}
+
+/* AC · 柔光细字：细字重和柔光形成安静但可读的情绪。 */
+.softglow-cover .cover-darken {
+  background: radial-gradient(circle at center, rgba(18, 13, 24, .9), rgba(18, 13, 24, .48) 68%, rgba(18, 13, 24, .8));
+}
+
+.softglow-cover .topline-title {
+  color: #f2eafa;
+  font-size: clamp(25px, 9.5cqmin, 88px);
+  font-weight: 400;
+  line-height: 1.38;
+  letter-spacing: .025em;
+  text-shadow: 0 0 1.8cqw rgba(222, 197, 246, .64), 0 2px 20px rgba(0, 0, 0, .48);
+}
+
+.softglow-cover .topline-title span:last-child {
+  font-size: 1.12em;
+  font-weight: 600;
+}
+
+.softglow-cover .topline-title span:only-child {
+  font-size: 1em;
+  font-weight: 500;
+}
+
+/* AD · 序号巨幕：数字只做低透明背景，标题仍是唯一主角。 */
+.numberstage-cover .cover-darken {
+  background: radial-gradient(circle at center, rgba(19, 10, 9, .9), rgba(19, 10, 9, .48) 68%, rgba(19, 10, 9, .78));
+}
+
+.numberstage-cover::before {
+  content: "01";
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  position: absolute;
+  inset: 0;
+  color: rgba(255, 122, 102, .2);
+  font-family: "DM Mono", monospace;
+  font-size: 42cqmin;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -.16em;
+  text-indent: -.16em;
+  pointer-events: none;
+}
+
+.numberstage-cover .topline-title {
+  font-size: clamp(27px, 10cqmin, 92px);
+  line-height: 1.13;
+  letter-spacing: -.045em;
+  text-shadow: 0 3px 24px rgba(0, 0, 0, .66);
+}

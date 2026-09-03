@@ -2292,13 +2292,6 @@ body {
   .board-panel { min-height: 240px; }
 }
 
-/* ===== 看板并入操作日志：整体纵向滚动，日志置底 ===== */
-.board-scroll { flex: 1; min-height: 0; overflow-y: auto; }
-.board-scroll > .mgmt-panel { flex: none; }
-.board-mgmt { overflow: visible; }
-.board-dash { flex: none; overflow: visible; }
-.board-log-sub { margin-top: 0; }
-
 /* ===== 配置提示框 ===== */
 .config-hint { margin:0 0 18px; padding:14px 16px; border:1px solid var(--border); border-radius:10px; background:var(--bg-surface); font-size:12.5px; color:var(--text-secondary); line-height:1.7; }
 .config-hint summary { cursor:pointer; font-weight:600; font-size:13px; color:var(--text); display:flex; align-items:center; gap:6px; user-select:none; }
@@ -2579,7 +2572,6 @@ body {
 .float-create-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 </style>
-<link rel="stylesheet" href="/trend.css?v=20260903-01">
 </head>
 <body>
 
@@ -2806,11 +2798,12 @@ body {
     </div>
     <div class="header-segments">
       <button class="header-seg" data-module="file">项目</button>
-      <button class="header-seg" data-module="cover">封面</button>
       <button class="header-seg active" data-module="board">看板</button>
-      <button class="header-seg" data-module="trend">趋势</button>
+      <button class="header-seg" data-module="team">团队</button>
+      <button class="header-seg" data-module="skill">技能</button>
+      <button class="header-seg" data-module="skilllib">技能库</button>
       <button class="header-seg" data-module="usage">用量</button>
-      <button class="header-seg" data-module="agent">Agent</button>
+      <button class="header-seg" data-module="log">日志</button>
       <button class="header-seg" data-module="config">设置</button>
     </div>
   </header>
@@ -2818,11 +2811,6 @@ body {
   <div id="main-layout">
     <!-- ===== 中间内容区 ===== -->
     <div id="center-panel">
-
-      <!-- 封面模块（Coverlab 集成，iframe 嵌入独立前端） -->
-      <div id="cover-module" class="module-content" style="position:relative;padding:0;overflow:hidden;">
-        <iframe src="/coverlab/?v=20260902-11" title="封面生成器" style="position:absolute;inset:0;width:100%;height:100%;border:0;display:block;"></iframe>
-      </div>
 
       <!-- 文件模块 -->
       <div id="file-module" class="module-content">
@@ -2930,10 +2918,8 @@ body {
         </div>
       </div>
 
-      <!-- 看板模块（数据优先：数据源 → 项目绑定；底部并入操作日志） -->
-      <div id="board-module" class="module-content active">
-        <div class="board-scroll">
-          <div class="mgmt-panel board-mgmt">
+      <!-- 看板模块（数据优先：数据源 → 项目绑定） -->
+      <div id="board-module" class="module-content active">        <div class="mgmt-panel board-mgmt">
           <div class="page-header">
             <h2>看板</h2>
             <p>业务数据 + 最近动态。</p>
@@ -2972,64 +2958,10 @@ body {
               </div>
             </section>
           </div>
-        </div>
-        <!-- 操作日志（已并入看板，置底） -->
-        <div class="mgmt-panel board-log-sub">
-          <div class="page-header">
-            <h2>操作日志</h2>
-            <p>记录所有智能体的调用记录，包括 Seegent 主智能体、侧车 Agent（WorkBuddy 等）以及各 CLI 工具（Cursor / Claude / Hermes 等）：任务、模型、轮次、工具、产出文件、Token、耗时、状态。</p>
-          </div>
-          <div class="log-filter-bar">
-            <select id="log-filter-agent" onchange="renderLogList()">
-              <option value="">全部 Agent</option>
-            </select>
-            <select id="log-filter-status" onchange="renderLogList()">
-              <option value="">全部状态</option>
-              <option value="success">成功</option>
-              <option value="error">失败</option>
-              <option value="max_iter">超轮次</option>
-            </select>
-            <select id="log-range" onchange="setLogRange()">
-              <option value="all">全部时间</option>
-              <option value="1d">今天</option>
-              <option value="7d">近 7 天</option>
-              <option value="30d">近 30 天</option>
-            </select>
-            <select id="log-view" onchange="renderLogList()">
-              <option value="timeline">时间流</option>
-              <option value="project">按项目</option>
-            </select>
-            <button class="log-refresh-btn" onclick="loadLogs()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9 9 9 0 0 1-6.36-2.64L3 21"/><path d="M3 7v5h5"/><path d="M3 12a9 9 0 0 1 9-9 9 9 0 0 1 6.36 2.64L21 3"/><path d="M21 17v-5h-5"/></svg>
-              刷新
-            </button>
-          </div>
-          <div id="log-overview" class="log-ov"></div>
-          <div id="log-list"></div>
-        </div>
-        </div>
-      </div>
+        </div>      </div>
 
-      <!-- 趋势模块（独立前端文件，不与现有看板逻辑耦合） -->
-      <div id="trend-module" class="module-content" aria-label="多链趋势监控"></div>
-
-      <!-- ===== Agent 模块：团队 / 技能 / 技能库 合三为一 ===== -->
-      <div id="agent-module" class="module-content">
-        <style>
-          .agent-subtabs { display:flex; gap:8px; padding:14px 40px 0; flex-shrink:0; }
-          .agent-subtab { padding:8px 16px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-secondary); border-radius:9px; cursor:pointer; font-size:13px; font-weight:600; }
-          .agent-subtab:hover { border-color:var(--accent); color:var(--text); }
-          .agent-subtab.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-          .agent-sub { display:none; }
-          .agent-sub.active { display:flex; flex-direction:column; flex:1; min-height:0; overflow:hidden; }
-        </style>
-        <div class="agent-subtabs">
-          <button class="agent-subtab active" data-agent-tab="team" onclick="switchAgentTab('team')">团队</button>
-          <button class="agent-subtab" data-agent-tab="skill" onclick="switchAgentTab('skill')">技能</button>
-          <button class="agent-subtab" data-agent-tab="skilllib" onclick="switchAgentTab('skilllib')">技能库</button>
-        </div>
-        <!-- 技能库（Agent 第三栏） -->
-        <div id="skilllib-module" class="agent-sub">
+      <!-- 技能库浏览器模块 -->
+      <div id="skilllib-module" class="module-content">
         <div class="skilllib-header">
           <div>
             <h2>技能库</h2>
@@ -3068,7 +3000,7 @@ body {
       </div>
 
       <!-- 团队模块（个人业务 / 工作流，数据源 = 拾元/syteam，按文件夹树浏览） -->
-      <div id="team-module" class="agent-sub active">
+      <div id="team-module" class="module-content">
         <style>
           #team-module { padding: 0; }
           .team-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:28px 40px 16px; }
@@ -3325,7 +3257,7 @@ body {
       </div>
 
       <!-- 技能模块（个人专属技能，数据源 = 拾元/syskill；与左侧「技能库」本机通用来源隔离） -->
-      <div id="skill-module" class="agent-sub">
+      <div id="skill-module" class="module-content">
         <style>
           #skill-module { padding: 0; }
           .skillp-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:28px 40px 16px; }
@@ -3527,7 +3459,6 @@ body {
         }
         </script>
       </div>
-      </div>
 
       <!-- 设置模块（模型 + 扩展 + 偏好） -->
       <div id="config-module" class="module-content">
@@ -3567,6 +3498,45 @@ body {
           </div>
           <div id="ai-token-section"></div>
           <div id="ai-token-history"></div>
+        </div>
+      </div>
+
+
+      <!-- 操作日志模块 -->
+
+      <div id="log-module" class="module-content">
+        <div class="mgmt-panel">
+          <div class="page-header">
+            <h2>操作日志</h2>
+            <p>记录所有智能体的调用记录，包括 Seegent 主智能体、侧车 Agent（WorkBuddy 等）以及各 CLI 工具（Cursor / Claude / Hermes 等）：任务、模型、轮次、工具、产出文件、Token、耗时、状态。</p>
+          </div>
+          <div class="log-filter-bar">
+            <select id="log-filter-agent" onchange="renderLogList()">
+              <option value="">全部 Agent</option>
+            </select>
+            <select id="log-filter-status" onchange="renderLogList()">
+              <option value="">全部状态</option>
+              <option value="success">成功</option>
+              <option value="error">失败</option>
+              <option value="max_iter">超轮次</option>
+            </select>
+            <select id="log-range" onchange="setLogRange()">
+              <option value="all">全部时间</option>
+              <option value="1d">今天</option>
+              <option value="7d">近 7 天</option>
+              <option value="30d">近 30 天</option>
+            </select>
+            <select id="log-view" onchange="renderLogList()">
+              <option value="timeline">时间流</option>
+              <option value="project">按项目</option>
+            </select>
+            <button class="log-refresh-btn" onclick="loadLogs()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9 9 9 0 0 1-6.36-2.64L3 21"/><path d="M3 7v5h5"/><path d="M3 12a9 9 0 0 1 9-9 9 9 0 0 1 6.36 2.64L21 3"/><path d="M21 17v-5h-5"/></svg>
+              刷新
+            </button>
+          </div>
+          <div id="log-overview" class="log-ov"></div>
+          <div id="log-list"></div>
         </div>
       </div>
 
@@ -3841,7 +3811,7 @@ async function removeSavedFolder(id) {
 
 // ========== 全局状态 ==========
 const state = {
-  folders: [],       // { id, name, handle, path, children: [], expanded: false }
+  folders: [],       // { id, name, handle, path, children: [], expanded: true }
   openTabs: [],      // { id, name, handle, icon, content }
   activeTabId: null,
   splitTabIds: null,   // 分屏模式 [leftTabId, rightTabId]，null 表示未分屏
@@ -3990,7 +3960,7 @@ async function addFolder() {
     }
 
     const id = 'folder_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-    const folder = { id, name: handle.name, handle, path: null, children: [], expanded: false };
+    const folder = { id, name: handle.name, handle, path: null, children: [], expanded: true };
     state.folders.push(folder);
     saveFolderOrder();
     await loadFolderChildren(folder);
@@ -4033,7 +4003,7 @@ async function handleDrop(e) {
     if (state.folders.find(f => f.handle.name === handle.name)) continue;
 
     const id = 'folder_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-    const folder = { id, name: handle.name, handle, path: null, children: [], expanded: false };
+    const folder = { id, name: handle.name, handle, path: null, children: [], expanded: true };
     state.folders.push(folder);
     await loadFolderChildren(folder);
     await saveFolderHandle(id, handle.name, handle);
@@ -4366,7 +4336,7 @@ async function doCreateFile(result) {
     if (!inserted) {
       const handle = result.location.handle;
       const id = 'folder_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-      const newFolder = { id, name: handle.name, handle, path: null, children: [], expanded: false };
+      const newFolder = { id, name: handle.name, handle, path: null, children: [], expanded: true };
       state.folders.push(newFolder);
       await loadFolderChildren(newFolder);
       await saveFolderHandle(id, handle.name, handle);
@@ -6978,7 +6948,7 @@ async function init() {
       const perm = await handle.queryPermission({ mode: 'readwrite' });
       console.log('[Seegent] ' + handle.name + ' 权限: ' + perm);
       if (perm === 'granted') {
-        const folder = { id, name: handle.name, handle, path: null, children: [], expanded: false };
+        const folder = { id, name: handle.name, handle, path: null, children: [], expanded: true };
         state.folders.push(folder);
         await loadFolderChildren(folder);
         console.log('[Seegent] ✅ 恢复: ' + handle.name);
@@ -7051,7 +7021,7 @@ function showRestoreBanner() {
       try {
         const perm = await item.handle.requestPermission({ mode: 'readwrite' });
         if (perm === 'granted') {
-          const folder = { id: item.id, name: item.handle.name, handle: item.handle, path: null, children: [], expanded: false };
+          const folder = { id: item.id, name: item.handle.name, handle: item.handle, path: null, children: [], expanded: true };
           state.folders.push(folder);
           await loadFolderChildren(folder);
           // 重新授权成功后，再次持久化 handle 到 IndexedDB
@@ -7124,7 +7094,6 @@ function switchConfigTab(tabName) {
 
 function switchModule(name) {
   if (name === 'settings') name = 'config';  // 旧「设置」模块已并入「配置」
-  if (activeModule === 'trend' && name !== 'trend' && window.SeegentTrend) window.SeegentTrend.deactivate();
   activeModule = name;
   localStorage.setItem('seegent-module', name);
   // 同步顶栏分段控件
@@ -7132,25 +7101,12 @@ function switchModule(name) {
   // 切换内容面板
   document.querySelectorAll('.module-content').forEach(c => c.classList.toggle('active', c.id === name + '-module'));
   if (name === 'config') { switchConfigTab(activeConfigTab); return; }
-  if (name === 'agent') { switchAgentTab(localStorage.getItem('seegent-agent-tab') || 'team'); return; }
-  if (name === 'board') { initDashboard(); loadLogs(); }
-  if (name === 'trend' && window.SeegentTrend) { window.SeegentTrend.activate(); }
+  if (name === 'board') { initDashboard(); }
   if (name === 'skilllib') { initSkillLibrary(); }
   if (name === 'team') { initTeam(); }
   if (name === 'skill') { initSkill(); }
   if (name === 'log') { loadLogs(); }
   if (name === 'usage') { loadAiMonitor(); }
-}
-
-// ========== Agent 子模块切换（团队 / 技能 / 技能库） ==========
-function switchAgentTab(tab) {
-  // tab: 'team' | 'skill' | 'skilllib'；默认团队
-  localStorage.setItem('seegent-agent-tab', tab);
-  document.querySelectorAll('.agent-subtab').forEach(b => b.classList.toggle('active', b.dataset.agentTab === tab));
-  document.querySelectorAll('.agent-sub').forEach(c => c.classList.toggle('active', c.id === tab + '-module'));
-  if (tab === 'team') initTeam();
-  else if (tab === 'skill') initSkill();
-  else if (tab === 'skilllib') initSkillLibrary();
 }
 
 // ========== 模块切换结束 ==========
@@ -7740,15 +7696,11 @@ document.querySelectorAll('.header-seg').forEach(seg => {
 setTimeout(() => {
   try {
     const saved = localStorage.getItem('seegent-module');
-    // 旧模块名映射：model/cli/mcp/settings → config；log → board；team/skill/skilllib → agent
-    const oldToNew = { model: 'config', cli: 'config', mcp: 'config', settings: 'config', log: 'board', team: 'agent', skill: 'agent', skilllib: 'agent' };
-    let actual = oldToNew[saved] || saved;
-    if (!actual) actual = 'board';
-    if (actual !== 'file' && document.getElementById(actual + '-module')) {
+    // 旧模块名映射：model/cli/mcp/agent → config
+    const oldToNew = { model: 'config', cli: 'config', mcp: 'config', agent: 'config', settings: 'config' };
+    const actual = oldToNew[saved] || saved;
+    if (actual && actual !== 'file' && document.getElementById(actual + '-module')) {
       switchModule(actual);
-    } else {
-      // 默认看板仍需初始化（数据 + 日志）
-      initDashboard(); loadLogs();
     }
   } catch(e) { console.warn('模块恢复失败:', e.message); }
 }, 100);
@@ -9922,5 +9874,4 @@ function fpChoose() {
 }
 function closeFolderPicker() { document.getElementById('folder-picker-overlay').style.display = 'none'; }
 </script>
-<script type="module" src="/trend.js?v=20260903-01"></script>
 </html>

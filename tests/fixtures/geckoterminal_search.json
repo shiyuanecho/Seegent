@@ -1,0 +1,45 @@
+{
+  "data": [
+    {
+      "id": "eth_0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "type": "pool",
+      "attributes": {
+        "address": "0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "name": "EXM / USDC",
+        "base_token_price_usd": "1.25",
+        "quote_token_price_usd": "1.00",
+        "reserve_in_usd": "500000",
+        "volume_usd": {"h24": "25000"},
+        "price_change_percentage": {"h24": "4.2"},
+        "transactions": {"h24": {"buys": 120, "sells": 80}},
+        "fdv_usd": "1250000",
+        "market_cap_usd": "1000000"
+      },
+      "relationships": {
+        "network": {"data": {"id": "eth", "type": "network"}},
+        "base_token": {"data": {"id": "eth_0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "type": "token"}},
+        "quote_token": {"data": {"id": "eth_0xcccccccccccccccccccccccccccccccccccccccc", "type": "token"}}
+      }
+    }
+  ],
+  "included": [
+    {
+      "id": "eth_0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "type": "token",
+      "attributes": {
+        "address": "0xBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "name": "Example Token",
+        "symbol": "EXM"
+      }
+    },
+    {
+      "id": "eth_0xcccccccccccccccccccccccccccccccccccccccc",
+      "type": "token",
+      "attributes": {
+        "address": "0xCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
+        "name": "USD Coin",
+        "symbol": "USDC"
+      }
+    }
+  ]
+}
